@@ -1,0 +1,6 @@
+package IdrisTddNotes
+modules = Main, Sanity.Hello, Part1.Sec1_4_5
+sourcedir = src
+opts = "-p effects"
+main = Main
+executable = IdrisTddNotes
