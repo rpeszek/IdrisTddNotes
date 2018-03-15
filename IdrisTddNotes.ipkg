@@ -1,5 +1,8 @@
 package IdrisTddNotes
-modules = Main, Sanity.Hello, Part1.Sec1_4_5
+modules = Main
+        , Sanity.Hello
+        , Part1.Sec1_4_5
+        , Part2.Sec2_2_2
 sourcedir = src
 opts = "-p effects"
 main = Main

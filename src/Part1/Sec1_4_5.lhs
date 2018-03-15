@@ -1,13 +1,15 @@
 |Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/N_Part1_Sec1_4_5
 |Idris Src: Sec1_4_5.idr
 
-Simple Idris example from 1.4.5 vs Haskell
-------------------------------------------
+Section 1.4.5. Simple Idris example vs Haskell
+==============================================
 
-__Idris code example__
+Idris code example
+------------------
 |IdrisRef: Sec1_4_5.idr 
 
-__Compared to Haskell__
+Compared to Haskell
+-------------------
 
 > {-# LANGUAGE TypeFamilies
 >  , DataKinds 
@@ -102,4 +104,3 @@ Conclusions
 -----------
 Idris dependent types are NICE!!! 
 This type of code is much simpler and has much less boiler plate in Idris compared to Haskell.
-
