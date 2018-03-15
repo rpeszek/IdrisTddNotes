@@ -1,8 +1,8 @@
 |Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/N_Part1_Sec2_2_2
 |Idris Src: Sec2_3_3.idr
 
-Section 2.2.2. Idris `the` function vs Haskell
-==============================================
+Section 2.2.2. Idris `the` function vs Haskell vs Java
+======================================================
 
 Idris code example
 ------------------  
@@ -54,8 +54,8 @@ This approach is clearly not as nice as Idris's.
 I had to declare helper proxies which is ugly.
 
 
-Other Languages
----------------
+Java
+----
 Any language that allows to express types as first class values should be able to implement
 `the`.  But it is not so easy. 
 Here is Groovy console showing what happens in Java
@@ -67,5 +67,5 @@ Result: class java.lang.Integer
 ```
 This code shows issues with Java implementation of type erasure.  
 
-Hay, maybe Haskell does not have it, but it does not have it correctly! 
+Incidentally, Haskell has full type erasure, Java only erases type variables. 
  
