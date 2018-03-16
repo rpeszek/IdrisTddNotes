@@ -72,7 +72,8 @@ the (list int) [1,2,3] :: [Int]
 *Part1.Sec2_2_2> :t the numList [1,3,4]
 the numList [1,3,4] :: Num a => [a]
 ```
-(Vector equivalent not shown because I am just lazy.)
+(Vector equivalent not shown because I am just lazy, besides Haskell does not have
+function overloading.)
 
 This approach is clearly not as nice as Idris's. 
 I had to declare helper proxies which is ugly.
