@@ -73,7 +73,7 @@ the (list int) [1,2,3] :: [Int]
 the numList [1,3,4] :: Num a => [a]
 ```
 (Vector equivalent not shown because I am just lazy, besides Haskell does not have
-function overloading.)
+data constructor overloading.)
 
 This approach is clearly not as nice as Idris's. 
 I had to declare helper proxies which is ugly.
