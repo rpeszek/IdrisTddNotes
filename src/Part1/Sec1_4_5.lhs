@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/N_Part1_Sec1_4_5
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part1_Sec1_4_5
 |Idris Src: Sec1_4_5.idr
 
 Section 1.4.5. Simple Idris example vs Haskell
