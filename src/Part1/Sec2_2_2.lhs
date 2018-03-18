@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/N_Part1_Sec2_2_2
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part1_Sec2_2_2
 |Idris Src: Sec2_3_3.idr
 
 Section 2.2.2. Idris `the` function vs Haskell vs Java
@@ -50,6 +50,9 @@ To do something similar, Haskell would need a value level representation of type
 >
 > string :: Proxy String 
 > string = Proxy 
+>
+> list :: Proxy a -> Proxy ([a])
+> list _ = Proxy
 >
 > numList :: Num a => Proxy ([a])
 > numList = Proxy
