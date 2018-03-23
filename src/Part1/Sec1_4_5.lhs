@@ -8,6 +8,42 @@ Idris code example
 ------------------
 |IdrisRef: Sec1_4_5.idr 
 
+Note: this example is used later in Section 6.1.3 to demonstrate use of type holes
+in type signatures. Type holes are amazing but unfortunately may not work with full
+implementation (undecidable with dependent types?). This does not compile:
+
+```
+-- this does not work! 6.1.3
+valToString : (isInt : Bool) -> (case isInt of
+                                      False => ?argType_1
+                                      True => ?argType_2) -> String
+valToString False y = trim y
+valToString True y = cast y
+```
+
+idris repl
+```
+   |
+41 | valToString False y = trim y
+   |                       ~~~~~~
+When checking right hand side of valToString with expected type
+        String
+
+When checking an application of function Prelude.Strings.trim:
+        Type mismatch between
+                case False of
+                  False => ?argType_1
+                  True => ?argType_2 (Type of y)
+        and
+                String (Expected type)
+        
+        Specifically:
+                Type mismatch between
+                        ?argType_1
+                and
+                        String
+```
+
 Compared to Haskell
 -------------------
 

@@ -2,7 +2,11 @@ package IdrisTddNotes
 modules = Main
         , Sanity.Hello
         , Part1.Sec1_4_5
-        , Part2.Sec2_2_2
+        , Part1.Sec2_2_2
+        , Part2.Sec3_2_3
+        , Part2.Sec4_2_2
+        , Part2.Sec5_3_3
+        , Part2.Sec6_1_1
 sourcedir = src
 opts = "-p effects"
 main = Main
