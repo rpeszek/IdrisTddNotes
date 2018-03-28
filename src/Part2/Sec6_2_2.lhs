@@ -9,7 +9,7 @@ Idris code example
 ------------------  
 Idris repl:  
 
-<img src="https://github.com/rpeszek/IdrisTddNotes/blob/master/image/Part2/Sec6_2_2.png" width="550">
+<img src="https://github.com/rpeszek/IdrisTddNotes/blob/master/image/Part2/Sec6_2_2.png" alt="/image/Part2/Sec6_2_2.png" width="550">
 
 Code:
 
@@ -29,7 +29,7 @@ Compared to Haskell
 Template Haskell/QuasiQuotation approach provides similar solution  
 https://hackage.haskell.org/package/safe-printf#readme
 
-I found a more dependently typed solution here (not exactly the same as Idris):  
+I found a more dependently typed solution here (lacking the same string formatting as Idris):  
 https://www.reddit.com/r/haskell/comments/55bvt4/typesafe_printf_with_typeintype/  
 https://gist.github.com/gergoerdi/5a0785ae9366776ebd4f1090d75979d3  
 

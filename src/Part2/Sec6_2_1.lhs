@@ -11,7 +11,7 @@ Idris code example
 
 Idris repl: 
  
-<img src="https://github.com/rpeszek/IdrisTddNotes/blob/master/image/Part2/Sec6_2_1.png" width="350">
+<img src="https://github.com/rpeszek/IdrisTddNotes/blob/master/image/Part2/Sec6_2_1.png" alt="/image/Part2/Sec6_2_1.png" width="350">
 
 Compared to Haskell
 -------------------
