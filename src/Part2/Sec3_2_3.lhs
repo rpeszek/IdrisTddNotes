@@ -52,6 +52,8 @@ Surprisingly this ability goes beyond ADTs and Haskell can derive functor on sim
 > module Part2.Sec3_2_3 where
 > import GHC.TypeLits
 > 
+> {- Note: using predecessor (n - 1) instead of (1 + n) seems, in some cases, 
+> to work better see Part2.Sec6_2_1 -}
 > data Vect (n::Nat) a where
 >   Nil :: Vect 0 a
 >   (:::) :: a -> Vect n a -> Vect (1 + n) a

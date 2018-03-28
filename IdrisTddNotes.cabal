@@ -35,6 +35,8 @@ library
       , Part2.Sec4_2_2
       , Part2.Sec5_3_3
       , Part2.Sec6_1_1
+      , Part2.Sec6_2_1
+      , Part2.Sec6_2_2
 
   default-language: Haskell2010
 

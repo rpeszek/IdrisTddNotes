@@ -28,6 +28,8 @@ This follows the idea from 5.3.2.
 > {-| 
 >  Provides link between Nat types and values.
 >  SNat allows to lift from value n to type n.
+>  Note: using predecessor (n - 1) instead of (1 + n) seems, in some cases, 
+>  to work better see Part2.Sec6_2_1 
 > -}
 > data SNat (n :: Nat) where
 >  SZ :: SNat 0
