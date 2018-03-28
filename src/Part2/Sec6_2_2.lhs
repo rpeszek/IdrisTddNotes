@@ -7,8 +7,11 @@ Type safe printf in Idris and Haskell.
 
 Idris code example
 ------------------  
-idris repl  
-![/image/Part2/Sec6_2_2.png](../blob/master/image/Part2/Sec6_2_2.png)
+Idris repl:  
+
+<img src="https://github.com/rpeszek/IdrisTddNotes/blob/master/image/Part2/Sec6_2_2.png" width="550">
+
+Code:
 
 |IdrisRef: Sec6_2_2.idr 
 

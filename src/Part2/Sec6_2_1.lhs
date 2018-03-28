@@ -9,8 +9,9 @@ Idris code example
 ------------------  
 |IdrisRef: Sec6_2_1.idr 
 
-idris repl  
-![/image/Part2/Sec6_2_2.png](../blob/master/image/Part2/Sec6_2_2.png)
+Idris repl: 
+ 
+<img src="https://github.com/rpeszek/IdrisTddNotes/blob/master/image/Part2/Sec6_2_1.png" width="350">
 
 Compared to Haskell
 -------------------
