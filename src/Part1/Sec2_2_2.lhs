@@ -1,8 +1,8 @@
 |Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part1_Sec2_2_2
 |Idris Src: Sec2_3_3.idr
 
-Section 2.2.2. Idris `the` function vs Haskell vs Java
-======================================================
+Section 2.2.2. Idris `the` function vs Haskell vs Groovy
+========================================================
 
 Idris code example
 ------------------  
@@ -82,19 +82,21 @@ This approach is clearly not as nice as Idris's.
 I had to declare helper proxies which is ugly.
 
 
-Java
-----
+Groovy
+------
 Any language that can express types as first class values should be able to implement
 `the`.  Java comes to mind because it has the `Class<T>` type.  But it is not so easy. 
-Here is Groovy console showing what happens in Java
+Here is Groovy console showing what happens in Groovy
 ```Groovy
 groovy> static <T> T the(Class<T> tc, T t) { return t;}
 groovy> (the(Double, 3)).getClass()
 
 Result: class java.lang.Integer
 ```
-The same concept, fully equivalent code, only it does not work. 
-This can be blamed on Java type erasure.  
-Incidentally, Haskell has full type erasure, Java only erases type variables. 
-Type erasure concept in itself is not what is wrong.
+This is not a fair example since Java does not really have a concept of polymorphic numeric literals.
+I think, this can be blamed on Java type erasure and Groovy being weak on types.  
+
+If this was Java code, this would not compile `the(Double.class, 3)`, 
+neither would this `the(Long.class, 3)`, these would: `the(Integer.class, 3)` as well as `the(Object.class, 3)`.
+Adding `@CompileStatic` annotation to Groovy code prevents compilation of the above code as well.
  

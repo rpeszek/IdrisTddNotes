@@ -1,4 +1,4 @@
-Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec6_2_1
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec6_2_1
 |Idris Src: Sec6_2_1.idr
 
 Section 6.2.1. adder example vs Haskell
@@ -25,6 +25,7 @@ Compared to Haskell
 >    , StandaloneDeriving
 >    , UndecidableInstances
 > #-}
+> {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec6_2_1 where
 > import Data.Kind (Type)
@@ -52,6 +53,9 @@ gets much closer.
 > resolveAdder ::  AdderGadt n -> Vect n Int -> Int 
 > resolveAdder (ZAdder i) _ = i
 > resolveAdder (SAdder f) (x ::: xs) = resolveAdder (f x) xs
+> -- this condition should not be needed but
+> -- GHC reports Pattern match(es) are non-exhaustive 
+> resolveAdder (SAdder _) Nil = error "This should be impossible"
 >
 > {- Realigned SNat and Vect -}
 >
@@ -67,7 +71,7 @@ gets much closer.
 > sTwo = SS (SS SZ)
 > test = resolveAdder (createAdder sTwo 0) (3 ::: 2 ::: Nil) 
 
-this is type safe and works but with an interesting error message on type mismatch:
+this seems type safe and works. The error message on type mismatch is interesting:
 ```
 *Part2.Sec6_2_1>  resolveAdder (createAdder sTwo 0) (3 ::: 2 ::: 1 ::: Nil) 
 <interactive>:110:15: error:
@@ -91,6 +95,23 @@ or
  Could not deduce: (n - 1) ~ n1
   from the context: n ~ (1 + n1)
 ```
+These boilerplate will be useful later (and are not needed here):
+
+> sNatToInteger :: SNat n -> Integer 
+> sNatToInteger SZ = 0
+> sNatToInteger (SS sn) = 1 + (sNatToInteger sn)
+>
+> data UnknownNat where
+>   UZ :: UnknownNat
+>   US :: UnknownNat -> UnknownNat
+>
+> sNatToUnknownNat :: SNat n -> UnknownNat 
+> sNatToUnknownNat SZ = UZ
+> sNatToUnknownNat (SS sn) = US (sNatToUnknownNat sn)
+>
+> unknownNatToInteger :: UnknownNat -> Integer
+> unknownNatToInteger UZ = 0
+> unknownNatToInteger (US un) = 1 + (unknownNatToInteger un)
 
 __Type family solution (first attempt)__   
 This code is almost exactly the same as Idris code:
@@ -127,12 +148,12 @@ The problem seems to be again with `TypeLits`, this works just fine:
 >   AdderType' Z' = Int
 >   AdderType' (S' n) = Int -> AdderType' n
 > 
-> adder :: SNat' n -> Int -> AdderType' n
-> adder SZ' acc = acc
-> adder (SS' k) acc = \nextArg -> adder k (nextArg + acc)
+> adder' :: SNat' n -> Int -> AdderType' n
+> adder' SZ' acc = acc
+> adder' (SS' k) acc = \nextArg -> adder' k (nextArg + acc)
 >
 > sTwo' = SS' (SS' SZ')
-> test' = adder sTwo' 0 3 2
+> test' = adder' sTwo' 0 3 2
 
 ghci output:
 ```
@@ -154,4 +175,9 @@ ghci output:
 
 Conclusions
 -----------
+I am finding that using GHC.TypeLits Nat is a struggle.  I often get errors like 
+Couldn't match type ‘n’ with ‘(n + 1) - 1’.  using constraints like 
+`n ~ ((n + 1) - 1)` does not help. To move forward I created
+Util.NonLitsNatAndVector.hs.
+
 I like Idris more and more!

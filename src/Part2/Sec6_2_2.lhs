@@ -33,7 +33,7 @@ I found a more dependently typed solution here (lacking the same string formatti
 https://www.reddit.com/r/haskell/comments/55bvt4/typesafe_printf_with_typeintype/  
 https://gist.github.com/gergoerdi/5a0785ae9366776ebd4f1090d75979d3  
 
-This one is classic:  
+This one is a classic:  
 https://www.microsoft.com/en-us/research/publication/fun-type-functions/
 
 See also discussion here:  
@@ -54,6 +54,8 @@ level strings. However the rest of the code is almost identical.
 >  , UndecidableInstances
 >  , TypeInType
 > #-}
+> {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+>
 > module Part2.Sec6_2_2 where
 > import GHC.TypeLits
 > import Data.Kind (Type)

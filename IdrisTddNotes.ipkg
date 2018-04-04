@@ -1,6 +1,10 @@
 package IdrisTddNotes
+
+pkgs = effects
+
 modules = Main
-        , Sanity.Hello
+        -- , Sanity.Hello
+        , Util.MiniParser
         , Part1.Sec1_4_5
         , Part1.Sec2_2_2
         , Part2.Sec3_2_3
@@ -9,7 +13,9 @@ modules = Main
         , Part2.Sec6_1_1
         , Part2.Sec6_2_1
         , Part2.Sec6_2_2
+        , Part2.Sec6_3
+        , Part2.Sec6_3b
+
 sourcedir = src
-opts = "-p effects"
 main = Main
 executable = IdrisTddNotes

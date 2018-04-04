@@ -13,7 +13,6 @@ AdderType (S k) = (nextArg : Int) -> AdderType k
 ||| adder 1 : Int -> Int -> Int
 ||| adder 2 : Int -> Int -> Int -> Int
 ||| adder 2 : Int -> Int -> Int -> Int
-
 adder : (numargs : Nat) -> (acc : Int) -> AdderType numargs
 adder Z acc = acc
 adder (S k) acc = \nextArg => adder k (nextArg + acc)

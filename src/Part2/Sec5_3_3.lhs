@@ -20,6 +20,8 @@ This follows the idea from 5.3.2.
 >    , TypeOperators 
 >    , ScopedTypeVariables
 > #-}
+> {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+>
 > module Part2.Sec5_3_3 where
 > import GHC.TypeLits
 > import Part2.Sec3_2_3 (Vect(..))
