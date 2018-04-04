@@ -131,14 +131,14 @@ I would prefer to replace tuples with something better and HList comes to mind.
 
 > data HList (as :: [Type]) where
 >   HNil :: HList '[]
->   (:++) :: a -> HList as -> HList (a ': as)
+>   (::-) :: a -> HList as -> HList (a ': as)
 >
-> infixr 5 :++
+> infixr 5 ::-
 
 ghci:
 ```
-*Part2.Sec6_3> :t (CH8.pack "hi") :++ (2::Int) :++ HNil
-(CH8.pack "hi") :++ (2::Int) :++ HNil :: HList '[ByteString, Int]
+*Part2.Sec6_3> :t (CH8.pack "hi") ::- (2::Int) ::- HNil
+(CH8.pack "hi") ::- (2::Int) ::- HNil :: HList '[ByteString, Int]
 ```
 Using HList SchemaType mapping becomes complicated. I need to be able to abstract over single 
 types and lists of types (`Type` and `[Type]` are different).  
@@ -154,7 +154,7 @@ https://hackage.haskell.org/package/HList-0.4.1.0
 > instance HAppendList '[] l2 where
 >   hAppendList HNil l = l
 > instance HAppendList l l' => HAppendList (x ': l) l' where
->   hAppendList (x :++ l) l' = x :++ (hAppendList l l')
+>   hAppendList (x ::- l) l' = x ::- (hAppendList l l')
 >
 > type family SchemaTypeList  (sch :: Schema) :: [Type] where
 >   SchemaTypeList 'SString = '[ByteString]
