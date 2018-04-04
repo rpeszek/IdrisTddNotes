@@ -38,9 +38,9 @@ Here is the replaced version, I will use it as the starting point for my Haskell
  
 |IdrisRef: Sec6_3b.idr 
 
-This demonstrates type safety around adding and retrieving records:  
-idris repl  
-<img src="https://github.com/rpeszek/IdrisTddNotes/blob/master/image/Part2/Sec6_3_idrisrepl.png" alt="/image/Part2/Sec6_2_2.png" width="550">
+This demonstrates type safety around adding and retrieving records (in idris repl):
+
+<img src="https://github.com/rpeszek/IdrisTddNotes/blob/master/image/Part2/Sec6_3_idrisrepl.png" alt="/image/Part2/Sec6_2_2.png" width="900">
 
 
 Compared to Haskell
