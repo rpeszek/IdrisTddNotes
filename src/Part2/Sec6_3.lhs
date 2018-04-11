@@ -268,7 +268,7 @@ is coded directly in not as type safe way:
 >           UZ -> Just (MkDataStore schema SZ Nil)
 >           _  -> Nothing 
 
-One thing that Idris makes easier is definition of locally scoped `where` functions.
+One thing that Idris makes easier is defining of locally scoped `where` functions.
 To make these work in Haskell I cannot just use dependently typed variables that are
 already in scope. 
 

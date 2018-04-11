@@ -32,5 +32,6 @@ temp
 temp*.md
 Temp*.hs
 Temp*.idr
+Temp*.lhs
 
 *.sh
