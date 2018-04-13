@@ -30,6 +30,7 @@ library
       base >= 4.7 && < 5
       , attoparsec
       , bytestring
+      , singletons
   exposed-modules:
       Util.NonLitsNatAndVector
       , Part1.Sec1_4_5
@@ -44,6 +45,7 @@ library
       , Part2.Sec8_1
       , Part2.Sec8_2_5
       , Part2.Sec8_3
+      , Part2.Sec9_1
 
   default-language: Haskell2010
 

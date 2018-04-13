@@ -45,8 +45,8 @@ This demonstrates type safety around adding and retrieving records (in idris rep
 
 Compared to Haskell
 -------------------
-*  I am using `attoparsec` because I have not much experience with the more generic `parsec` library. 
-Obviously, the existence of super nice parser (and other) libraries is a big plus for Haskell.
+*  I am using `attoparsec` just to play with it, I may created a version using the more commonly used `parsec` library
+in the future. Obviously, the existence of super nice parser (and other) libraries is a big plus for Haskell.
 *  GHC.TypeLits based vectors are hard to work with and I moved to using my own implementation `Util.NonLitsNatAndVector`
 *  Implementing polymorphic setSchema while keeping addSchema and getEntry type safe was hard
 *  Tuples in Haskell are yucky

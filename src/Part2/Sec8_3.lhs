@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec8_2
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec8_3
 |Idris Src: Sec8_3.idr
 
 Section 8.3 Dec/DecEq vs Haskell
@@ -69,5 +69,5 @@ ghci:
 *Part2.Sec8_3> exactLength (SS SZ) $ "t" :::  Nil
 Just ("t" ::: Nil)
 ```
-Mimicking of MyPair would be harder because I would need type level representation of
-constituent values.
+Providing DecEq instance of MyPair would be harder because I would need type level representation of
+constituent values.  Possible direction is to define `decEq` as type family as in [idrVsHs_Part2_Sec9_1].

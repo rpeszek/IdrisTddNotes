@@ -14,7 +14,7 @@
 # resolver: ghcjs-0.1.0_ghc-7.10.2
 # resolver:
 #  name: custom-snapshot
-#  location: "./custom-snapshot.yaml"
+#  location: "./custom-snapshot.yaml" lts-9.11
 resolver: lts-9.11
 
 # User packages to be built.
