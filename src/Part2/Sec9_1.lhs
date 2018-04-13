@@ -3,7 +3,7 @@
 
 Section 9.1 Type safe element of Vector vs Haskell
 ==================================================
-This note is about Idris type safe finding element in a Vector/List and mimicking this in Haskell.
+This note is about type safe `elem` function and mimicking this in Haskell.
 
 Idris code example
 ------------------  
@@ -47,7 +47,7 @@ This will not compile
 twoInList :: Elem 2 (1 ': 2 ':3 ': '[])
 twoInList = Here
 ```
-ghc
+ghc error:
 ```
     • Couldn't match type ‘2’ with ‘1’
       Expected type: Elem 2 '[1, 2, 3]
@@ -55,7 +55,7 @@ ghc
 
 ```
 
-Same works for Vectors
+Same approach works for Vectors
 
 > data VElem (ax :: a) (vx :: Vect k a) where
 >         VHere :: VElem x (x '::: xs)
@@ -67,6 +67,8 @@ Same works for Vectors
 >
 > strInVect :: VElem "str" ("hello" '::: "str" '::: 'Nil)
 > strInVect = VThere VHere
+
+and I can mimic Idris's removeElem using type families
 
 > type family RemoveElem (val :: a) (xs :: Vect (S n) a) (prf :: VElem val xs) :: Vect n a where
 >   RemoveElem val (val '::: xs) VHere = xs
