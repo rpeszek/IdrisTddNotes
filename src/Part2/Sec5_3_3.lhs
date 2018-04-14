@@ -10,7 +10,11 @@ Idris code example
 
 Compared to Haskell
 -------------------
-This follows the idea from 5.3.2.
+Note, standard approach in Haskell is to use existential type (or GADT which gives
+equivalent functionality).  Typical name used in Haskell for this starts with 'Some'
+ 
+This follows the idea from 5.3.2 and naming convention from the book so instead of
+`SomeVect` I have `VectUnknown`
 
 > {-# LANGUAGE DeriveFunctor
 >    , StandaloneDeriving
@@ -19,6 +23,7 @@ This follows the idea from 5.3.2.
 >    , DataKinds
 >    , TypeOperators 
 >    , ScopedTypeVariables
+>    , RankNTypes
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
@@ -29,7 +34,7 @@ This follows the idea from 5.3.2.
 >
 > {-| 
 >  Provides link between Nat types and values. Often called Natty.
->  SNat allows to lift from value n to type n.
+>  SNat allows to lift from value n to type n. And provides run time reflexion.
 >  Note: using predecessor (n - 1) instead of (1 + n) seems, in some cases, 
 >  to work better see Part2.Sec6_2_1 
 > -}
@@ -39,6 +44,7 @@ This follows the idea from 5.3.2.
 >
 > deriving instance Show (SNat n) 
 >
+> {-| In Haskell, this would be typically called SomeVect -}
 > data VectUnknown a where 
 >    MkVect :: SNat n -> Vect n a -> VectUnknown a 
 >  
@@ -56,4 +62,23 @@ ghci:
 *Part2.Sec5_3_3> listToVect [1,2,3]
 MkVect (SS (SS (SS SZ))) (1 ::: (2 ::: (3 ::: Nil)))
 *Part2.Sec5_3_3> 
+```
+There is also a CPS approach (singletons) (uses RankNTypes).  
+GHC.TypeLits are not the easiest to use here.  See `withNat`, `withSomeNat`,
+`withSomeVect` in 
+[/src/Util/NonLitsNatAndVector.hs](../blob/master/src/Util/NonLitsNatAndVector.hs)  
+But approaches should be equivalent
+
+> withVectUnknown :: VectUnknown a -> (forall n . SNat n -> Vect n a -> r) -> r
+> withVectUnknown (MkVect n v) f = f n v
+>
+> withListAsVect :: [a] -> (forall n . SNat n -> Vect n a -> r) -> r 
+> withListAsVect list f = withVectUnknown (listToVect list) f
+>
+> test = withListAsVect [1,2,3] $ \n vect -> show vect
+
+ghci:
+```
+*Part2.Sec5_3_3> test
+"1 ::: (2 ::: (3 ::: Nil))"
 ```

@@ -42,6 +42,7 @@ library
       , Part2.Sec6_2_1
       , Part2.Sec6_2_2
       , Part2.Sec6_3
+      , Part2.Sec6_3sing
       , Part2.Sec8_1
       , Part2.Sec8_2_5
       , Part2.Sec8_3

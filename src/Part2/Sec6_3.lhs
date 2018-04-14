@@ -45,6 +45,10 @@ This demonstrates type safety around adding and retrieving records (in idris rep
 
 Compared to Haskell
 -------------------
+This version was codes 'by-hand'. Using `singletons` will should make it much simpler.
+(`singletons` version is work in progress) 
+[/src/Part2/Sec6_3sing.hs](../blob/master/src/Part2/Sec6_3sing.hs)  
+
 *  I am using `attoparsec` just to play with it, I may created a version using the more commonly used `parsec` library
 in the future. Obviously, the existence of super nice parser (and other) libraries is a big plus for Haskell.
 *  GHC.TypeLits based vectors are hard to work with and I moved to using my own implementation `Util.NonLitsNatAndVector`
@@ -102,13 +106,15 @@ in the future. Obviously, the existence of super nice parser (and other) librari
 >              deriving Show
 > infixr 5 :+
 >
-> {-| Type level representation of Schema, adds quite a bit of boilerplate -}
+> {-| Type level representation of Schema (reflexion).
+>  This adds quite a bit of boilerplate 
+> -}
 > data SSchema (sch :: Schema) where
 >   SSString :: SSchema 'SString 
 >   SSInt :: SSchema 'SInt
 >   SSCons :: SSchema s1 -> SSchema s2 -> SSchema (s1 :+ s2) 
 >
-> {-| type family instead of type-level function, but almost identical -}
+> {-| type family instead of type-level function used in Idris, but almost identical -}
 > type family SchemaType  (sch :: Schema) :: Type where
 >  SchemaType 'SString = ByteString
 >  SchemaType 'SInt = Int
@@ -199,7 +205,9 @@ instructions (`SetSchema`, `Add`, `Get`, and `Quit`).  This should simplify recu
 definition for `SetSchema`, potentially removing the need for a helper type but it would
 deviate from Idris version I am trying to mimic.  
 
-
+> {-| this is the existential type that could also be named SomeSchema.
+>    It is the reification type.
+> -}
 > data AnySchema (sch :: Schema) where
 >            MkAnySchema :: SSchema asch -> AnySchema sch
 >
