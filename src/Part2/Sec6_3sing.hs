@@ -36,23 +36,47 @@ import Prelude hiding (getLine, putStrLn)
 $(singletons [d|
  data Schema = SString
               | SInt
-              | (:+) Schema Schema
-               deriving Show
+              | SCons Schema Schema
+                deriving Show
 
  |])
+
+t :: Schema -> Schema -> Schema
+t s1 s2 = undefined
+-- (:+++) :: Schema -> Schema -> Schema
+-- (:+++) = SCons
+-- infixr 5 :+++
 
  
 type family SchemaType  (sch :: Schema) :: Type where
    SchemaType 'SString = ByteString
    SchemaType 'SInt = Int
-   SchemaType (x :+ y) = (SchemaType x, SchemaType y)
+   SchemaType (x `SCons` y) = (SchemaType x, SchemaType y)
 
-testST :: SchemaType ('SInt :+ 'SString :+ 'SInt)
+testST :: SchemaType ('SInt `SCons` 'SString `SCons` 'SInt)
 testST = undefined
 
 data Command (sch :: Schema) where
             -- SetSchema is polymorphic in schema type
-            SetSchema :: Sing asch -> Command sch
+            SetSchema :: SSchema asch -> Command sch
             Add :: SchemaType sch -> Command sch
             Get :: Int -> Command sch
             Quit :: Command sch
+
+data AnySchema (sch :: Schema) where
+            MkAnySchema :: SSchema asch -> AnySchema sch
+
+toAnySchema :: Schema -> AnySchema sch
+toAnySchema SString = MkAnySchema SSString
+toAnySchema SInt = MkAnySchema SSInt
+toAnySchema (s1 `SCons` s2) = 
+      case toAnySchema s1 of
+        MkAnySchema s1' -> case toAnySchema s2 of 
+          MkAnySchema s2' ->
+            MkAnySchema $ SSCons s1' s2'
+
+toSetSchemaCommand :: AnySchema sch -> Command sch
+toSetSchemaCommand (MkAnySchema x) = SetSchema x
+
+schemaToSchemaCmd :: Schema -> Command sch 
+schemaToSchemaCmd  = toSetSchemaCommand . toAnySchema

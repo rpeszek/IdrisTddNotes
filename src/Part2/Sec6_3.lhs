@@ -205,9 +205,6 @@ instructions (`SetSchema`, `Add`, `Get`, and `Quit`).  This should simplify recu
 definition for `SetSchema`, potentially removing the need for a helper type but it would
 deviate from Idris version I am trying to mimic.  
 
-> {-| this is the existential type that could also be named SomeSchema.
->    It is the reification type.
-> -}
 > data AnySchema (sch :: Schema) where
 >            MkAnySchema :: SSchema asch -> AnySchema sch
 >
