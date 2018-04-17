@@ -95,12 +95,13 @@ or
  Could not deduce: (n - 1) ~ n1
   from the context: n ~ (1 + n1)
 ```
-These boilerplate will be useful later (and are not needed here):
+These boilerplate will be useful later (and is not needed here):
 
 > sNatToInteger :: SNat n -> Integer 
 > sNatToInteger SZ = 0
 > sNatToInteger (SS sn) = 1 + (sNatToInteger sn)
 >
+> -- TODO change to SomeNat as defined in Util.NonLitsNatAndVector
 > data UnknownNat where
 >   UZ :: UnknownNat
 >   US :: UnknownNat -> UnknownNat

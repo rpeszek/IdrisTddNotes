@@ -32,5 +32,10 @@ data Vect (n :: Nat) a where
      (:::) :: a -> Vect n a -> Vect ('S n) a
 infixr 5 :::
 
+-- TODO is there a more singleton version of this?
+someNatToInteger :: SomeSing Nat -> Integer
+someNatToInteger (SomeSing SZ) = 0
+someNatToInteger (SomeSing (SS k)) = 1 + someNatToInteger (SomeSing k)
+
 test :: SNat s -> ()
 test = undefined

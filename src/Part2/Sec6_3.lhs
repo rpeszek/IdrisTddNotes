@@ -87,7 +87,7 @@ in the future. Obviously, the existence of super nice parser (and other) librari
 > -- when trying to use TypeLits based Vect
 > -- import GHC.TypeLits
 > -- import Part2.Sec6_2_1 (Vect(..), SNat(..), UnknownNat(..), sNatToUnknownNat, unknownNatToInteger)
-> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), UnknownNat(..), sNatToUnknownNat, unknownNatToInteger)
+> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), SomeNat(..), sNatToSomeNat, someNatToInteger)
 > import Data.ByteString (ByteString)
 > import qualified Data.ByteString as B
 > import Data.ByteString.Char8 ()
@@ -107,7 +107,7 @@ in the future. Obviously, the existence of super nice parser (and other) librari
 > infixr 5 :+
 >
 > {-| Type level representation of Schema (reflexion).
->  This adds quite a bit of boilerplate 
+>  This adds quite a bit of boilerplate avoided with singletons
 > -}
 > data SSchema (sch :: Schema) where
 >   SSString :: SSchema 'SString 
@@ -237,9 +237,8 @@ to implement `addToStore`
 > getSchema :: DataStore sch -> SSchema sch 
 > getSchema (MkDataStore sch _ _) = sch
 >
-> {-| it would be more elegant to return something like UnknownNat, but Int will do -}
-> size :: DataStore sch -> UnknownNat
-> size (MkDataStore _ size _) = sNatToUnknownNat size
+> size :: DataStore sch -> SomeNat
+> size (MkDataStore _ size _) = sNatToSomeNat size
 >
 > display :: SSchema sch -> SchemaType sch -> ByteString
 > display SSString item = item
@@ -270,8 +269,8 @@ is coded directly in not as type safe way:
 >
 > setSchema :: DataStore asch -> SSchema sch -> Maybe (DataStore sch)
 > setSchema store schema = case size store of
->           UZ -> Just (MkDataStore schema SZ Nil)
->           _  -> Nothing 
+>           SomeNat SZ -> Just (MkDataStore schema SZ Nil)
+>           SomeNat _  -> Nothing 
 
 One thing that Idris makes easier is defining of locally scoped `where` functions.
 To make these work in Haskell I cannot just use dependently typed variables that are
@@ -365,7 +364,7 @@ implement `processInput`.
 >              in case parseAll (command ss) input of
 >                  Left msg -> Just ("Invalid command: " <> CH8.pack msg, MkUnknownStore store)
 >                  Right (Add item) ->
->                     Just ("ID " <> CH8.pack ( show (unknownNatToInteger . size $ store)), MkUnknownStore $ addToStore store item)
+>                     Just ("ID " <> CH8.pack ( show (someNatToInteger . size $ store)), MkUnknownStore $ addToStore store item)
 >                  Right (Get pos) -> (\s -> (s, MkUnknownStore store)) <$> getEntry pos store
 >                  Right (SetSchema schema') -> case setSchema store schema' of
 >                         Nothing -> Just ("Can't update schema", MkUnknownStore store)
