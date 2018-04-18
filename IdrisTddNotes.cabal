@@ -33,6 +33,8 @@ library
       , singletons
   exposed-modules:
       Util.NonLitsNatAndVector
+      , Util.SingVector
+      , Util.AttoparsecUtil
       , Part1.Sec1_4_5
       , Part1.Sec2_2_2
       , Part2.Sec3_2_3

@@ -45,8 +45,7 @@ This demonstrates type safety around adding and retrieving records (in idris rep
 
 Compared to Haskell
 -------------------
-This version was codes 'by-hand'. Using `singletons` will should make it much simpler.
-(`singletons` version is work in progress) 
+This version was coded 'by-hand'. Using `singletons` is a bit less boilerplate
 [/src/Part2/Sec6_3sing.hs](../blob/master/src/Part2/Sec6_3sing.hs)  
 
 *  I am using `attoparsec` just to play with it, I may created a version using the more commonly used `parsec` library
@@ -90,9 +89,8 @@ in the future. Obviously, the existence of super nice parser (and other) librari
 > import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), SomeNat(..), sNatToSomeNat, someNatToInteger)
 > import Data.ByteString (ByteString)
 > import qualified Data.ByteString as B
-> import Data.ByteString.Char8 ()
 > import qualified Data.ByteString.Char8 as CH8
-> import Data.Attoparsec.ByteString hiding (takeTill)
+> import Util.AttoparsecUtil (optional, spaces, between, parseAll)
 > import Data.Attoparsec.ByteString.Char8 
 > import Prelude hiding (getLine, putStrLn)
 >
@@ -289,25 +287,8 @@ already in scope.
 
 
 __Parsers__
-
-Added these to mimic my primitive Idris parser based on attoparsec
-
-> optional :: Parser a -> Parser (Maybe a)
-> optional p = option Nothing (Just <$> p)
->
-> spaces :: Parser [Char]
-> spaces = many1 space
->
-> between :: Parser a -> Parser b -> Parser ByteString
-> between from to = do
->         fx <- from
->         chars <- manyTill anyChar to
->         return $ CH8.pack chars
->
-> parseAll :: Parser a -> ByteString -> Either String a
-> parseAll p str = parseOnly (p <* endOfInput) str
-
-The following parsers map directly to Idris code
+The following parsers map directly to Idris code (I have reimplemented some of Idris generic
+parser code in `Util.AttoparsecUtil`)
 
 > sstring :: Parser Schema 
 > sstring =  string "String" *> pure SString

@@ -8,7 +8,7 @@ myAppend1 : Vect n a -> Vect m a -> Vect (n + m) a
 myAppend1 [] ys = ys
 myAppend1 (x :: xs) ys = x :: myAppend1 xs ys
 
-{- reverse order -}
+{- reversed order -}
 myAppend2_xs_lemma : Vect (S (m + k)) elem -> Vect (plus m (S k)) elem
 myAppend2_xs_lemma {m} {k} xs = rewrite sym
                        (plusSuccRightSucc m k) in xs

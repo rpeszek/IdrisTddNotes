@@ -32,8 +32,8 @@ This code uses `:~:` type equality defined in `Data.Type.Equality`
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec8_1 where
-> import Util.NonLitsNatAndVector
-> import Data.Type.Equality
+> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), vlength)
+> import Data.Type.Equality ((:~:)(Refl))
 > 
 > {- mimics concept of type level function in Idris-}
 > type family F (a :: k1) :: k2 
