@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec8_2
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec8_2_5
 |Idris Src: Sec8_2_5.idr
 
 Section 8.2.5 Nat `+` theorems in Vect append vs Haskell
@@ -21,7 +21,6 @@ Compared to Haskell
 >     TypeOperators
 >   , GADTs
 >   , DataKinds
->   , ScopedTypeVariables
 >   , AllowAmbiguousTypes
 >   , RankNTypes
 > #-}
