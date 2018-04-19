@@ -68,8 +68,11 @@ Following the above Idris example works (with some trepidation and the need for 
 > plusSuccRightSucc SZ right        = Refl
 > plusSuccRightSucc (SS left) right = cong $ plusSuccRightSucc left right 
 >
+> myAppend3' :: SNat n -> SNat m -> Vect n a -> Vect m a -> Vect (m + n) a
+> myAppend3' = myAppend3 plusZeroRightNeutral plusSuccRightSucc
+> 
 > test2 = myAppend2 ("1" ::: Nil) ("2" ::: Nil)
-> test3 = myAppend3 plusZeroRightNeutral plusSuccRightSucc (SS SZ) (SS SZ) ("1" ::: Nil) ("2" ::: Nil)
+> test3 = myAppend3' (SS SZ) (SS SZ) ("1" ::: Nil) ("2" ::: Nil)
 
 ghci:
 ```

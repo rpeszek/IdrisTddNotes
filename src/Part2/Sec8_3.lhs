@@ -20,6 +20,7 @@ Compared to Haskell
 >   , PolyKinds
 >   -- , ScopedTypeVariables
 >   , KindSignatures
+>   , EmptyCase
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
@@ -42,13 +43,9 @@ Compared to Haskell
 > revSS :: (SNat ('S n) :~: SNat ('S m)) -> (SNat n :~: SNat m)
 > revSS Refl = Refl
 >
-> {-| 
->  There is no impossible keyword in Haskell
->  To avoid: The type signature for ‘zSIsNotSS’ lacks an accompanying binding
->  I need something, Empty pattern match is not accepted
-> -}
+> {-! Empty case match -}
 > zSIsNotSS :: SNat n -> (SNat 'Z :~: SNat ('S n)) -> Void
-> zSIsNotSS = undefined
+> zSIsNotSS _ x = case x of { }
 >
 > instance DecEq SNat where
 >      decEq SZ SZ = Yes Refl
