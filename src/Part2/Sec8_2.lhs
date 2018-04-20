@@ -44,7 +44,7 @@ Haskell version is a straightforward copy of Idris code with exception of additi
 >
 > test = myReverse2 (SS (SS (SS SZ))) ("1" ::: "2" ::: "3 "::: Nil)
 >
-> {- implicit version, using SNatI n contraint instead of SNat n parameter -}
+> {- implicit version, using SNatI n constraint instead of SNat n parameter -}
 > myReverse2' :: SNatI n => Vect n a -> Vect n a
 > myReverse2' = myReverse2 sNat
 >
