@@ -22,7 +22,7 @@ Haskell version is a straightforward copy of Idris code with exception of additi
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec8_2 where
-> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), FromTL)
+> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), FromTL, SNatI, sNat)
 > import Data.Type.Equality ((:~:)(Refl))
 > import Part2.Sec8_1 (cong)
 > import Part2.Sec8_2_5 (plusZeroRightNeutral, plusSuccRightSucc)
@@ -43,9 +43,17 @@ Haskell version is a straightforward copy of Idris code with exception of additi
 >                       Refl -> xs
 >
 > test = myReverse2 (SS (SS (SS SZ))) ("1" ::: "2" ::: "3 "::: Nil)
+>
+> {- implicit version, using SNatI n contraint instead of SNat n parameter -}
+> myReverse2' :: SNatI n => Vect n a -> Vect n a
+> myReverse2' = myReverse2 sNat
+>
+> test' = myReverse2' ("1" ::: "2" ::: "3 "::: Nil)
 
 ghci
 ```
 *Part2.Sec8_2> test
+"3 " ::: ("2" ::: ("1" ::: Nil))
+*Part2.Sec8_2> test'
 "3 " ::: ("2" ::: ("1" ::: Nil))
 ```

@@ -27,7 +27,7 @@ Compared to Haskell
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec8_2_5 where
-> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+))
+> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), SNatI, sNat)
 > import Data.Type.Equality ((:~:)(Refl))
 > import Part2.Sec8_1 (cong)
 >
@@ -67,18 +67,29 @@ Following the above Idris example works (with some trepidation and the need for 
 > plusSuccRightSucc SZ right        = Refl
 > plusSuccRightSucc (SS left) right = cong $ plusSuccRightSucc left right 
 >
+> {-| RankNTypes were not really needed other than for clarity -}
 > myAppend3' :: SNat n -> SNat m -> Vect n a -> Vect m a -> Vect (m + n) a
 > myAppend3' = myAppend3 plusZeroRightNeutral plusSuccRightSucc
 > 
 > test2 = myAppend2 ("1" ::: Nil) ("2" ::: Nil)
-> test3 = myAppend3' (SS SZ) (SS SZ) ("1" ::: Nil) ("2" ::: Nil)
+> test3' = myAppend3' (SS SZ) (SS SZ) ("1" ::: Nil) ("2" ::: Nil)
+>
+> {-| implicit version, SNatI n  is like SingI provides implicit evidence replacing SNat n -}
+> myAppend3'' :: (SNatI n, SNatI m) => Vect n a -> Vect m a -> Vect (m + n) a
+> myAppend3'' = myAppend3' sNat sNat 
+>
+> test3'' = myAppend3'' ("1" ::: Nil) ("2" ::: Nil)
+
 
 ghci:
 ```
-*Part2.Sec8_2_5> test3
+*Part2.Sec8_2_5> test3'
+"1" ::: ("2" ::: Nil)
+*Part2.Sec8_2_5> test3''
 "1" ::: ("2" ::: Nil)
 ```
 Idris approach with `rewrite` is just much more expressive and simpler.
+But, I like the implicit version `myAppend3''`.
 
 
 Side Note about Haskell's `~` vs `:~:` GADT

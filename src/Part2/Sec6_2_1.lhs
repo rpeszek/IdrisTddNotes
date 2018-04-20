@@ -95,24 +95,6 @@ or
  Could not deduce: (n - 1) ~ n1
   from the context: n ~ (1 + n1)
 ```
-These boilerplate will be useful later (and is not needed here):
-
-> sNatToInteger :: SNat n -> Integer 
-> sNatToInteger SZ = 0
-> sNatToInteger (SS sn) = 1 + (sNatToInteger sn)
->
-> -- TODO change to SomeNat as defined in Util.NonLitsNatAndVector
-> data UnknownNat where
->   UZ :: UnknownNat
->   US :: UnknownNat -> UnknownNat
->
-> sNatToUnknownNat :: SNat n -> UnknownNat 
-> sNatToUnknownNat SZ = UZ
-> sNatToUnknownNat (SS sn) = US (sNatToUnknownNat sn)
->
-> unknownNatToInteger :: UnknownNat -> Integer
-> unknownNatToInteger UZ = 0
-> unknownNatToInteger (US un) = 1 + (unknownNatToInteger un)
 
 __Type family solution (first attempt)__   
 This code is almost exactly the same as Idris code:
@@ -180,5 +162,7 @@ I am finding that using GHC.TypeLits Nat is a struggle.  I often get errors like
 Couldn't match type ‘n’ with ‘(n + 1) - 1’.  using constraints like 
 `n ~ ((n + 1) - 1)` does not help. To move forward I created
 Util.NonLitsNatAndVector.hs.
+
+I may revisit this issue at some point.
 
 I like Idris more and more!

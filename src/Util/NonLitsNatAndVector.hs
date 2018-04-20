@@ -15,6 +15,10 @@ import qualified GHC.TypeLits as TL
   
 data Nat = Z | S Nat deriving Show
 
+natToInteger :: Nat -> Integer
+natToInteger Z = 0
+natToInteger (S un) = 1 + (natToInteger un)
+
 {- Called often Natty, allows to work with Nats as Types -}
 data SNat (n :: Nat) where
   SZ :: SNat Z
@@ -23,30 +27,14 @@ data SNat (n :: Nat) where
 deriving instance Show (SNat n)
 
 sNatToInteger :: SNat n -> Integer 
-sNatToInteger SZ = 0
-sNatToInteger (SS sn) = 1 + (sNatToInteger sn)
+sNatToInteger = natToInteger . sNatToNat
 
-{-| Existential reification take 1 
-   I am following naming convention from the book sec 5.3.2
--}
-data UnknownNat where
-  UZ :: UnknownNat
-  US :: UnknownNat -> UnknownNat
+sNatToNat :: SNat n -> Nat 
+sNatToNat SZ = Z
+sNatToNat (SS sn) = S (sNatToNat sn)
 
-sNatToUnknownNat :: SNat n -> UnknownNat 
-sNatToUnknownNat SZ = UZ
-sNatToUnknownNat (SS sn) = US (sNatToUnknownNat sn)
 
-natToUnknownNat :: Nat -> UnknownNat
-natToUnknownNat Z = UZ
-natToUnknownNat (S k) = US unkK 
-               where unkK = natToUnknownNat k
-
-unknownNatToInteger :: UnknownNat -> Integer
-unknownNatToInteger UZ = 0
-unknownNatToInteger (US un) = 1 + (unknownNatToInteger un)
-
-{-| Existential reification take 2 
+{-| Existential reification 
    I am following Haskell naming convention 
 -}
 data SomeNat where
@@ -71,6 +59,13 @@ withNat k = withSomeNat $ natToSomeNat k
 
 withSomeNat :: SomeNat -> (forall n. SNat n -> r) -> r
 withSomeNat (SomeNat n) f = f n
+
+{- Implicit SNat evidence, mimics singletons SingI -}
+class SNatI (n :: Nat) where
+  sNat :: SNat n
+
+instance SNatI 'Z where sNat = SZ
+instance SNatI k => SNatI ('S k) where sNat = SS sNat
 
 data Vect (n::Nat) a where
   Nil :: Vect 'Z a
