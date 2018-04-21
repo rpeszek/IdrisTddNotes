@@ -7,8 +7,8 @@ TODO Seems like 8.0 version has problems with defining opertions like plus
       , DataKinds
       , GADTs
       , PolyKinds
-  --  , TypeInType
-  --  , TypeOperators 
+      , TypeInType -- needed for SVect
+      , TypeOperators 
       , TypeFamilies
    -- , StandaloneDeriving
       , UndecidableInstances 
@@ -39,3 +39,9 @@ someNatToInteger (SomeSing (SS k)) = 1 + someNatToInteger (SomeSing k)
 
 test :: SNat s -> ()
 test = undefined
+
+-- Currently, I do not know how to do singletons for the Vect itself
+
+data SVect (v :: Vect n a) where
+  SNil :: SVect  'Nil
+  SCons :: Sing a -> SVect xs -> SVect (a '::: xs)

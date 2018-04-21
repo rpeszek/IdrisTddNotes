@@ -18,18 +18,26 @@ Compared to Haskell
 >   , TypeFamilies
 >   , DataKinds
 >   , PolyKinds
->   -- , ScopedTypeVariables
+>   , ScopedTypeVariables
 >   , StandaloneDeriving
 >   , KindSignatures
 >   , TypeInType
 >   , AllowAmbiguousTypes
+>   , EmptyCase
+>   , UndecidableInstances 
+>   , FlexibleContexts
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec9_1 where
 > import Util.NonLitsNatAndVector
+> import qualified Util.SingVector as SingV
 > import GHC.TypeLits
 > import Data.Kind (Type)
+> import Data.Void
+> import Data.Type.Equality
+> import Data.Singletons
+> import Part2.Sec8_3 
 > 
 > data Elem (ax :: a) (bx :: [a]) where
 >         Here :: Elem x (x ': xs)
@@ -55,7 +63,7 @@ ghc error:
 
 ```
 
-Same approach works for Vectors
+The same approach works for Vectors
 
 > data VElem (ax :: a) (vx :: Vect k a) where
 >         VHere :: VElem x (x '::: xs)
@@ -78,3 +86,55 @@ and I can mimic Idris's removeElem using type families
 >    Test :: Test (RemoveElem "str" ("hello" '::: "str" '::: 'Nil) strInVect)  
 
 Use of TypeFamiles has limitations but this example came close!
+
+
+`isElem` example
+----------------
+
+For this example, I am switching to use of `singletons.  
+The `isElem` example uses empty match instead of `impossible` keyword
+
+> data SVElem (ax :: a) (vx :: SingV.Vect k a) where
+>         SVHere :: SVElem x (x 'SingV.::: xs)
+>         SVThere :: SVElem x xs -> SVElem x (y 'SingV.::: xs)
+> deriving instance Show (SVElem a b)
+>
+> notInNil :: SVElem ax 'SingV.Nil -> Void
+> notInNil x = case x of { }
+>
+> notInTail ::  (SVElem ax xs -> Void) ->
+>                    ((Sing ax :~: Sing x) -> Void) -> SVElem ax (x 'SingV.::: xs) -> Void
+> notInTail notThere notHere SVHere = notHere Refl
+> notInTail notThere notHere (SVThere later) = notThere later
+
+Note, even using `TypeInType`, I was not able to auto-generate singletons for `Vect n a` itself.
+But I implemented it by hand.  
+The following, unfortunately, does not seem to work (TODO)
+
+> isElem :: DecEq (Sing :: a -> Type) => Sing a -> SingV.SVect xs -> Dec (SVElem a xs)
+> isElem val SingV.SNil = No notInNil
+> isElem val (SingV.SCons x xs) = undefined
+
+use of `case decEq val x` or even `case decEq val val` on the RHS of the second case split
+```
+isElem val (SingV.SCons x xs) = case decEq val val of
+        Yes Refl -> undefined 
+        No notHere -> undefined
+```
+causes
+```
+ghc error:
+   Could not deduce (DecEq Sing) arising from a use of ‘decEq’
+      from the context: DecEq Sing  
+```
+But narrowing the scope to just `Nat` vectors works
+
+> isElemNat :: SingV.SNat n -> SingV.SVect xs -> Dec (SVElem n xs)
+> isElemNat val SingV.SNil = No notInNil
+> isElemNat val (SingV.SCons x xs) = case decEq val x of
+>        Yes Refl -> Yes SVHere
+>        No notHere -> case isElemNat val xs of
+>           Yes prf -> Yes (SVThere prf)
+>           No notThere -> No (notInTail notThere notHere)
+
+and is the same way as Idris.
