@@ -12,7 +12,8 @@ Idris code example
 
 Compared to Haskell
 -------------------
-Haskell version is a straightforward copy of Idris code with exception of additional `SNat` parameters.
+Haskell version is a straightforward copy of Idris code with exception of additional `SNat` parameter
+which can be made implicit.
 
 > {-# LANGUAGE 
 >     TypeOperators

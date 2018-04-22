@@ -10,13 +10,14 @@ TODO Seems like 8.0 version has problems with defining opertions like plus
       , TypeInType -- needed for SVect
       , TypeOperators 
       , TypeFamilies
-   -- , StandaloneDeriving
+      , StandaloneDeriving
       , UndecidableInstances 
       , ScopedTypeVariables
 #-}
 
 module Util.SingVector where
 import Data.Singletons.TH
+import qualified GHC.TypeLits as TL
 
 $(singletons [d|
   data Nat = Z | S Nat
@@ -32,16 +33,38 @@ data Vect (n :: Nat) a where
      (:::) :: a -> Vect n a -> Vect ('S n) a
 infixr 5 :::
 
+deriving instance Show a => Show (Vect n a)
+
 -- TODO is there a more singleton version of this?
 someNatToInteger :: SomeSing Nat -> Integer
 someNatToInteger (SomeSing SZ) = 0
 someNatToInteger (SomeSing (SS k)) = 1 + someNatToInteger (SomeSing k)
 
-test :: SNat s -> ()
-test = undefined
+type family ToTL (n :: Nat) :: TL.Nat where
+    ToTL Z = 0
+    ToTL (S n) = 1 TL.+ (ToTL n)
+
+type family FromTL (n :: TL.Nat) :: Nat where
+    FromTL 0 = Z
+    FromTL n = S (FromTL (n TL.- 1))
+
+
+s0 :: SNat (FromTL 0) -- 'Z
+s0 = SZ
+s1 :: SNat (FromTL 1) -- ('S 'Z)
+s1 = SS SZ
+s2 :: SNat (FromTL 2) -- ('S ('S 'Z))
+s2 = SS (SS SZ)
+s3 :: SNat (FromTL 3) -- ('S ('S ('S 'Z)))
+s3 = SS (SS (SS SZ))
+
 
 -- Currently, I do not know how to do singletons for the Vect itself
 
 data SVect (v :: Vect n a) where
   SNil :: SVect  'Nil
   SCons :: Sing a -> SVect xs -> SVect (a '::: xs)
+
+sVectToVect :: forall a (n :: Nat) (xs :: Vect n a) . SingKind a => SVect xs -> Vect n (Demote a)
+sVectToVect SNil = Nil
+sVectToVect (SCons sa sxs) = (fromSing sa) ::: sVectToVect sxs

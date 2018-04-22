@@ -40,6 +40,7 @@ removeElem_auto value xs {prf} = removeElem value xs prf
 
 
 {-
+repl:
 *Part2/Sec9_1> removeElem 2 [1,2,3,4,5] (There Here)
 [1, 3, 4, 5] : Vect 4 Integer
 
@@ -47,6 +48,44 @@ removeElem_auto value xs {prf} = removeElem value xs prf
 [1, 3, 4, 5] : Vect 4 Integer
 -}
 
+data Test : (Vect 1 String) -> Type where
+   MkTest : Test (removeElem_auto "str" ["hello", "str"]) 
+
+data Test1 : (Vect 1 String) -> Type where
+   MkTest1 : Test1 (removeElem "str" ["hello", "str"] (There Here)) 
+
+{-
+Note: removeElem is resolved at compile time, same it true for Haskell
+repl: 
+*Part2/Sec9_1> :t MkTest
+MkTest : Test (removeElem_auto "str" ["hello", "str"])
+
+*Part2/Sec9_1> :t MkTest1
+MkTest1 : Test1 (removeElem "str" ["hello", "str"] (There Here))
+-}
+
+{-
+However: this does not compile :) but it does in Haskell :(
+data TestWrong : (Vect 1 String) -> Type where
+   MkTestWrong : TestWrong (removeElem "str1" ["hello", "str"] (There Here))  
+
+Compiler error:
+   |
+57 |    MkTestWrong : TestWrong (removeElem "str1" ["hello", "str"] (There Here))  
+   |                                                                 ~~~~~~~~~~
+When checking type of Part2.Sec9_1.MkTestWrong:
+When checking argument later to constructor Data.Vect.There:
+        Type mismatch between
+                Elem x (x :: xs) (Type of Here)
+        and
+                Elem "str1" ["str"] (Expected type)
+        
+        Specifically:
+                Type mismatch between
+                        "str1"
+                and
+                        "str"
+-}
 
 {- 
  Type safe version of elem function 
