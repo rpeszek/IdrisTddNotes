@@ -107,7 +107,7 @@ _TODO this needs more thinking_
 
 `removeElem` using `singletons`
 ------------------------------
-This is very similar to Idris except `fwarn-incomplete-patterns` does not work so well.  
+This is very similar to Idris except the final result is demoted and `fwarn-incomplete-patterns` does not work so well.  
 _Note, even using `TypeInType`, I was not able to auto-generate singletons for `Vect n a` itself._   
 _I have implemented `SVect` by hand._  
 
