@@ -13,6 +13,7 @@ TODO Seems like 8.0 version has problems with defining opertions like plus
       , StandaloneDeriving
       , UndecidableInstances 
       , ScopedTypeVariables
+      , TypeSynonymInstances
 #-}
 
 module Util.SingVector where
@@ -28,10 +29,19 @@ $(singletons [d|
   plus (S n) m = S (plus n m)
   |])
 
+instance Show (SNat n) where
+   show  = show . fromSing
+   
+
 data Vect (n :: Nat) a where
      Nil :: Vect 'Z a
      (:::) :: a -> Vect n a -> Vect ('S n) a
 infixr 5 :::
+
+{- TODO This would be more general since Vect :: Nat -> Type -> Type -}
+data VectK (n :: Nat) (a :: k) where
+     NilK :: VectK 'Z a
+     ConsK :: Sing a -> VectK n a -> VectK ('S n) a
 
 deriving instance Show a => Show (Vect n a)
 

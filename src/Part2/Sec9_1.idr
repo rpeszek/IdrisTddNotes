@@ -14,6 +14,7 @@ module Part2.Sec9_1
 import Data.Vect
 
 %default total 
+%access public export
 
 {- This type of code derives automatically with term search !-}
 twoTest : Elem 2 [1,2,3]

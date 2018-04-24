@@ -145,7 +145,8 @@ initDs = MkData SString _ []
 testDs : DataStore
 testDs = MkData (SInt .+. SString) _ []
 
+{- To execute in repl, idrs repl from src folder, :l this file and use :exec sec6_3b -}
 export
-partial
+covering
 sec6_3b : IO ()
 sec6_3b = replWith initDs "Command: " processInput

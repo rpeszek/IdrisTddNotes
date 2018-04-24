@@ -36,7 +36,10 @@ Compared to Haskell
 > import qualified Util.SingVector as V2
 > import Data.Singletons
 > import Data.Singletons.TH
->
+
+`DecEq` 
+------
+
 > data Dec (prop :: Type) where
 >    Yes :: prop -> Dec prop
 >    No  :: (prop -> Void) -> Dec prop
@@ -47,19 +50,6 @@ Compared to Haskell
 >
 > class DecEq (ty :: k -> Type) where
 >      decEq :: ty a -> ty b -> Dec (ty a :~: ty b)
-
-`exactLength` and `DecEq` for `Nat` example
--------------------------------------------
-
-> congSS :: (V1.SNat n :~: V1.SNat m) -> (V1.SNat ('V1.S n) :~: V1.SNat ('V1.S m))
-> congSS Refl = Refl
->
-> revSS :: (V1.SNat ('V1.S n) :~: V1.SNat ('V1.S m)) -> (V1.SNat n :~: V1.SNat m)
-> revSS Refl = Refl
->
-> {-! Empty case match -}
-> zSIsNotSS :: V1.SNat n -> (V1.SNat 'V1.Z :~: V1.SNat ('V1.S n)) -> Void
-> zSIsNotSS _ x = case x of { }
 >
 > instance DecEq V1.SNat where
 >      decEq V1.SZ V1.SZ = Yes Refl
@@ -70,6 +60,19 @@ Compared to Haskell
 >                                   Yes prf -> Yes $ congSS prf
 >                                   No contra -> No $ contra . revSS
 >
+> congSS :: (V1.SNat n :~: V1.SNat m) -> (V1.SNat ('V1.S n) :~: V1.SNat ('V1.S m))
+> congSS Refl = Refl
+>
+> revSS :: (V1.SNat ('V1.S n) :~: V1.SNat ('V1.S m)) -> (V1.SNat n :~: V1.SNat m)
+> revSS Refl = Refl
+>
+> {-! Empty case match -}
+> zSIsNotSS :: V1.SNat n -> (V1.SNat 'V1.Z :~: V1.SNat ('V1.S n)) -> Void
+> zSIsNotSS _ x = case x of { }
+
+`exactLength` example
+---------------------
+
 > exactLength :: V1.SNat len -> V1.Vect m a -> Maybe (V1.Vect len a) 
 > exactLength len vect = case decEq (V1.vlength vect) len of
 >         Yes Refl -> Just vect
@@ -80,17 +83,11 @@ ghci:
 *Part2.Sec8_3> exactLength (SS SZ) $ "t" :::  Nil
 Just ("t" ::: Nil)
 ```
+
+`DecEq` singletons
+------------------
 The `singletons` version is identical (note the fancy instance declaration that Haskell accepts)
 
-> congSS' :: (V2.SNat n :~: V2.SNat m) -> (V2.SNat ('V2.S n) :~: V2.SNat ('V2.S m))
-> congSS' Refl = Refl
->
-> revSS' :: (V2.SNat ('V2.S n) :~: V2.SNat ('V2.S m)) -> (V2.SNat n :~: V2.SNat m)
-> revSS' Refl = Refl
->
-> zSIsNotSS' :: V2.SNat n -> (V2.SNat 'V2.Z :~: V2.SNat ('V2.S n)) -> Void
-> zSIsNotSS' _ x = case x of { }
->
 > instance DecEq (Sing :: V2.Nat -> Type) where
 >      decEq V2.SZ V2.SZ = Yes Refl
 >      decEq V2.SZ (V2.SS k) = No $ zSIsNotSS' k
@@ -99,12 +96,53 @@ The `singletons` version is identical (note the fancy instance declaration that 
 >                               in case recv of 
 >                                   Yes prf -> Yes $ congSS' prf
 >                                   No contra -> No $ contra . revSS'
+>
+> congSS' :: (V2.SNat n :~: V2.SNat m) -> (V2.SNat ('V2.S n) :~: V2.SNat ('V2.S m))
+> congSS' Refl = Refl
+>
+> revSS' :: (V2.SNat ('V2.S n) :~: V2.SNat ('V2.S m)) -> (V2.SNat n :~: V2.SNat m)
+> revSS' Refl = Refl
+>
+> zSIsNotSS' :: V2.SNat n -> (V2.SNat 'V2.Z :~: V2.SNat ('V2.S n)) -> Void
+> zSIsNotSS' _ x = case x of { }
 
+ghci:
+```
+*Part2.Sec8_3> decEq V2.s1 V2.s2
+No
+*Part2.Sec8_3> decEq V2.s1 V2.s1
+Yes
+```
 The above instance could be replaced with `instance DecEq V2.SNat where`.   
 ghci:
 ```
 *Part2.Sec8_3> :info V2.SNat
 type V2.SNat = Sing :: V2.Nat -> *
+```
+
+`SingKind` version of `DecEq`
+-----------------------------
+
+I am having more luck with this approach to `DecEq`:
+
+> class SingKind k => DecEqSing k where
+>      decEqSing :: forall (a :: k) (b :: k) . Sing a -> Sing b -> Dec (Sing a :~: Sing b)
+>
+> instance DecEqSing (V2.Nat) where
+>      decEqSing V2.SZ V2.SZ = Yes Refl
+>      decEqSing V2.SZ (V2.SS k) = No $ zSIsNotSS' k
+>      decEqSing (V2.SS k) V2.SZ = No $ zSIsNotSS' k . sym
+>      decEqSing (V2.SS k1) (V2.SS k2) = let recv = decEqSing k1 k2
+>                               in case recv of 
+>                                   Yes prf -> Yes $ congSS' prf
+>                                   No contra -> No $ contra . revSS'
+
+ghci:
+```
+*Part2.Sec8_3> decEqSing V2.s1 V2.s2
+No
+*Part2.Sec8_3> decEqSing V2.s1 V2.s1
+Yes
 ```
 
 `MyPair` example
