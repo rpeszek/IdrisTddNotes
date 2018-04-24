@@ -78,3 +78,6 @@ data SVect (v :: Vect n a) where
 sVectToVect :: forall a (n :: Nat) (xs :: Vect n a) . SingKind a => SVect xs -> Vect n (Demote a)
 sVectToVect SNil = Nil
 sVectToVect (SCons sa sxs) = (fromSing sa) ::: sVectToVect sxs
+
+data SomeKnownSizeVect (n:: Nat) a where
+   MkSomeKnownSizeVect :: SNat n -> SVect (v :: Vect n a) -> SomeKnownSizeVect n a

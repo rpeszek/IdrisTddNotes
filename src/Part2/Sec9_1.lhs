@@ -117,17 +117,33 @@ This is very similar to Idris except the final result is demoted and `fwarn-inco
 _Note, even using `TypeInType`, I was not able to auto-generate singletons for `Vect n a` itself._   
 _I have implemented `SVect` by hand._  
 
-> removeElem :: forall (n :: V2.Nat) (val :: a) (xs :: V2.Vect (V2.S n) a) . SingKind a =>
+> removeElemDem :: forall (n :: V2.Nat) (val :: a) (xs :: V2.Vect (V2.S n) a) . SingKind a =>
 >       V2.SNat n -> Sing val ->  V2.SVect xs -> SVElem val xs -> V2.Vect n (Demote a)
-> removeElem _ val (_ `V2.SCons` ys) SVHere = V2.sVectToVect ys
-> removeElem (V2.SS n1) val (y `V2.SCons` ys) (SVThere later) = (fromSing y) V2.::: (removeElem n1 val ys later)
+> removeElemDem _ val (_ `V2.SCons` ys) SVHere = V2.sVectToVect ys
+> removeElemDem (V2.SS n1) val (y `V2.SCons` ys) (SVThere later) = (fromSing y) V2.::: (removeElemDem n1 val ys later)
 > {- While Idris knows that the following case is invalid, 
 >  GHC picks is up as error: Pattern match(es) are non-exhaustive
 >  attempt to implement it as `absurd' later` causes compilation errors
 > -}
-> removeElem V2.SZ val (V2.SCons _ V2.SNil) (SVThere later) = undefined -- absurd' later
+> removeElemDem V2.SZ val (V2.SCons _ V2.SNil) (SVThere later) = undefined -- absurd' later
 >
-> testRemoveElem = removeElem V2.s0 V2.s3 (V2.SCons V2.s3 V2.SNil) SVHere
+> testRemoveElem = removeElemDem V2.s0 V2.s3 (V2.SCons V2.s3 V2.SNil) SVHere
+
+This version does not `Demote a` and is better and is close to Idris:
+
+> removeElem :: forall (n :: V2.Nat) (val :: a) (xs :: V2.Vect (V2.S n) a) . SingKind a =>
+>       V2.SNat (V2.S n) -> Sing val ->  V2.SVect xs -> SVElem val xs -> V2.SomeKnownSizeVect n a
+> removeElem (V2.SS n) val (_ `V2.SCons` ys) SVHere = V2.MkSomeKnownSizeVect n ys
+> removeElem (V2.SS (V2.SS n)) val (y `V2.SCons` ys) (SVThere later) =
+>       let res = removeElem (V2.SS n) val ys later
+>       in case res of 
+>           V2.MkSomeKnownSizeVect _ rys -> V2.MkSomeKnownSizeVect (V2.SS n) $ V2.SCons y rys
+> {- The absurd case remains, GHC does not know that we are dealing with one element list,
+>   for example replacing `V2.SCons _ _` with `V2.SCons _ V2.SNil` would cause Pattern match(es) are non-exhaustive
+>   error
+> -}
+> removeElem (V2.SS V2.SZ) val (V2.SCons _ _) (SVThere _) = undefined -- absurd' later
+
 
 ghci:
 ```
