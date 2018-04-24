@@ -127,7 +127,7 @@ _I have implemented `SVect` by hand._
 > -}
 > removeElemDem V2.SZ val (V2.SCons _ V2.SNil) (SVThere later) = undefined -- absurd' later
 >
-> testRemoveElem = removeElemDem V2.s0 V2.s3 (V2.SCons V2.s3 V2.SNil) SVHere
+> testRemoveElemDem = removeElemDem V2.s0 V2.s3 (V2.SCons V2.s3 V2.SNil) SVHere
 
 This version does not `Demote a` and is better and is close to Idris:
 
@@ -143,11 +143,14 @@ This version does not `Demote a` and is better and is close to Idris:
 >   error
 > -}
 > removeElem (V2.SS V2.SZ) val (V2.SCons _ _) (SVThere _) = undefined -- absurd' later
-
+>
+> testRemoveElem = removeElem V2.s1 V2.s3 (V2.SCons V2.s3 V2.SNil) SVHere
 
 ghci:
 ```
-*Part2.Sec9_1> testRemoveElem
+*Part2.Sec9_1> testRemoveElemDem
+Nil
+*Part2.Sec9_1> V2.someKnownSizeVectToVect testRemoveElem
 Nil
 ```
 Nice!

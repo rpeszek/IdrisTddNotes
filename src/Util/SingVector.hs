@@ -81,3 +81,6 @@ sVectToVect (SCons sa sxs) = (fromSing sa) ::: sVectToVect sxs
 
 data SomeKnownSizeVect (n:: Nat) a where
    MkSomeKnownSizeVect :: SNat n -> SVect (v :: Vect n a) -> SomeKnownSizeVect n a
+
+someKnownSizeVectToVect :: SingKind a => SomeKnownSizeVect n a -> Vect n (Demote a)
+someKnownSizeVectToVect ksv = case ksv of MkSomeKnownSizeVect _ sv -> sVectToVect sv
