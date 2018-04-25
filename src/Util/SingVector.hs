@@ -38,6 +38,10 @@ data Vect (n :: Nat) a where
      (:::) :: a -> Vect n a -> Vect ('S n) a
 infixr 5 :::
 
+vlength :: Vect n a -> SNat n  
+vlength Nil = SZ
+vlength (x ::: xs) = SS (vlength xs)
+
 {- TODO This would be more general since Vect :: Nat -> Type -> Type -}
 data VectK (n :: Nat) (a :: k) where
      NilK :: VectK 'Z a
