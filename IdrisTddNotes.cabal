@@ -34,6 +34,7 @@ library
   exposed-modules:
       Util.NonLitsNatAndVector
       , Util.SingVector
+      , Util.SingList
       , Util.AttoparsecUtil
       , Part1.Sec1_4_5
       , Part1.Sec2_2_2
@@ -50,6 +51,9 @@ library
       , Part2.Sec8_2
       , Part2.Sec8_3
       , Part2.Sec9_1
+      , Part2.Sec9_2      
+      , Part2.Sec10_1     
+
 
   default-language: Haskell2010
 

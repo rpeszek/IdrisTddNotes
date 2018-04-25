@@ -62,11 +62,13 @@ type family FromTL (n :: TL.Nat) :: Nat where
 s0 :: SNat (FromTL 0) -- 'Z
 s0 = SZ
 s1 :: SNat (FromTL 1) -- ('S 'Z)
-s1 = SS SZ
+s1 = SS s0
 s2 :: SNat (FromTL 2) -- ('S ('S 'Z))
-s2 = SS (SS SZ)
+s2 = SS s1
 s3 :: SNat (FromTL 3) -- ('S ('S ('S 'Z)))
-s3 = SS (SS (SS SZ))
+s3 = SS s2
+s4 :: SNat (FromTL 4) -- ('S ('S ('S 'Z)))
+s4 = SS s3
 
 
 -- Currently, I do not know how to do singletons for the Vect itself
