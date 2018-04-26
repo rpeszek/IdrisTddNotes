@@ -1,5 +1,5 @@
 {-
-TODO Seems like 8.0 version has problems with defining opertions like plus
+"Singling of literal patterns not yet supported"
 -}
 
 {-# LANGUAGE TemplateHaskell
@@ -17,6 +17,7 @@ TODO Seems like 8.0 version has problems with defining opertions like plus
 #-}
 
 module Util.SingVector where
+import Numeric.Natural
 import Data.Singletons.TH
 import qualified GHC.TypeLits as TL
 
@@ -29,8 +30,14 @@ $(singletons [d|
   plus (S n) m = S (plus n m)
   |])
 
+instance Ord Nat where
+  compare Z Z = EQ
+  compare Z _    = LT
+  compare _  Z = GT
+  compare (S m) (S n) = compare m n
+
 instance Show (SNat n) where
-   show  = show . fromSing
+  show  = show . fromSing
    
 
 data Vect (n :: Nat) a where
@@ -49,11 +56,21 @@ data VectK (n :: Nat) (a :: k) where
 
 deriving instance Show a => Show (Vect n a)
 
--- TODO is there a more singleton version of this?
-someNatToInteger :: SomeSing Nat -> Integer
-someNatToInteger (SomeSing SZ) = 0
-someNatToInteger (SomeSing (SS k)) = 1 + someNatToInteger (SomeSing k)
+natToInteger :: Nat -> Integer
+natToInteger Z = 0
+natToInteger (S un) = 1 + (natToInteger un)
 
+someNatToInteger :: SomeSing Nat -> Integer
+someNatToInteger (SomeSing n) = natToInteger (fromSing n)
+
+-- partial
+integerToNat :: Integer -> Nat
+integerToNat n 
+        | n < 0 = error "negative integer"
+        | n == 0 = Z
+        | otherwise = S (integerToNat (n - 1))
+
+-- Singling of literal patterns not yet supported
 type family ToTL (n :: Nat) :: TL.Nat where
     ToTL Z = 0
     ToTL (S n) = 1 TL.+ (ToTL n)

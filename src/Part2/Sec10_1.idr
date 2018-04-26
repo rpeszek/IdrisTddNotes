@@ -50,12 +50,15 @@ total
 splitList : (input : List a) -> SplitList input
 splitList input = splitListHelp input input
 where
+  {- the first list acts as a counter only, 
+     each step removes 2 elements from the counter and adds new elements to the left 
+     when counter is excausted all elements are added to the right -}
   splitListHelp : List a -> (input : List a) -> SplitList input
   splitListHelp _ [] = SplitNil
   splitListHelp _ [x] = SplitOne
   splitListHelp (_ :: _ :: counter) (item :: items)
        = case splitListHelp counter items of
-              SplitNil => SplitOne
+              SplitNil => SplitOne  --cool how Idris figures this out!
               SplitOne {x} => SplitPair [item] [x]
               SplitPair lefts rights => SplitPair (item :: lefts) rights
   splitListHelp _ items = SplitPair [] items
@@ -66,6 +69,7 @@ mergeSort input with (splitList input)
    mergeSort [] | SplitNil = []
    mergeSort [x] | SplitOne = [x]
    mergeSort (lefts ++ rights) | (SplitPair lefts rights)
+                 -- merge : Ord a => List a -> List a -> List a
                  = merge (mergeSort lefts) (mergeSort rights)
 
 
