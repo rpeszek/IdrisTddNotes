@@ -28,8 +28,9 @@ Compared to Haskell
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec10_1 where
-> import Util.SingVector
-> import Util.SingList
+> import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger)
+> import Util.SingList (List(..), type Sing(..))
+> import qualified Util.SingList as L
 > import Part2.Sec9_1
 > import Part2.Sec9_2
 > import Data.Singletons
@@ -40,7 +41,7 @@ Compared to Haskell
 
 > data ListLast  (xs :: List a) where 
 >    Empty :: ListLast 'LNil 
->    NonEmpty :: forall (xs :: List a) (x :: a). Sing xs -> Sing x -> ListLast (Append xs (OneElem x))
+>    NonEmpty :: forall (xs :: List a) (x :: a). Sing xs -> Sing x -> ListLast (L.Append xs (L.OneElem x))
 > 
 > listLast :: forall (xs :: List a) . Sing xs -> ListLast xs
 > listLast SLNil = Empty
@@ -102,15 +103,15 @@ but it did not seemed right and was it was hard/impossible go far with it.
 
 > data SplitList (xs :: List a) where
 >     SplitNil :: SplitList 'LNil
->     SplitOne :: Sing x -> SplitList (OneElem x)
+>     SplitOne :: Sing x -> SplitList (L.OneElem x)
 >     SplitPair :: forall (lefts :: List a) (rights :: List a). 
 >                 Sing lefts -> Sing rights ->
->                 SplitList (Append lefts rights)
+>                 SplitList (L.Append lefts rights)
 >
 > -- used for testing only:
 > testSplitList :: forall (xs :: List a). SingKind a => SplitList xs -> [List (Demote a)]
 > testSplitList SplitNil = [LNil]
-> testSplitList (SplitOne x) = [oneElem (fromSing x)]
+> testSplitList (SplitOne x) = [L.oneElem (fromSing x)]
 > testSplitList (SplitPair xs ys) = [fromSing xs, fromSing ys]
 >
 > splitList :: forall (input :: List a). SingKind a => Sing input -> SplitList input
@@ -122,7 +123,7 @@ but it did not seemed right and was it was hard/impossible go far with it.
 > splitListHelp (_ `LCons` _ `LCons` counter) (item `SLCons` items) 
 >       = case splitListHelp counter items of
 >             SplitNil -> SplitOne item
->             SplitOne x ->  SplitPair (sOneElem item) (sOneElem x)
+>             SplitOne x ->  SplitPair (L.sOneElem item) (L.sOneElem x)
 >             SplitPair lefts rights ->  SplitPair (item `SLCons` lefts) rights
 > splitListHelp _ items = SplitPair SLNil items
 
@@ -137,7 +138,7 @@ SomeSing needs to be used in the result type to make it work
 
 > sMerge :: forall (xs :: List a) (ys :: List a). (SingKind a, Ord (Demote a)) => Sing xs -> Sing ys -> SomeSing (List a)
 > sMerge list1 list2 
->       = let xres = merge (fromSing list1) (fromSing list2)
+>       = let xres = L.merge (fromSing list1) (fromSing list2)
 >         in toSing xres
 
  
@@ -147,13 +148,13 @@ SomeSing needs to be used in the result type to make it work
 >
 > mergeSortHelper :: forall (xs :: List a). (SingKind a, Ord (Demote a)) => SplitList xs -> Sing xs -> SomeSing (List a)
 > mergeSortHelper SplitNil SLNil = SomeSing SLNil
-> mergeSortHelper (SplitOne x) _ = SomeSing (sOneElem x)
+> mergeSortHelper (SplitOne x) _ = SomeSing (L.sOneElem x)
 > mergeSortHelper (SplitPair lefts rights) _ 
 >     = case mergeSortHelper (splitList lefts) lefts of 
 >         SomeSing leftsRes -> case mergeSortHelper (splitList rights) rights of
 >           SomeSing rightsRes -> sMerge leftsRes rightsRes 
 >
-> testSort = map natToInteger $ listToL $ mergeSort $ lToList (map integerToNat [4,2,5,1]) 
+> testSort = map natToInteger $ L.listToL $ mergeSort $ L.lToList (map integerToNat [4,2,5,1]) 
 
 ghci
 ```
