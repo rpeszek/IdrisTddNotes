@@ -38,6 +38,11 @@ myReverse input with (listLast input)
     myReverse [] | Empty = []
     myReverse (xs ++ [x]) | (NonEmpty xs x) = x :: myReverse xs
 
+{- 
+idris repl:
+*Part2/Sec10_1> myReverse [5,2,7,1]
+[1, 7, 2, 5] : List Integer
+-}
 
 {- SplitList, merge sort example -}
 data SplitList : List a -> Type where
@@ -72,6 +77,34 @@ mergeSort input with (splitList input)
                  -- merge : Ord a => List a -> List a -> List a
                  = merge (mergeSort lefts) (mergeSort rights)
 
+{-
+idris repl: 
+*Part2/Sec10_1> mergeSort [5,2,7,1]
+[1, 2, 5, 7] : List Integer
+-}
 
--- TODO 
 -- excercises
+data TakeN : List a -> Type where
+      Fewer : TakeN xs
+      Exact : (n_xs : List a) -> TakeN (n_xs ++ rest)
+         
+takeN : (n : Nat) -> (xs : List a) -> TakeN xs
+takeN Z xs = Exact []  --kinda amazing how much Idris infers here!
+takeN (S k) [] = Fewer 
+takeN (S k) (x :: xs) = case takeN k xs of 
+       Fewer => Fewer
+       Exact rxs => Exact (x :: rxs)
+
+covering
+groupByN : (n : Nat) -> (xs : List a) -> List (List a)
+groupByN n xs with (takeN n xs)
+  groupByN n xs | Fewer = [xs]
+  groupByN n (n_xs ++ rest) | (Exact n_xs) = n_xs :: groupByN n rest
+
+{-
+idris repl:
+*Part2/Sec10_1> groupByN 3 [1..10]
+[[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]] : List (List Integer)
+-}
+
+TODO excercise 2

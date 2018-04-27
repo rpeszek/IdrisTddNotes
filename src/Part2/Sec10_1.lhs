@@ -83,11 +83,15 @@ Slow `reverse` example
 > myReverse :: (SingKind a) => List (Demote a) -> List (Demote a)
 > myReverse list = case withSomeSing list (\xs ->  myReverseHelper (listLast xs) xs) of 
 >                    SomeSing res -> fromSing res
+>
+> testWithList :: [a] -> (a->b) -> (List b -> List c) -> (c->d) -> [d]
+> testWithList al fab flist fcd 
+>        = map fcd $ L.listToL $ flist $ L.lToList (map fab al)
 
 ghci
 ```
-*Part2.Sec10_1> myReverse test
-LCons (S Z) (LCons Z LNil)
+*Part2.Sec10_1> testWithList [4,2,7,1] integerToNat myReverse natToInteger
+[1,4,2,7]
 ```
 
 Initially, I tried to implement myReverse using 
@@ -154,7 +158,7 @@ SomeSing needs to be used in the result type to make it work
 >         SomeSing leftsRes -> case mergeSortHelper (splitList rights) rights of
 >           SomeSing rightsRes -> sMerge leftsRes rightsRes 
 >
-> testSort = map natToInteger $ L.listToL $ mergeSort $ L.lToList (map integerToNat [4,2,5,1]) 
+> testSort = testWithList [4,2,5,1] integerToNat mergeSort natToInteger
 
 ghci
 ```
@@ -165,4 +169,53 @@ ghci
 Exercises
 ---------
 
-TODO
+`Sing rest` is required in the definition of `Exact` without `AllowAmbiguousTypes`.
+Definition identical to Idris is possible:
+```
+data TakeN_ (xs :: List a) where
+      Fewer_ :: TakeN_ xs
+      Exact_ :: Sing n_xs -> TakeN_ (L.Append n_xs rest)
+```
+but it does not allow me to use:
+```
+takeN SZ _ = Exact
+```
+
+
+> data TakeN (xs :: List a) where
+>      Fewer :: TakeN xs
+>      Exact :: forall (n_xs :: List a) (rest :: List a) (xs :: List a) . L.SList n_xs -> L.SList rest -> TakeN xs
+
+The `forall (n_xs :: List a) (xs :: List a)` quantifications above are needed for the
+expression `Exact (x `SLCons` rxs)` below to compile. 
+I also need to maintain the `rest` argument for `Exact` constructor to get sufficient pattern match.
+Idris gets this type of info from types and from its cool view based matching.
+
+> takeN :: forall (n :: Nat) (xs :: List a) . Sing n -> Sing xs -> TakeN xs
+> takeN SZ xs = Exact SLNil xs
+> takeN (SS k) SLNil = Fewer
+> takeN (SS k) (x `SLCons` xs) = case takeN k xs of 
+>       Fewer -> Fewer
+>       Exact rxs rrest -> Exact (x `SLCons` rxs) rrest
+>
+> groupByNHelper :: forall (n :: Nat) (xs :: List a) . 
+>                   Sing n -> 
+>                   Sing xs -> SomeSing (List (List a))
+> groupByNHelper n xs = case takeN n xs of 
+>           Fewer -> SomeSing (L.sOneElem xs)
+>           Exact n_xs rrest -> case groupByNHelper n rrest of
+>                    SomeSing n_next -> SomeSing $ n_xs `SLCons` n_next
+>
+> groupByN :: (SingKind a) => Nat -> List (Demote a) -> List ( List (Demote a))
+> groupByN n list = case withSomeSing n (\sn -> withSomeSing list $ groupByNHelper sn ) 
+>       of SomeSing res -> fromSing res
+>
+> testGroup = testWithList [1..10] integerToNat (groupByN (integerToNat 3)) (map natToInteger . L.listToL) 
+
+ghci:
+```
+*Part2.Sec10_1> testGroup
+[[1,2,3],[4,5,6],[7,8,9],[10]]
+```
+
+TODO second exercise
