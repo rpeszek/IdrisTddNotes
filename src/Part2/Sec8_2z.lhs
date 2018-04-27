@@ -1,10 +1,11 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec8_2
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec8_2z
 |Idris Src: Sec8_2.idr
 
 Section 8.2 Vect reverse vs Haskell
-===================================s
-This is best read after the simpler [idrVsHs_Part2_Sec8_2_5](idrVsHs_Part2_Sec8_2_5).
-It uses `plusZeroRightNeutral`, `plusSuccRightSucc` developed there.
+===================================
+This is best read after [idrVsHs_Part2_Sec8_2_5](idrVsHs_Part2_Sec8_2_5).
+This note imports `plusZeroRightNeutral`, `plusSuccRightSucc`, `plusCommutative`, 
+and `myAppend` from [idrVsHs_Part2_Sec8_2_5](idrVsHs_Part2_Sec8_2_5).
 
 Idris code example
 ------------------  
@@ -22,12 +23,32 @@ which can be made implicit.
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
-> module Part2.Sec8_2 where
+> module Part2.Sec8_2z where
 > import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), FromTL, SNatI, sNat)
 > import Data.Type.Equality ((:~:)(Refl))
 > import Part2.Sec8_1 (cong)
-> import Part2.Sec8_2_5 (plusZeroRightNeutral, plusSuccRightSucc)
+> import Part2.Sec8_2_5 (plusZeroRightNeutral, plusSuccRightSucc, plusCommutative, myAppend)
 >
+> {- slow reverse -}
+> myReverse :: SNat n -> Vect n elem -> Vect n elem
+> myReverse _ Nil = Nil
+> myReverse (SS n) (x ::: xs) = reverseLemma n ((myReverse n xs) `myAppend` (x ::: Nil) )
+> 
+> reverseLemma :: SNat k -> Vect (k + ('S 'Z)) elem -> Vect (S k) elem
+> reverseLemma k result = case plusCommutative (SS SZ) k of
+>          Refl -> result
+> 
+> myReverse' :: SNatI n => Vect n a -> Vect n a
+> myReverse' = myReverse sNat
+
+ghci:
+```
+*Part2.Sec8_2> myReverse (SS (SS (SS SZ))) ("1" ::: "2" ::: "3 "::: Nil)
+"3 " ::: ("2" ::: ("1" ::: Nil))
+*Part2.Sec8_2> myReverse' ("1" ::: "2" ::: "3 "::: Nil)
+"3 " ::: ("2" ::: ("1" ::: Nil))
+```
+
 > myReverse2 :: SNat n -> Vect n a -> Vect n a
 > myReverse2 n xs = reverse' SZ n Nil xs
 >   where reverse' :: SNat n -> SNat m -> Vect n a -> Vect m a -> Vect (n+m) a

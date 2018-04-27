@@ -36,10 +36,10 @@ Compared to Haskell
 > import Data.Kind (Type)
 > import Data.Char (toUpper)
 
-I am trying to avoid type literals and avoid use of type level strings and fighting/learning
-with type level list `singletons` syntax.  Type level list (from `Util.SingList`) is used to 
+I am trying to avoid type literals and avoid use of type level strings and fighting
+with (or learning) type level list `singletons` syntax.  Type level list (from `Util.SingList`) is used to 
 mimic `ValidInput` definition from Idris.   
-This is 'by hand' poor man's version: 
+This is a 'by hand', poor man's version of type level chars: 
 
 > $(singletons [d|
 >   data AChar = CA | CB | CC | CD | CE | CF | CG | CH | CI
@@ -74,8 +74,7 @@ This is 'by hand' poor man's version:
 >             axs <- stringToAChars xs
 >             Right (LCons ac axs)
 
-Idris dependent typing makes things simpler but, 
-other than the use of 'by hand' characters and strings the rest of the code is quite 
+Idris dependent typing makes things simpler and the rest of the code is quite 
 similar to Idris!
 
 > data WordState  (guesses_remaining :: Nat) (letters :: Nat) where
@@ -125,8 +124,8 @@ I use SomeValidInput instead of the dependent pair but the rest is almost identi
 > isValidInput (SLCons x SLNil) = Yes (Letter x)
 > isValidInput (SLCons _ (SLCons _ _)) = No invalidTwo
 
-My 'by hand' characters are not fully supported and I kept the error for not converted stuff.
-This also allows for an easy exit from the game.
+My 'by hand' characters are not fully supported and I keep the error for not converted stuff.
+This also allows for an easy exit from the game (just type unsupported char).
 
 > readGuess :: IO SomeValidInput
 > readGuess = do putStr "Guess:"
@@ -162,7 +161,7 @@ having to think much about the `(S guesses) (S letters)` semantics.
 > game' st = case st of 
 >         MkWordState (SS guesses) (SS letters) _ _ -> game guesses letters st
 
-The type safe list (`['T', 'E', 'S']` in Idris) is now ugly but I made it!
+The type safe list (`['T', 'E', 'S']` in Idris) is ugly but I made it!
 
 > sec_9_2 :: IO()
 > sec_9_2 

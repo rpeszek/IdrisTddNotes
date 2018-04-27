@@ -83,7 +83,7 @@ GHC 8.0.2 appears to provide much less info about DataKinds lifted types like Na
 If I type
 ```
 mapV :: forall a b n. (a -> b) -> Vect n a -> Vect n b
-mapV f Nil = Nil
+mapV f Nil = _
 ```
 I get 
 ```
@@ -125,8 +125,8 @@ mapV f (x ::: xs) = xs
 
 Program synthesis. Some Relevant links.
 --------------------------------------
-Simple code generation for ADTs 
-(Milewiski, CTFP)[https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/]
+Simple code generation for ADTs  
+(Milewiski, CTFP)[https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/]  
 (Ch.8 Functoriality)[https://bartoszmilewski.com/2015/02/03/functoriality/].
 
 More sophisticated synthesis approaches for code generation based on types (for future investigation) 

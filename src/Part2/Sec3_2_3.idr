@@ -3,7 +3,7 @@ import Data.Vect
 
 {-
 implementation code generated 100% by idris
-steps:
+steps (based on Atom key bindings):
  * Add def with cursor on mapV (Ctr-Alt-a)
  * Case split xs (Ctr-Alt-c)
  * Search (Crl-Alt-s) for both holes

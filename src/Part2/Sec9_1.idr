@@ -56,7 +56,7 @@ data Test1 : (Vect 1 String) -> Type where
    MkTest1 : Test1 (removeElem "str" ["hello", "str"] (There Here)) 
 
 {-
-Note: removeElem is resolved at compile time, same it true for Haskell
+Note: removeElem seems to be not resolved/reduced at compile time, same it true for Haskell
 repl: 
 *Part2/Sec9_1> :t MkTest
 MkTest : Test (removeElem_auto "str" ["hello", "str"])

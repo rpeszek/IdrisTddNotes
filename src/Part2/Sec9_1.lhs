@@ -88,6 +88,7 @@ The same approach works for Vectors
 `Uninhabited`
 -------------
 `Data.Void` defines function `absurd :: Void -> a` which mimics `void` in Idris.
+This shuffles things around to mimic Idris.
 
 > void :: Void -> a
 > void = absurd 
@@ -124,7 +125,7 @@ _I have implemented `SVect` by hand._
 >
 > testRemoveElemDem = removeElemDem s0 s3 (SCons s3 SNil) VHere
 
-This version does not `Demote a` and is better and is close to Idris:
+This version does not `Demote a` and is better and is closer to Idris:
 
 > removeElem :: forall (n :: Nat) (val :: a) (xs :: Vect (S n) a) . SingKind a =>
 >       SNat (S n) -> Sing val ->  SVect xs -> VElem val xs -> SomeKnownSizeVect n a
@@ -225,8 +226,7 @@ idris repl
 `isElem` example
 ----------------
 
-For this example, I am again switching to using `singletons`.  
-The `isElem` example uses `EmptyCase` instead of the `impossible` Idris keyword
+The `notInNil` uses `EmptyCase` instead of the `impossible` Idris keyword
 
 > notInNil :: VElem ax 'Nil -> Void
 > notInNil x = case x of { }
@@ -273,7 +273,8 @@ and the code is the same as in Idris.
 
 I can also fix this using `DecEqSing`, which is probably closer to how I should code dependent types in Haskell 
 
-> isElemSing :: DecEqSing k => forall n (a :: k) (xs :: Vect n k) . Sing a -> SVect xs -> Dec (VElem a xs)
+> isElemSing :: DecEqSing k => forall n (a :: k) (xs :: Vect n k) . 
+>                 Sing a -> SVect xs -> Dec (VElem a xs)
 > isElemSing val SNil = No notInNil
 > isElemSing val (SCons x xs) = case decEqSing val x of
 >        Yes Refl -> Yes VHere

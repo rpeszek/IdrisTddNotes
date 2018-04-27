@@ -6,7 +6,7 @@ import Data.Vect
 {- 
  proof is needed for typechecker to replace (k + 1) with (S k) - which is by definition (1 + k) 
  plusCommutative 1 k states that 1 + k = k + 1 or (S k) = k + 1
- `rewrite LHS=RHS in ax` matches on RHS to ax and rewrites ax to LHS type
+ `rewrite LHS=RHS in ax` rewrites ax replacing RHS with LHS (match on RHS and replace it with LHS)
 -}
 reverseLemma : Vect (k + 1) elem -> Vect (S k) elem
 reverseLemma {k} result = rewrite plusCommutative 1 k in result
@@ -21,7 +21,7 @@ Write plusCommutative in terms of
 plusZeroRightNeutral : (left : Nat) -> left + 0 = left
 plusSuccRightSucc : (left : Nat) -> (right : Nat) -> S (left + right) = left + S right 
 
-Using  
+Note need to use `rewrite`, simply using  
 myPlusCommutes (S k) m = plusSuccRightSucc m k
 results in error :
 
@@ -39,6 +39,7 @@ myPlusCommutes Z m = sym (plusZeroRightNeutral m)
 myPlusCommutes (S k) m = rewrite myPlusCommutes k m in plusSuccRightSucc m k
 
 {- 
+excercise:
 Finish the following replacing
 reverse' acc [] = ?reverseLemma_nil acc
   reverseLemma_nil : Vect n1 a -> Vect (plus n1 0) a

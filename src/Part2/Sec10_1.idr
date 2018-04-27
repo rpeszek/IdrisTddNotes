@@ -56,8 +56,8 @@ splitList : (input : List a) -> SplitList input
 splitList input = splitListHelp input input
 where
   {- the first list acts as a counter only, 
-     each step removes 2 elements from the counter and adds new elements to the left 
-     when counter is excausted all elements are added to the right -}
+     each step removes 2 elements from the counter and adds new elements to `lefts` 
+     when counter is excausted all elements are added to `rights` -}
   splitListHelp : List a -> (input : List a) -> SplitList input
   splitListHelp _ [] = SplitNil
   splitListHelp _ [x] = SplitOne

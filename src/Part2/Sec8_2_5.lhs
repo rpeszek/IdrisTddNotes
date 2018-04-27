@@ -2,13 +2,11 @@
 |Idris Src: Sec8_2_5.idr
 
 Section 8.2.5 Nat `+` theorems in Vect append vs Haskell
-======================================================
+========================================================
+
 Both Idris and Haskell know that `2+3 = 3+2` because both sides evaluate to `5`.
 But `n + m = m + n` is another story, this creates all these annoying compiler errors
 like "Couldn't match type ‘1 + n’ with ‘n + 1’". 
-
-This note focuses on a simple example of vector append. A more complex example of
-`reverse : Vect n elem -> Vect n elem` will be handled separately and is a TODO.
 
 Idris code example
 ------------------  
@@ -28,7 +26,7 @@ Compared to Haskell
 >
 > module Part2.Sec8_2_5 where
 > import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), SNatI, sNat)
-> import Data.Type.Equality ((:~:)(Refl))
+> import Data.Type.Equality ((:~:)(Refl), sym)
 > import Part2.Sec8_1 (cong)
 >
 > myAppend :: forall n m a. Vect n a -> Vect m a -> Vect (n + m) a
@@ -45,7 +43,20 @@ or
 > myAppend2Cheat :: Vect n a -> Vect m a -> Vect (m + n) a
 > myAppend2Cheat = flip myAppend
 
-but, defining myAppend2 recursively on its own is hard because type equality assumptions involve 
+There is also a way to do use `:~:` instead of `~`. This approach relies on
+some proofs that will be implemented later in this note
+
+> myAppend2' :: SNat n -> SNat m -> Vect n a -> Vect m a -> Vect (m + n) a
+> myAppend2' n m = case plusCommutative n m of Refl -> myAppend 
+> myAppend2'' :: (SNatI n, SNatI m) => Vect n a -> Vect m a -> Vect (m + n) a
+> myAppend2'' = myAppend2' sNat sNat 
+>
+> -- note: plusZeroRightNeutral, plusSuccRightSucc are reversed compared to Idris
+> plusCommutative :: SNat left -> SNat right -> ((left + right) :~: (right + left))
+> plusCommutative SZ right = plusZeroRightNeutral right
+> plusCommutative (SS k) right = case plusCommutative k right of Refl -> sym (plusSuccRightSucc right k)
+
+Defining myAppend2 recursively on its own is hard because type equality assumptions involve 
 numbers other than `n` and `m` (`n` and `m` are hardwired in the type signature). 
 
 Following the above Idris example works (with some trepidation and the need for redundant parameters):

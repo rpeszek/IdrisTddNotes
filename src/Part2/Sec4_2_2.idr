@@ -8,7 +8,9 @@ import Data.Vect
 2 case splits and Idris solution search works!
 -}
 zipV : Vect n a -> Vect n b -> Vect n (a,b)
-zipV [] [] = []
+zipV [] [] = [] 
+-- note this would also work (Idris, you figure it out!)
+-- zipV [] _ = []
 zipV (x :: xs) (y :: ys) = (x, y) :: zipV xs ys
 
 {-

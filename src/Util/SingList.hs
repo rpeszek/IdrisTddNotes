@@ -13,6 +13,7 @@
       , FlexibleContexts
 #-}
 module Util.SingList where
+import Util.SingVector
 import Data.Singletons.TH
 import Data.Singletons.Prelude
 import Data.Ord
@@ -37,6 +38,9 @@ $(singletons [d|
   lToList [] = LNil 
   lToList (x: xs) = LCons x (lToList xs)
 
+  lLength :: List a -> Nat 
+  lLength LNil = Z
+  lLength (LCons x xs) = S (lLength xs)
   |])
 
 -- errors our if placed inside $(singletons ..)  seems like singletons, basically, has problems with syntax sugar

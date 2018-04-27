@@ -1,8 +1,18 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sec10_1
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Secz10_1
 |Idris Src: Sec10_1.idr
 
-Section 10.1 Idris `ListLast` and `SplitList` views vs Haskell
-==============================================================
+Section 10.1 Idris `ListLast`, `SplitList`, `TakeN` views vs Haskell
+====================================================================
+
+Pattern matching using views.  Idris allows for a very expressive pattern match 
+informed by GADT-like structures.
+Haskell does not and the GADTs need to be used directly in the pattern match.  
+Also, Haskell GADTs need to contain more information, while Idris can infer 
+(or _exfer_) such information.
+ 
+I ended up using `SomeSing` in the return type and I am testing with `Nat` data trying
+to avoid complexity of using literals in dependently typed Haskell code.
+My Haskell examples use `singletons`.
 
 Idris code example
 ------------------  
@@ -27,7 +37,7 @@ Compared to Haskell
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
-> module Part2.Sec10_1 where
+> module Part2.Secz10_1 where
 > import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger)
 > import Util.SingList (List(..), type Sing(..))
 > import qualified Util.SingList as L
@@ -72,7 +82,7 @@ Int does not have the boilerplate needed by `singletons`, I use `Nat` to test it
 
 ghci
 ```
-*Part2.Sec10_1> describeListEnd test
+*Part2.Secz10_1> describeListEnd test
 "Non-empty, initial portion = LCons Z LNil"
 ```
 
@@ -93,17 +103,26 @@ Slow `reverse` example
 
 ghci
 ```
-*Part2.Sec10_1> testWithList [4,2,7,1] integerToNat myReverse natToInteger
+*Part2.Secz10_1> testWithList [4,2,7,1] integerToNat myReverse natToInteger
 [1,4,2,7]
 ```
 
-Initially, I tried to implement myReverse using 
+Note, I have to use `SomeSing (List a)` as return type when defining 
+`myReverseHelper` or similar type level list operations. Returning `Sing xs` would
+imply that the returned list is exactly the same as `Sing xs` input.  
+For example, this works 
+
+> myTail :: forall (xs :: List a) . Sing xs -> SomeSing (List a)
+> myTail SLNil = SomeSing SLNil 
+> myTail (SLCons x xs) = SomeSing xs
+
+but this makes no sense and does not compile:
 ```
-appendTh :: Sing xs -> Sing x -> ('LCons x xs :~: Append xs (OneElem x))
-myReverseHelper :: forall (xs :: List a) . Sing xs -> ListLast xs -> Sing xs
+myTail :: forall (xs :: List a) . Sing xs -> Sing xs
+myTail SLNil = SLNil 
+myTail (SLCons x xs) = xs -- compilation problem
 ```
-but it did not seemed right and was it was hard/impossible go far with it. 
-`SomeSing (List a)` made things workable.
+
 
 `mergeSort` example
 -------------------
@@ -137,11 +156,11 @@ but it did not seemed right and was it was hard/impossible go far with it.
 
 ghci:
 ```
-*Part2.Sec10_1> testSplitList $ splitList $ s0 `SLCons` s0 `SLCons` s1 `SLCons` s1 `SLCons` SLNil
+*Part2.Secz10_1> testSplitList $ splitList $ s0 `SLCons` s0 `SLCons` s1 `SLCons` s1 `SLCons` SLNil
 [LCons Z (LCons Z LNil),LCons (S Z) (LCons (S Z) LNil)]
 ```
 
-Unfortunately the standard `merge` function (see `Util.SingList`) does not lift easily with singletons. 
+Unfortunately the standard `merge` function (see `Util.SingList`) does not lift easily with `singletons`. 
 SomeSing needs to be used in the result type to make it work
 
 > sMerge :: forall (xs :: List a) (ys :: List a). (SingKind a, Ord (Demote a)) => 
@@ -168,15 +187,14 @@ SomeSing needs to be used in the result type to make it work
 
 ghci
 ```
-*Part2.Sec10_1> testSort
+*Part2.Secz10_1> testSort
 [1,2,4,5]
 ```
 
 Exercises
 ---------
 
-`Sing rest` is required in the definition of `Exact` without `AllowAmbiguousTypes`.
-Definition identical to Idris is possible:
+Definition identical to Idris is possible (requires `AllowAmbiguousTypes`):
 ```
 data TakeN_ (xs :: List a) where
       Fewer_ :: TakeN_ xs
@@ -186,7 +204,7 @@ but it does not allow me to use:
 ```
 takeN SZ _ = Exact
 ```
-
+However, the following works:
 
 > data TakeN (xs :: List a) where
 >      Fewer :: TakeN xs
@@ -195,8 +213,8 @@ takeN SZ _ = Exact
 
 The `forall (n_xs :: List a) (xs :: List a)` quantifications above are needed for the
 expression `Exact (x `SLCons` rxs)` below to compile. 
-I also need to maintain the `rest` argument for `Exact` constructor to get sufficient pattern match.
-Idris gets this type of info from types and from its cool view based matching.
+I also need to maintain the `rest` argument in `Exact` constructor to get sufficient pattern match.
+Also the above definition seems less type-safe (for example, `n_xs` does not need to be a sublist of `xs`).
 
 > takeN :: forall (n :: Nat) (xs :: List a) . Sing n -> Sing xs -> TakeN xs
 > takeN SZ xs = Exact SLNil xs
@@ -221,7 +239,7 @@ Idris gets this type of info from types and from its cool view based matching.
 
 ghci:
 ```
-*Part2.Sec10_1> testGroup
+*Part2.Secz10_1> testGroup
 [[1,2,3],[4,5,6],[7,8,9],[10]]
 ```
 

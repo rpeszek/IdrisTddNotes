@@ -77,9 +77,10 @@ exactLength {m} len input
                                     Just prf => rewrite prf in Just input  -- syntax from 8.2
 
 {- 
-Initial version from the book does not need rewrite, but it has number in scope (seems important, checkout 
-SameNat constructor) and is Nat sepecific, needing to have evidence of type being checked seems to 
-be related to some of the Haskell experience (see F2 type family and solutions to example 1 and 2). 
+`exactLength` implementation in the book (repeated below) does not need `rewrite` syntax.
+Maybe because it keeps nat value in scope (look at SameNat constructor) and is Nat sepecific. 
+The need to to have evidence of type/value being checked in scope seems to be important.
+This relates to some of my Haskell experience (see F2 type family and solutions to example 1 and 2). 
 -}
 
 data EqNat : (num1 : Nat) -> (num2 : Nat) -> Type where

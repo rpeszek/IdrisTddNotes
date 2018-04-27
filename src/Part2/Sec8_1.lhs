@@ -11,7 +11,8 @@ exactLength : (len : Nat) -> (input : Vect m a) -> Maybe (Vect len a)
 
 Idris code example
 ------------------
-[idrVsHs_Part2_Sec8_3](idrVsHs_Part2_Sec8_3) reimplements `exactLength` using `DecEq` interface
+The following code matches section 8.1 in the book.
+`exactLength` is reimplemented in [idrVsHs_Part2_Sec8_3](idrVsHs_Part2_Sec8_3) using the `DecEq` interface.
   
 |IdrisRef: Sec8_1.idr 
 
@@ -19,8 +20,9 @@ Idris code example
 Compared to Haskell
 -------------------
 As before, I try to keep Haskell code very close to Idris. I am not using the `~` constraint. 
-I will think about mapping `~` in the future.
-This code uses `:~:` type equality defined in `Data.Type.Equality` 
+This code uses the explicit `:~:` type equality defined in `Data.Type.Equality` 
+In the future, I may decide to play with this code using `~`.
+
 
 > {-# LANGUAGE 
 >    GADTs
@@ -58,7 +60,10 @@ This code uses `:~:` type equality defined in `Data.Type.Equality`
 >         Just (Refl) -> Just vect
 > 
 > {- exercise examples -}
-> {- partial application on type level? -}
+> {- 
+>  type level partial application would be nice! 
+>  would make F2 redundant 
+> -}
 > type family F2 (a :: k1) (b:: k2 ):: k3 
 > 
 > {- I need z in scope for this to work -}

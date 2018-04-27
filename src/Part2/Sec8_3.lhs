@@ -84,7 +84,7 @@ No
 *Part2.Sec8_3> decEq s1 s1
 Yes
 ```
-The above instance could be replaced with `instance DecEq SNat where`.   
+The above instance could be replaced with `instance DecEq SNat where ...`.   
 ghci:
 ```
 *Part2.Sec8_3> :info SNat
@@ -109,7 +109,7 @@ Just ("t" ::: Nil)
 `SingKind` version of `DecEq`
 -----------------------------
 
-I am having more luck with this approach to `DecEq`:
+I am having more luck with the following approach to `DecEq`:
 
 > class SingKind k => DecEqSing k where
 >      decEqSing :: forall (a :: k) (b :: k) . Sing a -> Sing b -> Dec (Sing a :~: Sing b)

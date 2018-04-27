@@ -79,22 +79,15 @@ this seems type safe and works. The error message on type mismatch is interestin
       createAdder :: SNat 2 -> Integer -> AdderGadt 3
 ```
 
+I am still using `GHC.TypeLits`. 
 I had to realign Vec and SNat to be based on the predecessor `n - 1` instead of 
-a successor `1 + n` or `n + 1`
-to avoid errors like these (for `1 + n`)
+a successor `1 + n` or `n + 1` to avoid errors like the following (for `1 + n`)
 ```
  Could not deduce: n2 ~ n1
   from the context: n ~ (1 + n1)
 ```
-or (for `n + 1`)
-```
-Couldn't match type ‘n’ with ‘(n - 1) + 1’
-```
-or
-```
- Could not deduce: (n - 1) ~ n1
-  from the context: n ~ (1 + n1)
-```
+These errors could be fixable, but using `n - 1' approach seems simpler.
+
 
 __Type family solution (first attempt)__   
 This code is almost exactly the same as Idris code:
@@ -158,11 +151,9 @@ ghci output:
 
 Conclusions
 -----------
-I am finding that using GHC.TypeLits Nat is a struggle.  I often get errors like 
-Couldn't match type ‘n’ with ‘(n + 1) - 1’.  using constraints like 
-`n ~ ((n + 1) - 1)` does not help. To move forward I created
+I am finding that using GHC.TypeLits Nat is a bit of a struggle.  I often get errors like 
+Couldn't match type ‘n’ with ‘(n + 1) - 1’.  Using constraints like 
+`n ~ ((n + 1) - 1)` does not always help. To move forward I created
 Util.NonLitsNatAndVector.hs.
-
-I may revisit this issue at some point.
 
 I like Idris more and more!

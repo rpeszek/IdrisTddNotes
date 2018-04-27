@@ -8,18 +8,20 @@ Idris code example
 ------------------
 |IdrisRef: Sec1_4_5.idr 
 
-Note: this example is used later in Section 6.1.3 to demonstrate use of type holes
-in type signatures. Type holes are amazing but unfortunately may not work with full
-implementation (undecidable with dependent types?). This does not compile:
+StringOrInt example is used later in Section 6.1.3 to demonstrate type holes
+in type signatures. Type holes are amazing but unfortunately sometimes do not work. 
+This does not compile (note full implementation in place and holes in type signature -
+my guess undecidable in dependently typed language):
 
 ```
--- this does not work! 6.1.3
+-- this does not work! (6.1.3)
 valToString : (isInt : Bool) -> (case isInt of
                                       False => ?argType_1
                                       True => ?argType_2) -> String
 valToString False y = trim y
 valToString True y = cast y
 ```
+
 
 idris repl
 ```
@@ -84,7 +86,7 @@ Naive solution that tries to mimic Idris code is not type safe
 
 
 Using Type Families, GADTs, and DataKinds provides good (almost equivalent with some differences) type safety but
-the boiler plate is big and conceptual difficulty is significantly higher
+the boiler plate is significant and conceptual difficulty is higher
 
 > data StringOrInt2 a where
 >     MkStr2 :: String -> StringOrInt2 String
@@ -139,4 +141,4 @@ testBad = valToString2' STrue (MkStr2 "Test")
 Conclusions
 -----------
 Idris dependent types are NICE!!! 
-This type of code is much simpler and has much less boiler plate in Idris compared to Haskell.
+Compared to Haskell, this type of code is much simpler and has much less boiler plate in Idris.

@@ -48,11 +48,11 @@ library
       , Part2.Sec6_3sing
       , Part2.Sec8_1
       , Part2.Sec8_2_5
-      , Part2.Sec8_2
+      , Part2.Sec8_2z
       , Part2.Sec8_3
       , Part2.Sec9_1
       , Part2.Sec9_2      
-      , Part2.Sec10_1     
+      , Part2.Secz10_1     
 
 
   default-language: Haskell2010

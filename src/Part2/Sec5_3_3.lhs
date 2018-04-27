@@ -63,11 +63,11 @@ ghci:
 MkVect (SS (SS (SS SZ))) (1 ::: (2 ::: (3 ::: Nil)))
 *Part2.Sec5_3_3> 
 ```
-There is also a CPS approach (singletons) (uses RankNTypes).  
+There is also a CPS approach, `singletons` library uses it, (it uses `RankNTypes`).  
 GHC.TypeLits are not the easiest to use here.  See `withNat`, `withSomeNat`,
 `withSomeVect` in 
 [/src/Util/NonLitsNatAndVector.hs](../blob/master/src/Util/NonLitsNatAndVector.hs)  
-But approaches should be equivalent
+These approaches are equivalent to:
 
 > withVectUnknown :: VectUnknown a -> (forall n . SNat n -> Vect n a -> r) -> r
 > withVectUnknown (MkVect n v) f = f n v
