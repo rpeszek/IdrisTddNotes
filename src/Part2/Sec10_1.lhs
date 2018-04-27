@@ -41,7 +41,8 @@ Compared to Haskell
 
 > data ListLast  (xs :: List a) where 
 >    Empty :: ListLast 'LNil 
->    NonEmpty :: forall (xs :: List a) (x :: a). Sing xs -> Sing x -> ListLast (L.Append xs (L.OneElem x))
+>    NonEmpty :: forall (xs :: List a) (x :: a). 
+>                Sing xs -> Sing x -> ListLast (L.Append xs (L.OneElem x))
 > 
 > listLast :: forall (xs :: List a) . Sing xs -> ListLast xs
 > listLast SLNil = Empty
@@ -49,11 +50,13 @@ Compared to Haskell
 >       Empty -> NonEmpty SLNil x
 >       NonEmpty ys y -> NonEmpty (SLCons x ys) y
 >
-> describeHelper1 :: forall (input :: List a) . (SingKind a, Show (Demote a)) => Sing input -> ListLast input -> String
+> describeHelper1 :: forall (input :: List a) . (SingKind a, Show (Demote a)) => 
+>                     Sing input -> ListLast input -> String
 > describeHelper1 SLNil Empty = "Empty"
 > describeHelper1 _ (NonEmpty xs x) = "Non-empty, initial portion = " ++ (show $ fromSing xs)
 > 
-> describeHelper2 :: forall (xs :: List a) . (SingKind a, Show (Demote a)) => Sing xs -> String
+> describeHelper2 :: forall (xs :: List a) . (SingKind a, Show (Demote a)) => 
+>                     Sing xs -> String
 > describeHelper2 xs = describeHelper1 xs (listLast xs)
 > 
 > describeListEnd :: (SingKind a, Show (Demote a)) => List (Demote a) -> String
@@ -121,7 +124,8 @@ but it did not seemed right and was it was hard/impossible go far with it.
 > splitList :: forall (input :: List a). SingKind a => Sing input -> SplitList input
 > splitList input = splitListHelp (fromSing input) input
 >
-> splitListHelp :: forall (input :: List a). SingKind a => List (Demote a) -> Sing input -> SplitList input
+> splitListHelp :: forall (input :: List a). SingKind a => 
+>                   List (Demote a) -> Sing input -> SplitList input
 > splitListHelp _ SLNil = SplitNil
 > splitListHelp _ (SLCons x SLNil) = SplitOne x
 > splitListHelp (_ `LCons` _ `LCons` counter) (item `SLCons` items) 
@@ -140,7 +144,8 @@ ghci:
 Unfortunately the standard `merge` function (see `Util.SingList`) does not lift easily with singletons. 
 SomeSing needs to be used in the result type to make it work
 
-> sMerge :: forall (xs :: List a) (ys :: List a). (SingKind a, Ord (Demote a)) => Sing xs -> Sing ys -> SomeSing (List a)
+> sMerge :: forall (xs :: List a) (ys :: List a). (SingKind a, Ord (Demote a)) => 
+>            Sing xs -> Sing ys -> SomeSing (List a)
 > sMerge list1 list2 
 >       = let xres = L.merge (fromSing list1) (fromSing list2)
 >         in toSing xres
@@ -150,7 +155,8 @@ SomeSing needs to be used in the result type to make it work
 > mergeSort list = case withSomeSing list (\xs -> mergeSortHelper (splitList xs) xs) of
 >           SomeSing res -> fromSing res
 >
-> mergeSortHelper :: forall (xs :: List a). (SingKind a, Ord (Demote a)) => SplitList xs -> Sing xs -> SomeSing (List a)
+> mergeSortHelper :: forall (xs :: List a). (SingKind a, Ord (Demote a)) => 
+>                     SplitList xs -> Sing xs -> SomeSing (List a)
 > mergeSortHelper SplitNil SLNil = SomeSing SLNil
 > mergeSortHelper (SplitOne x) _ = SomeSing (L.sOneElem x)
 > mergeSortHelper (SplitPair lefts rights) _ 
@@ -184,7 +190,8 @@ takeN SZ _ = Exact
 
 > data TakeN (xs :: List a) where
 >      Fewer :: TakeN xs
->      Exact :: forall (n_xs :: List a) (rest :: List a) (xs :: List a) . L.SList n_xs -> L.SList rest -> TakeN xs
+>      Exact :: forall (n_xs :: List a) (rest :: List a) (xs :: List a) . 
+>                L.SList n_xs -> L.SList rest -> TakeN xs
 
 The `forall (n_xs :: List a) (xs :: List a)` quantifications above are needed for the
 expression `Exact (x `SLCons` rxs)` below to compile. 

@@ -107,4 +107,4 @@ idris repl:
 [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]] : List (List Integer)
 -}
 
-TODO excercise 2
+-- TODO excercise 2
