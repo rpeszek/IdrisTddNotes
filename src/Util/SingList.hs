@@ -11,6 +11,8 @@
       , ScopedTypeVariables
       , TypeSynonymInstances
       , FlexibleContexts
+      , StandaloneDeriving
+      , DeriveFunctor
 #-}
 module Util.SingList where
 import Util.SingVector
@@ -42,6 +44,8 @@ $(singletons [d|
   lLength LNil = Z
   lLength (LCons x xs) = S (lLength xs)
   |])
+
+deriving instance Functor List
 
 -- errors our if placed inside $(singletons ..)  seems like singletons, basically, has problems with syntax sugar
 listToL :: List a -> [a]

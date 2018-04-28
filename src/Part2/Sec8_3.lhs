@@ -40,6 +40,7 @@ Both are equivalent, moving forward, I will focus on the second
 > import Util.SingVector (Nat(..), Vect(..), SVect(..), vlength, type SNat, type Sing(..))
 > import Data.Singletons
 > import Data.Singletons.TH
+> import Data.Bifunctor
 
 `DecEq` 
 ------
@@ -143,6 +144,11 @@ But the following works and is closer to Idris
 > $(singletons [d|
 >  data MyPair a b = MkMyPair a b deriving (Show)
 >  |])
+>
+> {-| needed for convenience later on -}
+> instance Bifunctor MyPair where
+>   bimap fab fcd (MkMyPair a c) = MkMyPair (fab a) (fcd c)
+
 
 Note:
 ```

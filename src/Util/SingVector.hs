@@ -28,6 +28,11 @@ $(singletons [d|
   plus :: Nat -> Nat -> Nat
   plus Z m = m
   plus (S n) m = S (plus n m)
+
+  half :: Nat -> Nat 
+  half Z = Z
+  half (S Z) = Z
+  half (S (S k)) = S (half k)
   |])
 
 instance Ord Nat where
@@ -59,6 +64,9 @@ deriving instance Show a => Show (Vect n a)
 natToInteger :: Nat -> Integer
 natToInteger Z = 0
 natToInteger (S un) = 1 + (natToInteger un)
+
+withInteger :: Integer -> (Nat -> Nat) -> Integer
+withInteger i f = natToInteger $ f (integerToNat i)
 
 someNatToInteger :: SomeSing Nat -> Integer
 someNatToInteger (SomeSing n) = natToInteger (fromSing n)

@@ -38,13 +38,15 @@ Compared to Haskell
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Secz10_1 where
-> import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger)
+> import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger, sHalf)
 > import Util.SingList (List(..), type Sing(..))
 > import qualified Util.SingList as L
 > import Part2.Sec9_1
 > import Part2.Sec9_2
+> import qualified Part2.Sec8_3 as P
 > import Data.Singletons
 > import Data.Singletons.TH
+> import Data.Bifunctor (bimap)
 
 `describeList` example
 ----------------------
@@ -243,4 +245,25 @@ ghci:
 [[1,2,3],[4,5,6],[7,8,9],[10]]
 ```
 
-TODO second exercise
+> halvesHelper :: forall (xs :: List a) . Sing xs -> SomeSing (P.MyPair (List a) (List a))
+> halvesHelper slist 
+>        = case takeN (sHalf $ L.sLLength slist) slist of
+>            Fewer -> SomeSing $ P.SMkMyPair slist SLNil
+>            Exact xs ys -> SomeSing $ P.SMkMyPair xs ys
+>
+> halves :: (SingKind a) => List (Demote a) -> P.MyPair (List (Demote a)) (List (Demote a))
+> halves list = case withSomeSing list halvesHelper of 
+>        SomeSing res -> fromSing res
+>
+> testHalves =  let convert = map natToInteger . L.listToL
+>               in bimap convert convert . halves . L.lToList . map integerToNat 
+
+ghci:
+```
+*Part2.Secz10_1> testHalves [1..10]
+MkMyPair [1,2,3,4,5] [6,7,8,9,10]
+*Part2.Secz10_1> testHalves [1]
+MkMyPair [] [1]
+*Part2.Secz10_1> testHalves []
+MkMyPair [] []
+```
