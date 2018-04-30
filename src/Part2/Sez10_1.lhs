@@ -1,5 +1,7 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Secz10_1
-|Idris Src: Sec10_1.idr
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sez10_1
+|Idris Src: Sez10_1.idr 
+ 
+_using 'z' in the name to recover alphabetical sort of sections_
 
 Section 10.1 Idris `ListLast`, `SplitList`, `TakeN` views vs Haskell
 ====================================================================
@@ -16,7 +18,7 @@ My Haskell examples use `singletons`.
 
 Idris code example
 ------------------  
-|IdrisRef: Sec10_1.idr 
+|IdrisRef: Sez10_1.idr 
 
 Compared to Haskell
 -------------------
@@ -37,7 +39,7 @@ Compared to Haskell
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
-> module Part2.Secz10_1 where
+> module Part2.Sez10_1 where
 > import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger, sHalf)
 > import Util.SingList (List(..), type Sing(..))
 > import qualified Util.SingList as L
@@ -84,19 +86,20 @@ Int does not have the boilerplate needed by `singletons`, I use `Nat` to test it
 
 ghci
 ```
-*Part2.Secz10_1> describeListEnd test
+*Part2.Sez10_1> describeListEnd test
 "Non-empty, initial portion = LCons Z LNil"
 ```
 
 Slow `reverse` example
 ----------------------
 
-> myReverseHelper :: forall (xs :: List a) . ListLast xs -> Sing xs -> SomeSing (List a)
-> myReverseHelper Empty _ = SomeSing SLNil 
-> myReverseHelper (NonEmpty xs x) _ = SomeSing $ SLCons x xs 
+> myReverseHelper :: forall (xs :: List a) . ListLast xs  -> SomeSing (List a)
+> myReverseHelper Empty = SomeSing SLNil 
+> myReverseHelper (NonEmpty xs x) = case myReverseHelper (listLast xs) of
+>              SomeSing sres -> SomeSing $ SLCons x sres  
 > 
 > myReverse :: (SingKind a) => List (Demote a) -> List (Demote a)
-> myReverse list = case withSomeSing list (\xs ->  myReverseHelper (listLast xs) xs) of 
+> myReverse list = case withSomeSing list (\xs ->  myReverseHelper (listLast xs)) of 
 >                    SomeSing res -> fromSing res
 >
 > testWithList :: [a] -> (a->b) -> (List b -> List c) -> (c->d) -> [d]
@@ -105,8 +108,8 @@ Slow `reverse` example
 
 ghci
 ```
-*Part2.Secz10_1> testWithList [4,2,7,1] integerToNat myReverse natToInteger
-[1,4,2,7]
+*Part2.Sez10_1> testWithList [4,2,7,1] integerToNat myReverse natToInteger
+[1,7,2,4]
 ```
 
 Note, I have to use `SomeSing (List a)` as return type when defining 
@@ -158,7 +161,7 @@ myTail (SLCons x xs) = xs -- compilation problem
 
 ghci:
 ```
-*Part2.Secz10_1> testSplitList $ splitList $ s0 `SLCons` s0 `SLCons` s1 `SLCons` s1 `SLCons` SLNil
+*Part2.Sez10_1> testSplitList $ splitList $ s0 `SLCons` s0 `SLCons` s1 `SLCons` s1 `SLCons` SLNil
 [LCons Z (LCons Z LNil),LCons (S Z) (LCons (S Z) LNil)]
 ```
 
@@ -189,7 +192,7 @@ SomeSing needs to be used in the result type to make it work
 
 ghci
 ```
-*Part2.Secz10_1> testSort
+*Part2.Sez10_1> testSort
 [1,2,4,5]
 ```
 
@@ -241,7 +244,7 @@ Also the above definition seems less type-safe (for example, `n_xs` does not nee
 
 ghci:
 ```
-*Part2.Secz10_1> testGroup
+*Part2.Sez10_1> testGroup
 [[1,2,3],[4,5,6],[7,8,9],[10]]
 ```
 
@@ -260,10 +263,10 @@ ghci:
 
 ghci:
 ```
-*Part2.Secz10_1> testHalves [1..10]
+*Part2.Sez10_1> testHalves [1..10]
 MkMyPair [1,2,3,4,5] [6,7,8,9,10]
-*Part2.Secz10_1> testHalves [1]
+*Part2.Sez10_1> testHalves [1]
 MkMyPair [] [1]
-*Part2.Secz10_1> testHalves []
+*Part2.Sez10_1> testHalves []
 MkMyPair [] []
 ```

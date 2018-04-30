@@ -1,5 +1,5 @@
-
-module Part2.Sec10_1 
+{- Sez10_1 instead of Sec10_1 to recover alphabetical sort -}
+module Part2.Sez10_1 
 
 %default total 
 
@@ -31,7 +31,7 @@ describeListEnd' input with (listLast input)
   describeListEnd' (xs ++ [x]) | (NonEmpty xs x)
           = "Non-empty, initial portion = " ++ show xs
 
-|||slow reverse
+|||slow reverse - ListLast view is rebuilt in each recursive step
 covering
 myReverse : List a -> List a
 myReverse input with (listLast input)
@@ -40,7 +40,7 @@ myReverse input with (listLast input)
 
 {- 
 idris repl:
-*Part2/Sec10_1> myReverse [5,2,7,1]
+*Part2/Sez10_1> myReverse [5,2,7,1]
 [1, 7, 2, 5] : List Integer
 -}
 
@@ -79,7 +79,7 @@ mergeSort input with (splitList input)
 
 {-
 idris repl: 
-*Part2/Sec10_1> mergeSort [5,2,7,1]
+*Part2/Sez10_1> mergeSort [5,2,7,1]
 [1, 2, 5, 7] : List Integer
 -}
 
@@ -103,7 +103,7 @@ groupByN n xs with (takeN n xs)
 
 {-
 idris repl:
-*Part2/Sec10_1> groupByN 3 [1..10]
+*Part2/Sez10_1> groupByN 3 [1..10]
 [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]] : List (List Integer)
 -}
 
@@ -116,10 +116,10 @@ halves list with (takeN ((length list) `div` 2) list)
    halves (half1 ++ half2) | (Exact half1) = (half1, half2)
 
 {-
-*Part2/Sec10_1> halves [1..10]
+*Part2/Sez10_1> halves [1..10]
 ([1, 2, 3, 4, 5], [6, 7, 8, 9, 10]) : (List Integer, List Integer)
-*Part2/Sec10_1> halves [1]
+*Part2/Sez10_1> halves [1]
 ([], [1]) : (List Integer, List Integer)
-*Part2/Sec10_1> the (List Integer, List Integer) (halves [])
+*Part2/Sez10_1> the (List Integer, List Integer) (halves [])
 ([], []) : (List Integer, List Integer)
 -} 

@@ -55,7 +55,7 @@ listToL (LCons x xs) = x : (listToL xs)
 withList :: [a] -> (List a -> r) -> r
 withList xs f = f (lToList xs)
 
--- merge does not want to lift (see Sec10_1 for implementation that returns SomeSing (List a) )
+-- merge does not want to lift (see Sez10_1 for implementation that returns SomeSing (List a) )
 merge :: (Ord a) => List a -> List a -> List a
 merge LNil ys = ys
 merge xs LNil = xs
