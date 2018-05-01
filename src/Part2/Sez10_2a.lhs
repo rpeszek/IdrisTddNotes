@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sez10_2
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sez10_2a
 |Idris Src: Sez10_2a.idr
 
 Sections 10.2.1 - 10.2.2 SnocList view and fast reverse
@@ -14,28 +14,25 @@ Compared to Haskell
 A straightforward conversion of Idris code has quadratic cost (Idris code has linear cost).
 
 > {-# LANGUAGE 
->    TemplateHaskell
->    , TypeOperators
+>    TypeOperators
 >    , GADTs
 >    , TypeFamilies
 >    , DataKinds
 >    , PolyKinds
->    , KindSignatures
->    , EmptyCase
->    , RankNTypes
->    , LambdaCase
 >    , ScopedTypeVariables 
->    , FlexibleContexts
+>    -- , KindSignatures
+>    -- , FlexibleContexts
+>    -- , FlexibleInstances
+>    -- , TypeInType
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sez10_2a where
 > import Data.Type.Equality
-> import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger, sHalf)
+> import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger)
 > import Util.SingList (List(..), type Sing(..))
 > import qualified Util.SingList as L
 > import Data.Singletons
-> import Part2.Sez10_1 (testWithList)
 >
 > data SnocList (xs :: List a) where
 >    Empty :: SnocList 'LNil
@@ -50,9 +47,9 @@ A straightforward conversion of Idris code has quadratic cost (Idris code has li
 >            Refl ->  snocListHelp (L.sAppend input (L.sOneElem x)) (Snoc snoc x) xs 
 
 Similarly to Idris ghc needs `appendNilRightNeutral` and `appendAssociative` theorems to compile.
-However `snocListHelp` `input` argument is no longer implicit and results in 
+However `snocListHelp` `input` argument is no longer implicit `{input}` and results in 
 one `sAppend` call at each recursive step.
-This is quadratic cost, ouch!  The only reason why we cary `input` around is to use it as an argument
+This becomes quadratic complexity, ouch!  The only reason why we cary `input` around is to use it as an argument
 to proofs of `appendNilRightNeutral` and `appendAssociative`.
 This is a type level aspect that Idris appears to handle without runtime cost!   
 TODO - think about it more!
@@ -85,4 +82,35 @@ TODO - think about it more!
 ```
 *Part2.Sez10_2a> testWithList [4,2,7,1] integerToNat myReverse natToInteger
 [1,7,2,4]
+```
+
+Liner solution attempt using ISing
+----------------------------------
+The idea is to move the cost of carrying around `input` to type class constraints 
+
+> snocListHelp' :: forall (input :: List a) (rest :: List a) . 
+>                  SingI input =>  SnocList input -> Sing rest -> SnocList (L.Append input rest)
+> snocListHelp' snoc SLNil = case sym (appendNilRightNeutral (sing :: Sing input)) of Refl -> snoc
+> snocListHelp' snoc (SLCons x xs) 
+>       = case sym (appendAssociative (sing :: Sing input) (L.sOneElem x) xs) of
+>            Refl ->  undefined -- snocListHelp' (Snoc snoc x) xs 
+
+To compile commented out code I need to tell GHC that `L.Append list ('LCons x 'LNil)` has SingI instance.  
+I can, and have, derived this:
+
+```
+instance forall a (n1 :: a) (n2 :: List a). (SingI n1, SingI n2) => SingI ('LCons n1 n2) where
+   sing = undefined
+```
+but GHC 8.2.2 does not allow me to express this (assuming some additional pragmas):
+```
+instance forall a (x :: a) (list :: List a). (SingI list, SingI x) => SingI (L.Append list ('LCons x 'LNil)) where 
+   sing = undefined
+```
+ghc error:
+```
+   • Illegal type synonym family application in instance:
+        L.Append list ('LCons x 'LNil)
+   • In the instance declaration for
+        ‘SingI (L.Append list ( 'LCons x  'LNil))’
 ```

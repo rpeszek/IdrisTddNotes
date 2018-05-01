@@ -5,10 +5,14 @@
 
 module Part2.Sez10_2a
 
+%default total 
+
+public export
 data SnocList : List a -> Type where
      Empty : SnocList []
      Snoc : (rec : SnocList xs) -> SnocList (xs ++ [x])
 
+export
 snocList : (xs : List a) -> SnocList xs
 
 snocListHelp : (snoc : SnocList input) -> (rest : List a) ->
@@ -20,6 +24,7 @@ snocListHelp {input} snoc (x :: xs) = rewrite appendAssociative input [x] xs in
 snocList xs = snocListHelp Empty xs
 
 ||| reverse based on SnocList view, implementation that avoids using Helper function
+export
 myReverse : List a -> List a
 -- with argument is not recreated in recursive step
 myReverse input with (snocList input)

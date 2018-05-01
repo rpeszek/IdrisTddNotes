@@ -23,6 +23,7 @@ modules = Main
         , Part2.Sec9_2
         , Part2.Sez10_1
         , Part2.Sez10_2a
+        , Part2.Sez10_2b     
 
 sourcedir = src
 main = Main
