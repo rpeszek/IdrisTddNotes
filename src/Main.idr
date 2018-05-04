@@ -25,6 +25,8 @@ import Part2.Sec9_2
 import Part2.Sez10_1
 import Part2.Sez10_2a
 import Part2.Sez10_2b     
+import Part2.Sez10_2e     
+import Part2.Sez10_3     
 
 main : IO ()
 main = sec6_3b

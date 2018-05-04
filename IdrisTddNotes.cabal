@@ -55,6 +55,7 @@ library
       , Part2.Sez10_1     
       , Part2.Sez10_2a     
       , Part2.Sez10_2b     
+      , Part2.Sez10_3     
 
 
   default-language: Haskell2010

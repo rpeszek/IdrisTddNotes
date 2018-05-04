@@ -24,6 +24,8 @@ modules = Main
         , Part2.Sez10_1
         , Part2.Sez10_2a
         , Part2.Sez10_2b     
+        , Part2.Sez10_2e     
+        , Part2.Sez10_3     
 
 sourcedir = src
 main = Main

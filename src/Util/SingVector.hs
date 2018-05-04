@@ -1,5 +1,6 @@
 {-
 "Singling of literal patterns not yet supported"
+TODO move Nat into a separate module
 -}
 
 {-# LANGUAGE TemplateHaskell
@@ -28,6 +29,12 @@ $(singletons [d|
   plus :: Nat -> Nat -> Nat
   plus Z m = m
   plus (S n) m = S (plus n m)
+  infixl 6 `plus`
+
+  multi :: Nat -> Nat -> Nat
+  multi Z m = Z
+  multi (S n) m = plus (multi n m) m
+  infixl 7 `multi`
 
   half :: Nat -> Nat 
   half Z = Z
