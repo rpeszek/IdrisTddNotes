@@ -93,8 +93,23 @@ type family FromTL (n :: TL.Nat) :: Nat where
 
 {-| reification type -}
 data SomeVect a where
-   SomeVect :: SNat s -> Vect s a -> SomeVect a
+   SomeVect :: Vect n a -> SomeVect a
+
+deriving instance Show a => Show (SomeVect a)
 
 {-| CPS style reification -}
-withSomeVect :: SomeVect a -> (forall n. SNat n -> Vect n a -> r) -> r
-withSomeVect (SomeVect sn vec) f = f sn vec
+withSomeVect :: SomeVect a -> (forall n.Vect n a -> r) -> r
+withSomeVect (SomeVect vec) f = f vec
+
+listToSomeVect :: [a] -> SomeVect a
+listToSomeVect [] = SomeVect Nil
+listToSomeVect (x : xs) 
+      = case listToSomeVect xs of SomeVect rr -> SomeVect (x ::: rr) 
+
+vectToList :: Vect n a -> [a]
+vectToList Nil = []
+vectToList (x ::: xs) = x : vectToList xs
+
+listWithVect :: [a] -> (forall n. Vect n a -> r) -> r
+listWithVect xs f = case listToSomeVect xs of
+      SomeVect vxs -> f vxs 

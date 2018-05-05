@@ -15,6 +15,7 @@ TODO move Nat into a separate module
       , UndecidableInstances 
       , ScopedTypeVariables
       , TypeSynonymInstances
+      , Rank2Types
 #-}
 
 module Util.SingVector where
@@ -50,23 +51,6 @@ instance Ord Nat where
 
 instance Show (SNat n) where
   show  = show . fromSing
-   
-
-data Vect (n :: Nat) a where
-     Nil :: Vect 'Z a
-     (:::) :: a -> Vect n a -> Vect ('S n) a
-infixr 5 :::
-
-vlength :: Vect n a -> SNat n  
-vlength Nil = SZ
-vlength (x ::: xs) = SS (vlength xs)
-
-{- TODO This would be more general since Vect :: Nat -> Type -> Type -}
-data VectK (n :: Nat) (a :: k) where
-     NilK :: VectK 'Z a
-     ConsK :: Sing a -> VectK n a -> VectK ('S n) a
-
-deriving instance Show a => Show (Vect n a)
 
 natToInteger :: Nat -> Integer
 natToInteger Z = 0
@@ -106,9 +90,50 @@ s3 = SS s2
 s4 :: SNat (FromTL 4) -- ('S ('S ('S 'Z)))
 s4 = SS s3
 
+{- Vect stuff -}   
 
--- Currently, I do not know how to do singletons for the Vect itself
+data Vect (n :: Nat) a where
+     Nil :: Vect 'Z a
+     (:::) :: a -> Vect n a -> Vect ('S n) a
+infixr 5 :::
 
+deriving instance Show a => Show (Vect n a)
+
+vlength :: Vect n a -> SNat n  
+vlength Nil = SZ
+vlength (x ::: xs) = SS (vlength xs)
+
+{-| simple reification type, I decided to include SNat for now, this is redundant as
+vlenght recovers it -}
+data SomeVect a where
+   SomeVect :: SNat s -> Vect s a -> SomeVect a
+
+deriving instance Show a => Show (SomeVect a)
+
+{-| CPS style reification -}
+withSomeVect :: SomeVect a -> (forall n. SNat n -> Vect n a -> r) -> r
+withSomeVect (SomeVect sn vec) f = f sn vec
+
+listToSomeVect :: [a] -> SomeVect a
+listToSomeVect [] = SomeVect SZ Nil
+listToSomeVect (x : xs) 
+      = case listToSomeVect xs of SomeVect n rr -> SomeVect (SS n) (x ::: rr) 
+
+
+vectToList :: Vect n a -> [a]
+vectToList Nil = []
+vectToList (x ::: xs) = x : vectToList xs
+
+
+{-| TODO This would be more general since Vect :: Nat -> Type -> Type, currently not used-}
+{-
+data VectK (n :: Nat) (a :: k) where
+     NilK :: VectK 'Z a
+     ConsK :: Sing a -> VectK n a -> VectK ('S n) a
+
+-}
+
+{-| Currently, I do not know how to do singletons for the Vect itself -}
 data SVect (v :: Vect n a) where
   SNil :: SVect  'Nil
   SCons :: Sing a -> SVect xs -> SVect (a '::: xs)
