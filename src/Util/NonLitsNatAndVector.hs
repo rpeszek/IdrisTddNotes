@@ -91,9 +91,10 @@ type family FromTL (n :: TL.Nat) :: Nat where
     FromTL 0 = Z
     FromTL n = S (FromTL (n TL.- 1))
 
-{-| reification type -}
+{-| reification type, I decided to exclude SNat, since I can recover it using
+vlenght, this makes is slightly different than the dependent pair concept in Idris -}
 data SomeVect a where
-   SomeVect :: Vect n a -> SomeVect a
+   SomeVect :: {- SNat n -> -} Vect n a -> SomeVect a
 
 deriving instance Show a => Show (SomeVect a)
 

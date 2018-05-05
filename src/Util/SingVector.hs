@@ -104,7 +104,7 @@ vlength Nil = SZ
 vlength (x ::: xs) = SS (vlength xs)
 
 {-| simple reification type, I decided to include SNat for now, this is redundant as
-vlenght recovers it -}
+vlenght recovers it but is isomorphic to dependent pair concept in Idris -}
 data SomeVect a where
    SomeVect :: SNat s -> Vect s a -> SomeVect a
 

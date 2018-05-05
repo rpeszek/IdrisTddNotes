@@ -153,7 +153,7 @@ Conclusions
 -----------
 I am finding that using GHC.TypeLits Nat is a bit of a struggle.  I often get errors like 
 Couldn't match type ‘n’ with ‘(n + 1) - 1’.  Using constraints like 
-`n ~ ((n + 1) - 1)` does not always help. To move forward I created
+`n ~ ((n + 1) - 1)` does not always help (see note [idrVsHs_Part2_Sec8_2_5](idrVsHs_Part2_Sec8_2_5)). To move forward I created
 Util.NonLitsNatAndVector.hs.
 
 I like Idris more and more!
