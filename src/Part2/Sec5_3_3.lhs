@@ -51,7 +51,7 @@ This follows the idea from 5.3.2 and naming convention from the book so instead 
 > deriving instance Show a => Show (VectUnknown a) 
 >
 > listToVect :: [a] -> VectUnknown a
-> listToVect [] = MkVect SZ Nil
+> listToVect [] = MkVect SZ VNil
 > listToVect (x : xs) = 
 >              let forXs = listToVect xs
 >              in case forXs of
@@ -60,7 +60,7 @@ This follows the idea from 5.3.2 and naming convention from the book so instead 
 ghci:
 ```
 *Part2.Sec5_3_3> listToVect [1,2,3]
-MkVect (SS (SS (SS SZ))) (1 ::: (2 ::: (3 ::: Nil)))
+MkVect (SS (SS (SS SZ))) (1 ::: (2 ::: (3 ::: VNil)))
 *Part2.Sec5_3_3> 
 ```
 There is also a CPS approach, `singletons` library uses it, (it uses `RankNTypes`).  
@@ -80,5 +80,5 @@ These approaches are equivalent to:
 ghci:
 ```
 *Part2.Sec5_3_3> test
-"1 ::: (2 ::: (3 ::: Nil))"
+"1 ::: (2 ::: (3 ::: VNil))"
 ```

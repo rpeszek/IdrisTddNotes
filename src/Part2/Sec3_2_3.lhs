@@ -55,12 +55,12 @@ Surprisingly this ability goes beyond ADTs and Haskell can derive functor on sim
 > {- Note: using predecessor (n - 1) instead of (1 + n) seems, in some cases, 
 > to work better see Part2.Sec6_2_1 -}
 > data Vect (n::Nat) a where
->   Nil :: Vect 0 a
+>   VNil :: Vect 0 a
 >   (:::) :: a -> Vect n a -> Vect (1 + n) a
 > infixr 5 :::
 > 
 > testV :: Vect 3 Int
-> testV = 1 ::: 2 ::: 3 ::: Nil
+> testV = 1 ::: 2 ::: 3 ::: VNil
 >                                 
 > deriving instance Functor (Vect n)
 > deriving instance Show a => Show (Vect n a) 
@@ -68,9 +68,9 @@ Surprisingly this ability goes beyond ADTs and Haskell can derive functor on sim
 ghci:
 ```
 *Part2.Temp2> fmap (+1) testV
-2 ::: (3 ::: (4 ::: Nil))
+2 ::: (3 ::: (4 ::: VNil))
 *Part2.Temp2> fmap (*2) testV
-2 ::: (4 ::: (6 ::: Nil))
+2 ::: (4 ::: (6 ::: VNil))
 ```
 
 and, obviously, I can just do
@@ -83,7 +83,7 @@ GHC 8.0.2 appears to provide much less info about DataKinds lifted types like Na
 If I type
 ```
 mapV :: forall a b n. (a -> b) -> Vect n a -> Vect n b
-mapV f Nil = _
+mapV f VNil = _
 ```
 I get 
 ```

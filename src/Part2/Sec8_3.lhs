@@ -12,8 +12,8 @@ Idris code example
 Compared to Haskell
 -------------------
 I currently have 2 implementations of `Nat` and `Vect`
- * by hand `Util.NonLitsNatAndVector`
- * partially using `singletons` `Util.SingVector`
+ * by hand `Data.CodedByHand`
+ * partially using `singletons` `Data.SingBased`
 
 Both are equivalent, moving forward, I will focus on the second
 
@@ -37,7 +37,7 @@ Both are equivalent, moving forward, I will focus on the second
 > import Data.Type.Equality
 > import Data.Kind (Type)
 > import Data.Void
-> import Util.SingVector (Nat(..), Vect(..), SVect(..), vlength, type SNat, type Sing(..))
+> import Data.SingBased (Nat(..), Vect(..), SVect(..), vlength, type SNat, type Sing(..))
 > import Data.Singletons
 > import Data.Singletons.TH
 > import Data.Bifunctor
@@ -102,8 +102,8 @@ type SNat = Sing :: Nat -> *
 
 ghci:
 ```
-*Part2.Sec8_3> exactLength (SS SZ) $ "t" :::  Nil
-Just ("t" ::: Nil)
+*Part2.Sec8_3> exactLength (SS SZ) $ "t" :::  VNil
+Just ("t" ::: VNil)
 ```
 
 

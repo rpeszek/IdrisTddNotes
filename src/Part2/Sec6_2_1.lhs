@@ -31,8 +31,6 @@ Compared to Haskell
 > import Data.Kind (Type)
 > import GHC.TypeLits
 > import Data.Proxy
-> -- import Part2.Sec5_3_3 (SNat(..))
-> -- import Part2.Sec3_2_3 (Vect(..))
 
 __GADT solution__  
 This code is quite verbose and not very close to Idris.  Type Family solution 
@@ -55,7 +53,7 @@ gets much closer.
 > resolveAdder (SAdder f) (x ::: xs) = resolveAdder (f x) xs
 > -- this condition should not be needed but
 > -- GHC reports Pattern match(es) are non-exhaustive 
-> resolveAdder (SAdder _) Nil = error "This should be impossible"
+> resolveAdder (SAdder _) VNil = error "This should be impossible"
 >
 > {- Realigned SNat and Vect -}
 >
@@ -64,16 +62,16 @@ gets much closer.
 >  SS :: SNat (n - 1) -> SNat n
 >
 > data Vect (n::Nat) a where
->   Nil :: Vect 0 a
+>   VNil :: Vect 0 a
 >   (:::) :: a -> Vect (n - 1) a -> Vect n a
 > infixr 5 :::
 >
 > sTwo = SS (SS SZ)
-> test = resolveAdder (createAdder sTwo 0) (3 ::: 2 ::: Nil) 
+> test = resolveAdder (createAdder sTwo 0) (3 ::: 2 ::: VNil) 
 
 this seems type safe and works. The error message on type mismatch is interesting:
 ```
-*Part2.Sec6_2_1>  resolveAdder (createAdder sTwo 0) (3 ::: 2 ::: 1 ::: Nil) 
+*Part2.Sec6_2_1>  resolveAdder (createAdder sTwo 0) (3 ::: 2 ::: 1 ::: VNil) 
 <interactive>:110:15: error:
     Variable not in scope:
       createAdder :: SNat 2 -> Integer -> AdderGadt 3
@@ -154,6 +152,6 @@ Conclusions
 I am finding that using GHC.TypeLits Nat is a bit of a struggle.  I often get errors like 
 Couldn't match type ‘n’ with ‘(n + 1) - 1’.  Using constraints like 
 `n ~ ((n + 1) - 1)` does not always help (see note [idrVsHs_Part2_Sec8_2_5](idrVsHs_Part2_Sec8_2_5)). To move forward I created
-Util.NonLitsNatAndVector.hs.
+Data.CodedByHand.hs.
 
 I like Idris more and more!

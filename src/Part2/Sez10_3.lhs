@@ -34,7 +34,7 @@ I am using manually defined fractional type `Frac` in place of language build `D
 > import Data.Singletons.TH
 > import Data.Kind (Type)
 > import Data.Singletons.SuppressUnusedWarnings
-> import Util.SingVector
+> import Data.SingBased
 >
 > $(singletons [d|
 >   data Shape a = MkTriangle a a

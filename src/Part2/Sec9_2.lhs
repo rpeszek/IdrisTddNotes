@@ -27,17 +27,16 @@ Compared to Haskell
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 > 
 > module Part2.Sec9_2 where
-> import Util.SingVector
-> import Util.SingList
-> import Part2.Sec8_3
-> import Part2.Sec9_1
+> import Data.SingBased -- TODO spell out what is imported (uses Vect, Nat, List)
+> import Part2.Sec8_3 (DecEqSing(..), Dec(..))
+> import Part2.Sec9_1 (isElemSing, removeElem)
 > import Data.Singletons
 > import Data.Singletons.TH
 > import Data.Kind (Type)
 > import Data.Char (toUpper)
 
 I am trying to avoid type literals and avoid use of type level strings and fighting
-with (or learning) type level list `singletons` syntax.  Type level list (from `Util.SingList`) is used to 
+with (or learning) type level list `singletons` syntax.  Type level list (from `Data.SingBased.List`) is used to 
 mimic `ValidInput` definition from Idris.   
 This is a 'by hand', poor man's version of type level chars: 
 

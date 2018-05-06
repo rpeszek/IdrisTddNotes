@@ -24,15 +24,15 @@ which can be made implicit.
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec8_2z where
-> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), FromTL, SNatI, sNat)
+> import Data.CodedByHand (Vect(..), Nat(..), SNat(..), type (+), FromTL, SNatI, sNat)
 > import Data.Type.Equality ((:~:)(Refl))
 > import Part2.Sec8_1 (cong)
 > import Part2.Sec8_2_5 (plusZeroRightNeutral, plusSuccRightSucc, plusCommutative, myAppend)
 >
 > {- slow reverse -}
 > myReverse :: SNat n -> Vect n elem -> Vect n elem
-> myReverse _ Nil = Nil
-> myReverse (SS n) (x ::: xs) = reverseLemma n ((myReverse n xs) `myAppend` (x ::: Nil) )
+> myReverse _ VNil = VNil
+> myReverse (SS n) (x ::: xs) = reverseLemma n ((myReverse n xs) `myAppend` (x ::: VNil) )
 > 
 > reverseLemma :: SNat k -> Vect (k + ('S 'Z)) elem -> Vect (S k) elem
 > reverseLemma k result = case plusCommutative (SS SZ) k of
@@ -43,16 +43,16 @@ which can be made implicit.
 
 ghci:
 ```
-*Part2.Sec8_2> myReverse (SS (SS (SS SZ))) ("1" ::: "2" ::: "3 "::: Nil)
-"3 " ::: ("2" ::: ("1" ::: Nil))
-*Part2.Sec8_2> myReverse' ("1" ::: "2" ::: "3 "::: Nil)
-"3 " ::: ("2" ::: ("1" ::: Nil))
+*Part2.Sec8_2> myReverse (SS (SS (SS SZ))) ("1" ::: "2" ::: "3 "::: VNil)
+"3 " ::: ("2" ::: ("1" ::: VNil))
+*Part2.Sec8_2> myReverse' ("1" ::: "2" ::: "3 "::: VNil)
+"3 " ::: ("2" ::: ("1" ::: VNil))
 ```
 
 > myReverse2 :: SNat n -> Vect n a -> Vect n a
-> myReverse2 n xs = reverse' SZ n Nil xs
+> myReverse2 n xs = reverse' SZ n VNil xs
 >   where reverse' :: SNat n -> SNat m -> Vect n a -> Vect m a -> Vect (n+m) a
->         reverse' n _ acc Nil = reverseLemma_nil n acc
+>         reverse' n _ acc VNil = reverseLemma_nil n acc
 >         reverse' nacc (SS nxs) acc (x ::: xs)
 >                       = reverseLemma_xs nacc nxs $ reverse' (SS nacc) nxs (x ::: acc) xs
 >
@@ -64,18 +64,18 @@ ghci:
 > reverseLemma_xs n1 len xs = case plusSuccRightSucc n1 len of 
 >                       Refl -> xs
 >
-> test = myReverse2 (SS (SS (SS SZ))) ("1" ::: "2" ::: "3 "::: Nil)
+> test = myReverse2 (SS (SS (SS SZ))) ("1" ::: "2" ::: "3 "::: VNil)
 >
 > {- implicit version, using SNatI n constraint instead of SNat n parameter -}
 > myReverse2' :: SNatI n => Vect n a -> Vect n a
 > myReverse2' = myReverse2 sNat
 >
-> test' = myReverse2' ("1" ::: "2" ::: "3 "::: Nil)
+> test' = myReverse2' ("1" ::: "2" ::: "3 "::: VNil)
 
 ghci
 ```
 *Part2.Sec8_2> test
-"3 " ::: ("2" ::: ("1" ::: Nil))
+"3 " ::: ("2" ::: ("1" ::: VNil))
 *Part2.Sec8_2> test'
-"3 " ::: ("2" ::: ("1" ::: Nil))
+"3 " ::: ("2" ::: ("1" ::: VNil))
 ```

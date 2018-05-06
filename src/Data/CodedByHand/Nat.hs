@@ -5,12 +5,12 @@
    , TypeOperators 
    , TypeFamilies
    , StandaloneDeriving
-   , RankNTypes
+   , Rank2Types
    , UndecidableInstances -- needed to define ToTL and FromTL 
 #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
-module Util.NonLitsNatAndVector where
+module Data.CodedByHand.Nat where
 import qualified GHC.TypeLits as TL
   
 data Nat = Z | S Nat deriving Show
@@ -67,17 +67,6 @@ class SNatI (n :: Nat) where
 instance SNatI 'Z where sNat = SZ
 instance SNatI k => SNatI ('S k) where sNat = SS sNat
 
-data Vect (n::Nat) a where
-  Nil :: Vect 'Z a
-  (:::) :: a -> Vect n a -> Vect ('S n) a
-infixr 5 :::
-
-deriving instance Show a => Show (Vect n a)
-
-vlength :: Vect n a -> SNat n  
-vlength Nil = SZ
-vlength (x ::: xs) = SS (vlength xs)
-
 {- Mimics Idris -}
 type family (m :: Nat) + (n :: Nat) :: Nat where
    Z + right = right 
@@ -90,27 +79,3 @@ type family ToTL (n :: Nat) :: TL.Nat where
 type family FromTL (n :: TL.Nat) :: Nat where
     FromTL 0 = Z
     FromTL n = S (FromTL (n TL.- 1))
-
-{-| reification type, I decided to exclude SNat, since I can recover it using
-vlenght, this makes is slightly different than the dependent pair concept in Idris -}
-data SomeVect a where
-   SomeVect :: {- SNat n -> -} Vect n a -> SomeVect a
-
-deriving instance Show a => Show (SomeVect a)
-
-{-| CPS style reification -}
-withSomeVect :: SomeVect a -> (forall n.Vect n a -> r) -> r
-withSomeVect (SomeVect vec) f = f vec
-
-listToSomeVect :: [a] -> SomeVect a
-listToSomeVect [] = SomeVect Nil
-listToSomeVect (x : xs) 
-      = case listToSomeVect xs of SomeVect rr -> SomeVect (x ::: rr) 
-
-vectToList :: Vect n a -> [a]
-vectToList Nil = []
-vectToList (x ::: xs) = x : vectToList xs
-
-listWithVect :: [a] -> (forall n. Vect n a -> r) -> r
-listWithVect xs f = case listToSomeVect xs of
-      SomeVect vxs -> f vxs 

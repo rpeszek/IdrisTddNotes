@@ -34,7 +34,7 @@ In the future, I may decide to play with this code using `~`.
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec8_1 where
-> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), vlength)
+> import Data.CodedByHand (Vect(..), Nat(..), SNat(..), type (+), vlength)
 > import Data.Type.Equality ((:~:)(Refl))
 > 
 > {- mimics concept of type level function in Idris-}

@@ -11,7 +11,7 @@ Idris code example
 
 Compared to Haskell
 -------------------
-I am using only `Util.SingVector` moving forward. 
+I am using only `Data.SingBased` moving forward. 
 
 > {-# LANGUAGE 
 >     TypeOperators
@@ -31,16 +31,15 @@ I am using only `Util.SingVector` moving forward.
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec9_1 where
-> import Util.SingVector (Nat(..), Vect(..), SVect(..), type SNat, type Sing(..), SomeKnownSizeVect(..))
-> import Util.SingVector (someKnownSizeVectToVect, sVectToVect, s0, s1, s2, s3)
-> import qualified Util.SingVector as V2
-> import Util.SingVector (type FromTL)
+> import Data.SingBased.Nat (Nat(..), type SNat, type Sing(..), s0, s1, s2, s3, type FromTL)
+> import Data.SingBased.Vect (Vect(..), SVect(..), SomeKnownSizeVect(..))
+> import Data.SingBased (someKnownSizeVectToVect, sVectToVect)
 > import GHC.TypeLits hiding (Nat)
 > import Data.Kind (Type)
 > import Data.Void
 > import Data.Type.Equality
 > import Data.Singletons
-> import Part2.Sec8_3 
+> import Part2.Sec8_3 (Dec(..), DecEqSing(..), DecEq(..))
 
 List `Elem`
 ----------
@@ -79,10 +78,10 @@ The same approach works for Vectors
 >         VThere :: VElem x xs -> VElem x (y '::: xs)
 > deriving instance Show (VElem a b)
 >
-> twoInVect :: VElem 2 (1 '::: 2 '::: 3 '::: 'Nil)
+> twoInVect :: VElem 2 (1 '::: 2 '::: 3 '::: 'VNil)
 > twoInVect = VThere VHere
 >
-> strInVect :: VElem "str" ("hello" '::: "str" '::: 'Nil)
+> strInVect :: VElem "str" ("hello" '::: "str" '::: 'VNil)
 > strInVect = VThere VHere
 
 `Uninhabited`
@@ -162,35 +161,35 @@ I had somewhat less luck mimicking Idris's `removeElem` using type families
 >   RemoveElem val (y '::: ys) ('VThere later) = y '::: RemoveElem val ys later
 
 ```
-*Part2.Sec9_1> :kind! (RemoveElem "str" ("hello" '::: "str" '::: 'Nil) ('VThere 'VHere))
-(RemoveElem "str" ("hello" '::: "str" '::: 'Nil) ('VThere 'VHere)) :: Vect
+*Part2.Sec9_1> :kind! (RemoveElem "str" ("hello" '::: "str" '::: 'VNil) ('VThere 'VHere))
+(RemoveElem "str" ("hello" '::: "str" '::: 'VNil) ('VThere 'VHere)) :: Vect
                                                                         ('S 'Z) Symbol
-= "hello" '::: 'Nil
+= "hello" '::: 'VNil
 
-*Part2.Sec9_1> :kind! (RemoveElem "str1" ("hello" '::: "str" '::: 'Nil) ('VThere 'VHere))
+*Part2.Sec9_1> :kind! (RemoveElem "str1" ("hello" '::: "str" '::: 'VNil) ('VThere 'VHere))
 
 <interactive>:1:52: error:
-    • Expected kind ‘VElem "str1" ("hello" '::: ("str" '::: 'Nil))’,
+    • Expected kind ‘VElem "str1" ("hello" '::: ("str" '::: 'VNil))’,
         but ‘'VThere 'VHere’ has kind ‘VElem
-                                         "str1" ("hello" '::: ("str1" '::: 'Nil))’
+                                         "str1" ("hello" '::: ("str1" '::: 'VNil))’
     • In the third argument of ‘RemoveElem’, namely
         ‘( 'VThere  'VHere)’
       In the type ‘(RemoveElem "str1" ("hello"
-                                     ::: ("str" :::  'Nil)) ( 'VThere  'VHere))’
+                                     ::: ("str" :::  'VNil)) ( 'VThere  'VHere))’
 ```
 Good! 
  
 The following code is not very useful (similarly to Idris `RemoveElem` is not resolved)
 
 > data Test (a :: Vect ('S 'Z) Symbol) where
->    Test :: Test (RemoveElem "str" ("hello" '::: "str" '::: 'Nil) strInVect) 
+>    Test :: Test (RemoveElem "str" ("hello" '::: "str" '::: 'VNil) strInVect) 
 
 `Test` compiles (because size is reduced by type family, but there is no evidence of type family actually working.
 
 Unlike Idris, the following also compiles :( 
 
 > data TestWrong (a :: Vect ('S 'Z) Symbol) where
->    TestWrong :: TestWrong (RemoveElem "str1" ("hello" '::: "str" '::: 'Nil) strInVect)  
+>    TestWrong :: TestWrong (RemoveElem "str1" ("hello" '::: "str" '::: 'VNil) strInVect)  
 
 TODO I need to study these limitations more.
 
@@ -198,7 +197,7 @@ Interestingly `RemoveElem` also complies when I include the absurd case!
 
 > type family RemoveElem' (val :: a) (xs :: Vect (S n) a) (prf :: VElem val xs) :: Vect n a where
 >   RemoveElem' val (val '::: xs) 'VHere = xs
->   RemoveElem' val (y '::: 'Nil) ('VThere later) = VoidF (UninhabitedF later)
+>   RemoveElem' val (y '::: 'VNil) ('VThere later) = VoidF (UninhabitedF later)
 >   RemoveElem' val (y '::: ys) ('VThere later) = y '::: RemoveElem' val ys later
 >
 
@@ -206,13 +205,13 @@ I can type the not logical case to invoke the uninhabited case for `RemoveElem'`
 and the corresponding case is just not reduced for `RemoveElem`  
 ghci:
 ```
-*Part2.Sec9_1> :kind! (RemoveElem' "na" ("str" '::: 'Nil) ('VThere _))
-(RemoveElem' "na" ("str" '::: 'Nil) ('VThere _)) :: Vect 'Z Symbol
+*Part2.Sec9_1> :kind! (RemoveElem' "na" ("str" '::: 'VNil) ('VThere _))
+(RemoveElem' "na" ("str" '::: 'VNil) ('VThere _)) :: Vect 'Z Symbol
 = VoidF (UninhabitedF _)
 
-*Part2.Sec9_1> :kind! (RemoveElem "na" ("str" '::: 'Nil) ('VThere _))
-(RemoveElem "na" ("str" '::: 'Nil) ('VThere _)) :: Vect 'Z Symbol
-= RemoveElem "na" ("str" '::: 'Nil) ('VThere _)
+*Part2.Sec9_1> :kind! (RemoveElem "na" ("str" '::: 'VNil) ('VThere _))
+(RemoveElem "na" ("str" '::: 'VNil) ('VThere _)) :: Vect 'Z Symbol
+= RemoveElem "na" ("str" '::: 'VNil) ('VThere _)
 ```
 I cannot evaluate similar nonsense in Idris   
 idris repl 
@@ -228,7 +227,7 @@ idris repl
 
 The `notInNil` uses `EmptyCase` instead of the `impossible` Idris keyword
 
-> notInNil :: VElem ax 'Nil -> Void
+> notInNil :: VElem ax 'VNil -> Void
 > notInNil x = case x of { }
 >
 > notInTail ::  (VElem ax xs -> Void) ->

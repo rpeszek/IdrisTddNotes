@@ -40,11 +40,9 @@ Compared to Haskell
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sez10_1 where
-> import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger, sHalf)
-> import Util.SingList (List(..), type Sing(..))
-> import qualified Util.SingList as L
-> import Part2.Sec9_1
-> import Part2.Sec9_2
+> import Data.SingBased.Nat (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger, sHalf)
+> import Data.SingBased.List (List(..), type Sing(..))
+> import qualified Data.SingBased.List as L
 > import qualified Part2.Sec8_3 as P
 > import Data.Singletons
 > import Data.Singletons.TH
@@ -165,7 +163,7 @@ ghci:
 [LCons Z (LCons Z LNil),LCons (S Z) (LCons (S Z) LNil)]
 ```
 
-Unfortunately the standard `merge` function (see `Util.SingList`) does not lift easily with `singletons`. 
+Unfortunately the standard `merge` function (see `Data.SingBased.List`) does not lift easily with `singletons`. 
 SomeSing needs to be used in the result type to make it work
 
 > sMerge :: forall (xs :: List a) (ys :: List a). (SingKind a, Ord (Demote a)) => 

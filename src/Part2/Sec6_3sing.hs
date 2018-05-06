@@ -24,8 +24,7 @@ import Data.Singletons.TH
 import Control.Applicative ((<|>))
 import Data.Monoid ((<>))
 import Data.Kind (Type)
--- import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), UnknownNat(..), sNatToUnknownNat, unknownNatToInteger)
-import Util.SingVector (Vect(..), Nat(..), SNat(..), Sing(..), someNatToInteger) 
+import Data.SingBased (Vect(..), Nat(..), SNat(..), Sing(..), someNatToInteger) 
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as CH8
 import Util.AttoparsecUtil (optional, spaces, between, parseAll)
@@ -108,7 +107,7 @@ display SSInt item =  CH8.pack . show $ item
 display (SSCons sch1 sch2) (item1, item2) = display sch1 item1 <> " " <> display sch2 item2
  
 getvelem :: Int -> Vect n a -> Maybe a
-getvelem _ Nil = Nothing
+getvelem _ VNil = Nothing
 getvelem 0 (x ::: _) = Just x
 getvelem i (_ ::: xs) = getvelem (i - 1) xs
 
@@ -126,7 +125,7 @@ getEntry pos store@(MkDataStore ss _ vect)  =
 -- slight diff in pattern match using SomeSing SZ
 setSchema :: DataStore asch -> SSchema sch -> Maybe (DataStore sch)
 setSchema store schema = case size store of
-         SomeSing SZ -> Just (MkDataStore schema SZ Nil)
+         SomeSing SZ -> Just (MkDataStore schema SZ VNil)
          _  -> Nothing 
 
 -- unchanged
@@ -137,7 +136,7 @@ addToStore (MkDataStore schema size elems) newitem
     -- I had to bring type level schema and size evidence to make it work
     -- Couldn't match type ‘n’ with ‘(n + 1) - 1’ when using Part2.Sec6_2_1 definitions
     addToData ::  SSchema sc -> SchemaType sc -> Sing oldsize -> Vect oldsize (SchemaType sc) -> Vect ('S oldsize) (SchemaType sc)
-    addToData schema newitem SZ Nil = newitem ::: Nil
+    addToData schema newitem SZ VNil = newitem ::: VNil
     addToData schema newitem (SS n) (item ::: items) = item ::: addToData schema newitem n items
 
 {- parser logic is the same -}
@@ -205,7 +204,7 @@ processInput (MkUnknownStore store) input
                 Right Quit -> Nothing
 
 initDs :: DataStore 'SString
-initDs = MkDataStore SSString SZ Nil
+initDs = MkDataStore SSString SZ VNil
 
 sec6_3sing :: IO ()
 sec6_3sing = replWith (MkUnknownStore initDs) "Command: " processInput

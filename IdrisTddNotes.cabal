@@ -32,9 +32,13 @@ library
       , bytestring
       , singletons
   exposed-modules:
-      Util.NonLitsNatAndVector
-      , Util.SingVector
-      , Util.SingList
+      Data.SingBased.Vect
+      , Data.SingBased.Nat
+      , Data.SingBased
+      , Data.CodedByHand.Vect
+      , Data.CodedByHand.Nat
+      , Data.CodedByHand
+      , Data.SingBased.List
       , Util.AttoparsecUtil
       , Part1.Sec1_4_5
       , Part1.Sec2_2_2

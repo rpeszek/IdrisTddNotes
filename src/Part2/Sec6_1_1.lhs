@@ -46,7 +46,7 @@ Idris seems much simpler.
 > sumFirst list = sum (map fst list)
 >
 > tri :: Polygon 3
-> tri = (0.0, 0.0) ::: ((3.0, 0.0) ::: ((0.0, 4.0) ::: Nil))
+> tri = (0.0, 0.0) ::: ((3.0, 0.0) ::: ((0.0, 4.0) ::: VNil))
 > 
 > type PolygonUnk = VectUnknown Position
 > 
@@ -65,6 +65,6 @@ Idris seems much simpler.
 > sumFirst' list = sum (map fst list)
 >
 > tri' :: Polygon' 3
-> tri' = (0.0, 0.0) ::: ((3.0, 0.0) ::: ((0.0, 4.0) ::: Nil))
+> tri' = (0.0, 0.0) ::: ((3.0, 0.0) ::: ((0.0, 4.0) ::: VNil))
 
 Idris shines!

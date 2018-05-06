@@ -14,8 +14,8 @@
       , StandaloneDeriving
       , DeriveFunctor
 #-}
-module Util.SingList where
-import Util.SingVector
+module Data.SingBased.List where
+import Data.SingBased.Nat
 import Data.Singletons.TH
 import Data.Singletons.Prelude
 import Data.Ord

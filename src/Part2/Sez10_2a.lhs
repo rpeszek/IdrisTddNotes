@@ -29,9 +29,9 @@ A straightforward conversion of Idris code has quadratic cost (Idris code has li
 >
 > module Part2.Sez10_2a where
 > import Data.Type.Equality
-> import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger)
-> import Util.SingList (List(..), type Sing(..))
-> import qualified Util.SingList as L
+> import Data.SingBased.Nat (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger)
+> import Data.SingBased.List (List(..), type Sing(..))
+> import qualified Data.SingBased.List as L
 > import Data.Singletons
 >
 > data SnocList (xs :: List a) where

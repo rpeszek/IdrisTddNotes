@@ -27,9 +27,9 @@ Compared to Haskell
 >
 > module Part2.Sez10_2b where
 > import Data.Type.Equality
-> import Util.SingVector (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger)
-> import Util.SingList (List(..), type Sing(..))
-> import qualified Util.SingList as L
+> import Data.SingBased.Nat (Nat(..), type SNat, type Sing(..), integerToNat, natToInteger)
+> import Data.SingBased.List (List(..), type Sing(..))
+> import qualified Data.SingBased.List as L
 > import Data.Singletons
 > import Part2.Sez10_2a (SnocList(..), snocList)
 

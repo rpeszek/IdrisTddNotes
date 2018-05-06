@@ -50,7 +50,7 @@ This version was coded 'by-hand'. Using `singletons` is a bit less boilerplate
 
 *  I am using `attoparsec` just to play with it, I may created a version using the more commonly used `parsec` library
 in the future. Obviously, the existence of super nice parser (and other) libraries is a big plus for Haskell.
-*  GHC.TypeLits based vectors are hard to work with and I moved to using my own implementation `Util.NonLitsNatAndVector`
+*  GHC.TypeLits based vectors are hard to work with and I moved to using my own implementation `Data.CodedByHand`
 *  Implementing polymorphic setSchema while keeping addSchema and getEntry type safe was hard
 *  Tuples in Haskell are yucky
 *  It is hard to implement locally scoped dependently typed helper functions in Haskell
@@ -86,7 +86,7 @@ in the future. Obviously, the existence of super nice parser (and other) librari
 > -- when trying to use TypeLits based Vect
 > -- import GHC.TypeLits
 > -- import Part2.Sec6_2_1 (Vect(..), SNat(..), UnknownNat(..), sNatToUnknownNat, unknownNatToInteger)
-> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), SomeNat(..), sNatToSomeNat, someNatToInteger)
+> import Data.CodedByHand (Vect(..), Nat(..), SNat(..), SomeNat(..), sNatToSomeNat, someNatToInteger)
 > import Data.ByteString (ByteString)
 > import qualified Data.ByteString as B
 > import qualified Data.ByteString.Char8 as CH8
@@ -246,11 +246,11 @@ to implement `addToStore`
 Instead of implementing Fin type (which I plan to do later) getEntry
 is coded directly in not as type safe way:
 
-> {-| getvelem is total because at some point vector will reduce to Nil 
+> {-| getvelem is total because at some point vector will reduce to VNil 
 >     returning Just value only if 0 index is encountered during recursion
 > -}
 > getvelem :: Int -> Vect n a -> Maybe a
-> getvelem _ Nil = Nothing
+> getvelem _ VNil = Nothing
 > getvelem 0 (x ::: _) = Just x
 > getvelem i (_ ::: xs) = getvelem (i - 1) xs
 >
@@ -267,7 +267,7 @@ is coded directly in not as type safe way:
 >
 > setSchema :: DataStore asch -> SSchema sch -> Maybe (DataStore sch)
 > setSchema store schema = case size store of
->           SomeNat SZ -> Just (MkDataStore schema SZ Nil)
+>           SomeNat SZ -> Just (MkDataStore schema SZ VNil)
 >           SomeNat _  -> Nothing 
 
 One thing that Idris makes easier is defining of locally scoped `where` functions.
@@ -282,7 +282,7 @@ already in scope.
 >      -- I had to bring type level schema and size evidence to make it work
 >      -- Couldn't match type ‘n’ with ‘(n + 1) - 1’ when using Part2.Sec6_2_1 definitions
 >      addToData ::  SSchema sc -> SchemaType sc -> SNat oldsize -> Vect oldsize (SchemaType sc) -> Vect ('S oldsize) (SchemaType sc)
->      addToData schema newitem SZ Nil = newitem ::: Nil
+>      addToData schema newitem SZ VNil = newitem ::: VNil
 >      addToData schema newitem (SS n) (item ::: items) = item ::: addToData schema newitem n items
 
 
@@ -365,10 +365,10 @@ Cloned from Idris `replWith` (it is somewhat less flexible, prints and reads who
 >                      Nothing -> pure ()
 >
 > initDs :: DataStore 'SString
-> initDs = MkDataStore SSString SZ Nil
+> initDs = MkDataStore SSString SZ VNil
 >
 > testDs :: DataStore ('SInt :+ 'SString)
-> testDs = MkDataStore (SSInt `SSCons` SSString) SZ Nil
+> testDs = MkDataStore (SSInt `SSCons` SSString) SZ VNil
 >
 > sec6_3 :: IO ()
 > sec6_3 = replWith (MkUnknownStore initDs) "Command: " processInput

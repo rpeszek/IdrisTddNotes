@@ -25,8 +25,8 @@ Compared to Haskell
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module Part2.Sec8_2_5 where
-> import Util.NonLitsNatAndVector (Vect(..), Nat(..), SNat(..), type (+), SNatI, sNat, SomeVect(..))
-> import qualified Util.NonLitsNatAndVector as V
+> import Data.CodedByHand (Vect(..), Nat(..), SNat(..), type (+), SNatI, sNat, SomeVect(..))
+> import qualified Data.CodedByHand as V
 > import Data.Type.Equality ((:~:)(Refl), sym)
 > import Part2.Sec8_1 (cong)
 >
@@ -35,7 +35,7 @@ Compared to Haskell
 > testAppend xs ys fapp = V.listWithVect xs (\vxs -> V.listWithVect ys (\vys -> SomeVect $ fapp vxs vys))
 >
 > myAppend :: forall n m a. Vect n a -> Vect m a -> Vect (n + m) a
-> myAppend Nil v2 = v2
+> myAppend VNil v2 = v2
 > myAppend (x ::: xs) v2 = x ::: (myAppend xs v2)
 
 I can do that easily enough
@@ -52,7 +52,7 @@ Or I can just do this:
 > myAppend2Cheat :: Vect n a -> Vect m a -> Vect (m + n) a
 > myAppend2Cheat = flip myAppend
 
-The best approach seems to use `:~:` and it mimics Idris.
+The best approach seems to use `:~:` mimicking Idris.
 
 > myAppend3 :: SNat n -> SNat m -> Vect n a -> Vect m a -> Vect (m + n) a
 > myAppend3 n m = case plusCommutative n m of Refl -> myAppend 
@@ -74,7 +74,7 @@ checks out:
 
 > myAppend4 :: SNat n -> SNat m -> Vect n a -> Vect m a -> Vect (m + n) a
 > -- myAppend4' = myAppend4 plusZeroRightNeutral plusSuccRightSucc
-> myAppend4 _ m Nil v2 = case plusZeroRightNeutral m of 
+> myAppend4 _ m VNil v2 = case plusZeroRightNeutral m of 
 >        Refl -> v2
 > myAppend4 (SS n) m (x ::: xs) v2 = let res = myAppend4 n m xs v2 
 >     in case plusSuccRightSucc m n of
@@ -88,40 +88,40 @@ checks out:
 > plusSuccRightSucc SZ right        = Refl
 > plusSuccRightSucc (SS left) right = cong $ plusSuccRightSucc left right 
 > 
-> test2 = myAppend2 ("1" ::: "2" ::: Nil) ("3" ::: Nil)
-> test4 = myAppend4 (SS (SS SZ)) (SS SZ) ("1" ::: "2" ::: Nil) ("3" ::: Nil)
+> test2 = myAppend2 ("1" ::: "2" ::: VNil) ("3" ::: VNil)
+> test4 = myAppend4 (SS (SS SZ)) (SS SZ) ("1" ::: "2" ::: VNil) ("3" ::: VNil)
 >
 > {-| implicit version, SNatI n  is like SingI provides implicit evidence replacing SNat n -}
 > myAppend4' :: (SNatI n, SNatI m) => Vect n a -> Vect m a -> Vect (m + n) a
 > myAppend4' = myAppend4 sNat sNat 
 >
-> test4' = myAppend4' ("1" ::: "2" ::: Nil) ("3" ::: Nil)
+> test4' = myAppend4' ("1" ::: "2" ::: VNil) ("3" ::: VNil)
 >
 > myAppend4'' ::  Vect n a -> Vect m a -> Vect (m + n) a
 > myAppend4'' v1 v2 = myAppend4 (V.vlength v1) (V.vlength v2) v1 v2
 >
-> test4'' = myAppend4'' ("1" ::: "2" ::: Nil) ("3" ::: Nil)
+> test4'' = myAppend4'' ("1" ::: "2" ::: VNil) ("3" ::: VNil)
 
 
 ghci:
 ```
 *Part2.Sec8_2_5> test2
-"1" ::: ("2" ::: ("3" ::: Nil))
+"1" ::: ("2" ::: ("3" ::: VNil))
 *Part2.Sec8_2_5> test4
-"1" ::: ("2" ::: ("3" ::: Nil))
+"1" ::: ("2" ::: ("3" ::: VNil))
 *Part2.Sec8_2_5> test4'
-"1" ::: ("2" ::: ("3" ::: Nil))
+"1" ::: ("2" ::: ("3" ::: VNil))
 *Part2.Sec8_2_5> test4''
-"1" ::: ("2" ::: ("3" ::: Nil))
+"1" ::: ("2" ::: ("3" ::: VNil))
 ```
 Here is the runtime test that converts regular list and treat it as a vector:
 
 ghci:
 ```
 *Part2.Sec8_2_5> testAppend [1,2] [6] myAppend4''
-SomeVect (1 ::: (2 ::: (6 ::: Nil)))
+SomeVect (1 ::: (2 ::: (6 ::: VNil)))
 *Part2.Sec8_2_5> testAppend [1,2] [6] myAppend3''
-SomeVect (1 ::: (2 ::: (6 ::: Nil)))
+SomeVect (1 ::: (2 ::: (6 ::: VNil)))
 ```
 As could be expected the programmable `:~:` works great!  
 Idris approach with `rewrite` is just much more expressive and simpler.
