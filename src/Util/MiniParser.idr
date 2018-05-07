@@ -127,14 +127,14 @@ unless q p = P (\inp => case parse q inp of
                )
 
 exactly :  (n : Nat) -> Parser a  -> Parser (Vect n a)
-exactly Z _      = pure VNil
+exactly Z _      = pure Nil
 exactly (S n) p = [| p :: exactly n p |]
 
 covering
 many : Parsable a => Parser a -> Parser (List a)
 many p = do
   (Just i) <- optional p
-    | Nothing => pure VNil
+    | Nothing => pure Nil
   [| pure i :: many p |] 
 
 covering
@@ -149,7 +149,7 @@ spaces = many1 (char ' ')
 
 covering
 until : Parser a -> Parser a -> Parser (List a)
-until to p = map reverse (untilrec to p VNil)
+until to p = map reverse (untilrec to p Nil)
    where  
     partial
     untilrec : Parser a -> Parser a -> List a -> Parser (List a) 

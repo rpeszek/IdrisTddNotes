@@ -26,7 +26,8 @@ import Part2.Sez10_1
 import Part2.Sez10_2a
 import Part2.Sez10_2b     
 import Part2.Sez10_2e     
-import Part2.Sez10_3     
+import Part2.Sez10_3
+import Play.FunctorLaws      
 
 main : IO ()
 main = sec6_3b
