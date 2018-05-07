@@ -114,32 +114,32 @@ _I have implemented `SVect` by hand._
 
 > removeElemDem :: forall (n :: Nat) (val :: a) (xs :: Vect (S n) a) . SingKind a =>
 >       SNat n -> Sing val ->  SVect xs -> VElem val xs -> Vect n (Demote a)
-> removeElemDem _ val (_ `SCons` ys) VHere = sVectToVect ys
-> removeElemDem (SS n1) val (y `SCons` ys) (VThere later) = (fromSing y) ::: (removeElemDem n1 val ys later)
+> removeElemDem _ val (_ `SVCons` ys) VHere = sVectToVect ys
+> removeElemDem (SS n1) val (y `SVCons` ys) (VThere later) = (fromSing y) ::: (removeElemDem n1 val ys later)
 > {- While Idris knows that the following case is invalid, 
 >  GHC picks is up as error: Pattern match(es) are non-exhaustive
 >  attempt to implement it as `absurd' later` causes compilation errors
 > -}
-> removeElemDem SZ val (SCons _ SNil) (VThere later) = undefined -- absurd' later
+> removeElemDem SZ val (SVCons _ SVNil) (VThere later) = undefined -- absurd' later
 >
-> testRemoveElemDem = removeElemDem s0 s3 (SCons s3 SNil) VHere
+> testRemoveElemDem = removeElemDem s0 s3 (SVCons s3 SVNil) VHere
 
 This version does not `Demote a` and is better and is closer to Idris:
 
 > removeElem :: forall (n :: Nat) (val :: a) (xs :: Vect (S n) a) . SingKind a =>
 >       SNat (S n) -> Sing val ->  SVect xs -> VElem val xs -> SomeKnownSizeVect n a
-> removeElem (SS n) val (_ `SCons` ys) VHere = MkSomeKnownSizeVect n ys
-> removeElem (SS (SS n)) val (y `SCons` ys) (VThere later) =
+> removeElem (SS n) val (_ `SVCons` ys) VHere = MkSomeKnownSizeVect n ys
+> removeElem (SS (SS n)) val (y `SVCons` ys) (VThere later) =
 >       let res = removeElem (SS n) val ys later
 >       in case res of 
->           MkSomeKnownSizeVect _ rys -> MkSomeKnownSizeVect (SS n) $ SCons y rys
+>           MkSomeKnownSizeVect _ rys -> MkSomeKnownSizeVect (SS n) $ SVCons y rys
 > {- The absurd case remains, GHC does not know that we are dealing with one element list,
->   for example replacing `SCons _ _` with `SCons _ SNil` would cause Pattern match(es) are non-exhaustive
+>   for example replacing `SVCons _ _` with `SVCons _ SVNil` would cause Pattern match(es) are non-exhaustive
 >   error
 > -}
-> removeElem (SS SZ) val (SCons _ _) (VThere _) = undefined -- absurd' later
+> removeElem (SS SZ) val (SVCons _ _) (VThere _) = undefined -- absurd' later
 >
-> testRemoveElem = removeElem s1 s3 (SCons s3 SNil) VHere
+> testRemoveElem = removeElem s1 s3 (SVCons s3 SVNil) VHere
 
 ghci:
 ```
@@ -238,12 +238,12 @@ The `notInNil` uses `EmptyCase` instead of the `impossible` Idris keyword
 The following, unfortunately, does not seem to work (TODO)
 
 > isElem :: DecEq (Sing :: a -> Type) => Sing a -> SVect xs -> Dec (VElem a xs)
-> isElem val SNil = No notInNil
-> isElem val (SCons x xs) = undefined
+> isElem val SVNil = No notInNil
+> isElem val (SVCons x xs) = undefined
 
 use of `case decEq val x` or even `case decEq val val` on the RHS of the second case split
 ```
-isElem val (SCons x xs) = case decEq val val of
+isElem val (SVCons x xs) = case decEq val val of
         Yes Refl -> undefined 
         No notHere -> undefined
 ```
@@ -256,8 +256,8 @@ ghc error:
 But narrowing the scope to just `Nat` (from `Sing a` to `SNat n`) makes it work
 
 > isElemNat :: SNat n -> SVect xs -> Dec (VElem n xs)
-> isElemNat val SNil = No notInNil
-> isElemNat val (SCons x xs) = case decEq val x of
+> isElemNat val SVNil = No notInNil
+> isElemNat val (SVCons x xs) = case decEq val x of
 >        Yes Refl -> Yes VHere
 >        No notHere -> case isElemNat val xs of
 >           Yes prf -> Yes (VThere prf)
@@ -265,7 +265,7 @@ But narrowing the scope to just `Nat` (from `Sing a` to `SNat n`) makes it work
 
 ghci:
 ```
-*Part2.Sec9_1> isElemNat s1 (SCons s1 SNil)
+*Part2.Sec9_1> isElemNat s1 (SVCons s1 SVNil)
 Yes
 ```
 and the code is the same as in Idris.
@@ -274,8 +274,8 @@ I can also fix this using `DecEqSing`, which is probably closer to how I should 
 
 > isElemSing :: DecEqSing k => forall n (a :: k) (xs :: Vect n k) . 
 >                 Sing a -> SVect xs -> Dec (VElem a xs)
-> isElemSing val SNil = No notInNil
-> isElemSing val (SCons x xs) = case decEqSing val x of
+> isElemSing val SVNil = No notInNil
+> isElemSing val (SVCons x xs) = case decEqSing val x of
 >        Yes Refl -> Yes VHere
 >        No notHere -> case isElemSing val xs of
 >           Yes prf -> Yes (VThere prf)
@@ -283,6 +283,6 @@ I can also fix this using `DecEqSing`, which is probably closer to how I should 
 
 ghci:
 ```
-*Part2.Sec9_1> isElemSing s1 (SCons s1 SNil)
+*Part2.Sec9_1> isElemSing s1 (SVCons s1 SVNil)
 Yes
 ```

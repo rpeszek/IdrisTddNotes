@@ -1,7 +1,3 @@
-{-
-"Singling of literal patterns not yet supported"
-TODO move Nat into a separate module
--}
 
 {-# LANGUAGE 
       KindSignatures
@@ -10,7 +6,7 @@ TODO move Nat into a separate module
       -- , PolyKinds
       , TypeInType -- needed for SVect
       , TypeOperators 
-      -- , TypeFamilies
+      , TypeFamilies
       , StandaloneDeriving
       , ScopedTypeVariables
       -- , TypeSynonymInstances
@@ -66,17 +62,23 @@ data VectK (n :: Nat) (a :: k) where
 
 -}
 
-{-| Currently, I do not know how to do singletons for the Vect itself -}
 data SVect (v :: Vect n a) where
-  SNil :: SVect  'VNil
-  SCons :: Sing a -> SVect xs -> SVect (a '::: xs)
+  SVNil :: SVect  'VNil
+  SVCons :: Sing a -> SVect xs -> SVect (a '::: xs)
 
 sVectToVect :: forall a (n :: Nat) (xs :: Vect n a) . SingKind a => SVect xs -> Vect n (Demote a)
-sVectToVect SNil = VNil
-sVectToVect (SCons sa sxs) = (fromSing sa) ::: sVectToVect sxs
+sVectToVect SVNil = VNil
+sVectToVect (SVCons sa sxs) = (fromSing sa) ::: sVectToVect sxs
 
 data SomeKnownSizeVect (n:: Nat) a where
    MkSomeKnownSizeVect :: SNat n -> SVect (v :: Vect n a) -> SomeKnownSizeVect n a
 
 someKnownSizeVectToVect :: SingKind a => SomeKnownSizeVect n a -> Vect n (Demote a)
 someKnownSizeVectToVect ksv = case ksv of MkSomeKnownSizeVect _ sv -> sVectToVect sv
+
+type family VOneElem (x :: a) :: Vect (S Z) a where
+  VOneElem x = x '::: 'VNil
+
+type family VAppend (v1 :: Vect n a) (v2 :: Vect m a) :: Vect (Plus n m) a where
+  VAppend 'VNil xs = xs
+  VAppend (y '::: ys) xs = y '::: VAppend ys xs

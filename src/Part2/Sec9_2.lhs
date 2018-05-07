@@ -164,7 +164,7 @@ The type safe list (`['T', 'E', 'S']` in Idris) is ugly but I made it!
 
 > sec_9_2 :: IO()
 > sec_9_2 
->     = do result <- game' (MkWordState s2 s3 "Test" (SCT `SCons` (SCE `SCons` (SCS `SCons` SNil))))
+>     = do result <- game' (MkWordState s2 s3 "Test" (SCT `SVCons` (SCE `SVCons` (SCS `SVCons` SVNil))))
 >          case result of
 >                Lost (MkWordState _ _ word missing) ->
 >                   putStrLn ("You lose. The word was " ++ word)
