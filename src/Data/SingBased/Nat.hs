@@ -17,6 +17,7 @@ TODO move Nat into a separate module
       , TypeSynonymInstances
       , Rank2Types
 #-}
+{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
 module Data.SingBased.Nat where
 import Numeric.Natural
@@ -77,6 +78,9 @@ type family ToTL (n :: Nat) :: TL.Nat where
 type family FromTL (n :: TL.Nat) :: Nat where
     FromTL 0 = Z
     FromTL n = S (FromTL (n TL.- 1))
+
+type family (m :: Nat) + (n :: Nat) :: Nat where
+   left + right = Plus left right 
 
 
 s0 :: SNat (FromTL 0) -- 'Z

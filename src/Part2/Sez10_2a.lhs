@@ -84,7 +84,7 @@ TODO - think about it more!
 [1,7,2,4]
 ```
 
-Liner solution attempt using ISing
+Linear solution attempt using ISing
 ----------------------------------
 The idea is to move the cost of carrying around `input` to type class constraints 
 
@@ -114,3 +114,15 @@ ghc error:
    • In the instance declaration for
         ‘SingI (L.Append list ( 'LCons x  'LNil))’
 ```
+
+Reversing Vect 
+--------------
+I have implemented `Vect n a` version of `myReverse` in 
+[Part2.Sez10_2aVect.hs](../blob/master/src/Part2/Sez10_2aVect.hs).
+
+The take away is:
+
+* I had to use `:~~:` instead of `:~:` because ghc considered `appendNilRightNeutral`, `appendAssociative`
+  equalities having different RHS and LHS kinds
+* I had big hope that I will be able to replace `Sing list` evidence in `appendNilRightNeutral`, `appendAssociative` 
+  with SNat` but I failed. If that works my hope is to recover linear cost.
