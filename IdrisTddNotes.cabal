@@ -61,7 +61,8 @@ library
       , Part2.Sez10_2a
       , Part2.Sez10_2aVect     
       , Part2.Sez10_2b     
-      , Part2.Sez10_3     
+      , Part2.Sez10_3 
+      , Play.FunctorLaws    
 
 
   default-language: Haskell2010

@@ -27,3 +27,10 @@ Polygon n = Vect n Position
 
 tri : Polygon 3
 tri = [(0.0, 0.0), (3.0, 0.0), (0.0, 4.0)]
+
+||| One param function acting as type synomym
+MyList : Type -> Type
+MyList = List
+
+testMyList : MyList Integer -> MyList Integer
+testMyList = map (+1) 

@@ -1,5 +1,6 @@
 {- 
  Proofs for Functor Laws!
+ (Redefined from Idris' Interfaces.Verified)
 -}
 
 module Play.FunctorLaws 
