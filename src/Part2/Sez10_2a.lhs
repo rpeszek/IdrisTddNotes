@@ -117,12 +117,27 @@ ghc error:
 
 Reversing Vect 
 --------------
-I have implemented `Vect n a` version of `myReverse` in 
-[Part2.Sez10_2aVect.hs](../blob/master/src/Part2/Sez10_2aVect.hs).
+I have implemented two versions of `myReverse` for `Vect`.
+ 
+* [Part2.Sez10_2aVect.hs](../blob/master/src/Part2/Sez10_2aVect.hs)
+* [Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs)
 
+[Part2.Sez10_2aVect.hs](../blob/master/src/Part2/Sez10_2aVect.hs) approach mimics closely the list version above.   
 The take away is:
 
 * I had to use `:~~:` instead of `:~:` because ghc considered `appendNilRightNeutral`, `appendAssociative`
   equalities having different RHS and LHS kinds
 * I had big hope that I will be able to replace `Sing list` evidence in `appendNilRightNeutral`, `appendAssociative` 
-  with SNat` but I failed. If that works my hope is to recover linear cost.
+  with SNat` but I have failed. If that works my hope is to recover linear cost.
+
+[Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs) is simpler and has linear cost!
+This is basically the same code as a straightforward implementation of `reverse` for `Vect` that uses 
+accumulator, see 
+[my presentation 1](https://github.com/rpeszek/presentations-code/blob/master/precise-types/src/Present/P5_VectRev1.hs)
+and 
+[my presentation 2](https://github.com/rpeszek/presentations-code/blob/master/precise-types/src/Present/P6_VectRev2.hs).
+
+Compared to [Part2.Sez10_2aVect.hs](../blob/master/src/Part2/Sez10_2aVect.hs),
+[Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs) is less a "type level" code.
+It does not use `SVect` or `VAppend` type family.  The only proofs needed are about `Nat` and `+` and those do
+not add to the computational cost (the need for `Sing list` evidence has been averted).

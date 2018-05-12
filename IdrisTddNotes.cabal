@@ -60,6 +60,7 @@ library
       , Part2.Sez10_1     
       , Part2.Sez10_2a
       , Part2.Sez10_2aVect     
+      , Part2.Sez10_2aVect2     
       , Part2.Sez10_2b     
       , Part2.Sez10_3 
       , Play.FunctorLaws    
