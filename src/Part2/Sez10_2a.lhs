@@ -20,10 +20,6 @@ A straightforward conversion of Idris code has quadratic cost (Idris code has li
 >    , DataKinds
 >    , PolyKinds
 >    , ScopedTypeVariables 
->    -- , KindSignatures
->    -- , FlexibleContexts
->    -- , FlexibleInstances
->    -- , TypeInType
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
@@ -84,39 +80,12 @@ TODO - think about it more!
 [1,7,2,4]
 ```
 
-Linear solution attempt using ISing
-----------------------------------
-The idea is to move the cost of carrying around `input` to type class constraints 
+I do not think the linear cost can be achieved by making the above `Sing input`
+argument implicit (using constraint such as `SingI input`). The implicit `sing` will still be 
+a reclusive call.
 
-> snocListHelp' :: forall (input :: List a) (rest :: List a) . 
->                  SingI input =>  SnocList input -> Sing rest -> SnocList (L.Append input rest)
-> snocListHelp' snoc SLNil = case sym (appendNilRightNeutral (sing :: Sing input)) of Refl -> snoc
-> snocListHelp' snoc (SLCons x xs) 
->       = case sym (appendAssociative (sing :: Sing input) (L.sOneElem x) xs) of
->            Refl ->  undefined -- snocListHelp' (Snoc snoc x) xs 
-
-To compile commented out code I need to tell GHC that `L.Append list ('LCons x 'LNil)` has SingI instance.  
-I can, and have, derived this:
-
-```
-instance forall a (n1 :: a) (n2 :: List a). (SingI n1, SingI n2) => SingI ('LCons n1 n2) where
-   sing = undefined
-```
-but GHC 8.2.2 does not allow me to express this (assuming some additional pragmas):
-```
-instance forall a (x :: a) (list :: List a). (SingI list, SingI x) => SingI (L.Append list ('LCons x 'LNil)) where 
-   sing = undefined
-```
-ghc error:
-```
-   • Illegal type synonym family application in instance:
-        L.Append list ('LCons x 'LNil)
-   • In the instance declaration for
-        ‘SingI (L.Append list ( 'LCons x  'LNil))’
-```
-
-Reversing Vect 
---------------
+Reversing `Vect` 
+----------------
 I have implemented two versions of `myReverse` for `Vect`.
  
 * [Part2.Sez10_2aVect.hs](../blob/master/src/Part2/Sez10_2aVect.hs)
