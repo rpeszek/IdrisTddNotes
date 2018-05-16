@@ -3,10 +3,14 @@
 
 VerifiedFunctor in Idris and Haskell
 =====================================
+Ref: https://www.schoolofhaskell.com/user/edwardk/snippets/fmap  
+__Note the above reference, checking second functor law is redundant.__
+
 
 Idris code example
 ------------------  
 |IdrisRef: FunctorLaws.idr 
+
 
 Compared to Haskell
 -------------------
@@ -23,7 +27,6 @@ Ref: https://blog.jle.im/entry/verified-instances-in-haskell.html
 >       , StandaloneDeriving
 >       , UndecidableInstances 
 >       , ScopedTypeVariables
->       -- , TypeSynonymInstances
 >       , LambdaCase
 > #-}
 > module Play.FunctorLaws where

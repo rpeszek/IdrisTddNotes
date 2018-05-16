@@ -22,7 +22,11 @@ type instance F n = 'S n
 cong :: (x :~: y) -> F x :~: F y
 cong Refl = Refl 
 
-
+{- 
+  cong makes it more explit but it is not needed.
+  I could use 
+   case plusSuccRightSucc left right of Refl -> Refl instead.
+ -}
 plusZeroRightNeutral :: SNat mx -> 'Z + mx :~: mx + 'Z
 plusZeroRightNeutral SZ     = Refl
 plusZeroRightNeutral (SS k) = cong (plusZeroRightNeutral k)

@@ -53,6 +53,15 @@ In the future, I may decide to play with this code using `~`.
 >       Just prf -> Just $ cong prf
 > -- Note: SS :: SNat n -> SNat ('S n)
 > type instance F n = 'S n
+>
+> {-| Note, GHC can figure out cong on its own -}
+> checkEqNat' :: SNat num1 -> SNat num2 -> Maybe (num1 :~: num2)
+> checkEqNat' SZ SZ = Just Refl
+> checkEqNat' SZ (SS k) = Nothing
+> checkEqNat' (SS k) (SZ) = Nothing
+> checkEqNat' (SS k) (SS j) = case checkEqNat' k j of
+>       Nothing -> Nothing
+>       Just prf -> case prf of Refl -> Just Refl
 > 
 > exactLength :: SNat len -> Vect m a -> Maybe (Vect len a) 
 > exactLength len vect = case checkEqNat (vlength vect) len of
@@ -73,6 +82,10 @@ In the future, I may decide to play with this code using `~`.
 > same_cons :: x -> xs :~: ys -> x ': xs :~: x ': ys
 > same_cons x prf = cong2 x prf
 > type instance F2 x xs = x ': xs
+> 
+> {-| cong-less version -}
+> same_cons' :: x -> xs :~: ys -> x ': xs :~: x ': ys
+> same_cons' x prf = case prf of Refl -> Refl
 > 
 > {- again need value of at least one type in scope -}
 > same_lists :: x -> x :~: y -> xs :~: ys -> (x ': xs) :~: (y ': ys) 

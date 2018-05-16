@@ -87,7 +87,19 @@ checks out:
 > plusSuccRightSucc :: SNat left -> SNat right -> (left + 'S right) :~: 'S (left + right)
 > plusSuccRightSucc SZ right        = Refl
 > plusSuccRightSucc (SS left) right = cong $ plusSuccRightSucc left right 
-> 
+
+Side-note that `cong` is not needed:
+
+> plusZeroRightNeutral' :: SNat mx -> 'Z + mx :~: mx + 'Z
+> plusZeroRightNeutral' SZ     = Refl
+> plusZeroRightNeutral' (SS k) = case plusZeroRightNeutral' k of Refl -> Refl
+>
+> plusSuccRightSucc' :: SNat left -> SNat right -> (left + 'S right) :~: 'S (left + right)
+> plusSuccRightSucc' SZ right        = Refl
+> plusSuccRightSucc' (SS left) right = case plusSuccRightSucc left right of Refl -> Refl
+
+(end of side-note)
+ 
 > test2 = myAppend2 ("1" ::: "2" ::: VNil) ("3" ::: VNil)
 > test4 = myAppend4 (SS (SS SZ)) (SS SZ) ("1" ::: "2" ::: VNil) ("3" ::: VNil)
 >
