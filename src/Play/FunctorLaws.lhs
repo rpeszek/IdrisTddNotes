@@ -61,6 +61,10 @@ reading the scary `(((:.$) @@ g) @@ h) x`:
 * `type (@@) (a :: k1 ~> k) (b :: k1) = Apply a b :: k`
 * `(:.$) :: (b ~> c) ~> ((a ~> b) ~> (a ~> c))`
 
+Symbols and GATD-zied `type level functions` are needed for type level partial application.  
+Haskell type families do not allow for partial application. 
+
+
 >     {- | fmap f (fmap g x) = fmap (f . g) x -}
 >     distLaw
 >         :: Sing (g :: b ~> c)
