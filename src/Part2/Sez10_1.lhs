@@ -38,6 +38,7 @@ Compared to Haskell
 >    , LambdaCase
 >    , ScopedTypeVariables 
 >    , FlexibleContexts
+>    , ViewPatterns
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
@@ -93,13 +94,19 @@ ghci
 Slow `reverse` example
 ----------------------
 
-> myReverseHelper :: forall (xs :: List a) . ListLast xs  -> SomeSing (List a)
-> myReverseHelper Empty = SomeSing SLNil 
-> myReverseHelper (NonEmpty xs x) = case myReverseHelper (listLast xs) of
->              SomeSing sres -> SomeSing $ SLCons x sres  
+I am also using `ViewPatterns` here (see `myReverseHelper` `listLast -> ...` syntax).  
+I am not using them elsewhere. 
+It appears that with GHC 8.2.2 this extension does not play well with 
+`-fwarn-incomplete-patterns`. 
+
+> myReverseHelper :: forall (xs :: List a) . Sing xs  -> SomeSing (List a)
+> myReverseHelper (listLast -> Empty) = SomeSing SLNil 
+> myReverseHelper (listLast -> (NonEmpty xs x)) = case myReverseHelper xs of
+>              SomeSing sres -> SomeSing $ SLCons x sres 
+> myReverseHelper _ = error "ViewPatterns do not know that pattern match is exhaustive" 
 > 
 > myReverse :: (SingKind a) => List (Demote a) -> List (Demote a)
-> myReverse list = case withSomeSing list (\xs ->  myReverseHelper (listLast xs)) of 
+> myReverse list = case withSomeSing list (\xs ->  myReverseHelper xs) of 
 >                    SomeSing res -> fromSing res
 >
 > testWithList :: [a] -> (a->b) -> (List b -> List c) -> (c->d) -> [d]
