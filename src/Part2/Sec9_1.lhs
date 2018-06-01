@@ -32,7 +32,7 @@ I am using only `Data.SingBased` moving forward.
 >
 > module Part2.Sec9_1 where
 > import Data.SingBased.Nat (Nat(..), type SNat, type Sing(..), s0, s1, s2, s3, type FromTL)
-> import Data.SingBased.Vect (Vect(..), SVect(..), SomeKnownSizeVect(..))
+> import Data.SingBased.Vect (Vect(..), SomeKnownSizeVect(..), type Sing(..))
 > import Data.SingBased (someKnownSizeVectToVect, sVectToVect)
 > import GHC.TypeLits hiding (Nat)
 > import Data.Kind (Type)
@@ -110,24 +110,24 @@ _TODO this needs more thinking_
 ------------------------------
 This is very similar to Idris except the final result is demoted and `fwarn-incomplete-patterns` does not work so well.  
 _Note, even using `TypeInType`, I was not able to auto-generate singletons for `Vect n a` itself._   
-_I have implemented `SVect` by hand._  
 
 > removeElemDem :: forall (n :: Nat) (val :: a) (xs :: Vect (S n) a) . SingKind a =>
->       SNat n -> Sing val ->  SVect xs -> VElem val xs -> Vect n (Demote a)
+>       SNat n -> Sing val ->  Sing xs -> VElem val xs -> Vect n (Demote a)
 > removeElemDem _ val (_ `SVCons` ys) VHere = sVectToVect ys
 > removeElemDem (SS n1) val (y `SVCons` ys) (VThere later) = (fromSing y) ::: (removeElemDem n1 val ys later)
 > {- While Idris knows that the following case is invalid, 
 >  GHC picks is up as error: Pattern match(es) are non-exhaustive
->  attempt to implement it as `absurd' later` causes compilation errors
+>  attempt to implement it as 'absurd' later' causes compilation errors as well
+>  using SVect GADT  defined by hand instead of 'Sing xs' does not solve the issue
 > -}
-> removeElemDem SZ val (SVCons _ SVNil) (VThere later) = undefined -- absurd' later
+> removeElemDem SZ _ (SVCons _ _) (VThere _) = undefined
 >
 > testRemoveElemDem = removeElemDem s0 s3 (SVCons s3 SVNil) VHere
 
-This version does not `Demote a` and is better and is closer to Idris:
+This (equivalent, really) version does not `Demote a` and seems a bit closer to Idris' dependent pair:
 
-> removeElem :: forall (n :: Nat) (val :: a) (xs :: Vect (S n) a) . SingKind a =>
->       SNat (S n) -> Sing val ->  SVect xs -> VElem val xs -> SomeKnownSizeVect n a
+> removeElem :: forall (n :: Nat) (val :: a) (xs :: Vect (S n) a) .
+>       SNat (S n) -> Sing val ->  Sing xs -> VElem val xs -> SomeKnownSizeVect n a
 > removeElem (SS n) val (_ `SVCons` ys) VHere = MkSomeKnownSizeVect n ys
 > removeElem (SS (SS n)) val (y `SVCons` ys) (VThere later) =
 >       let res = removeElem (SS n) val ys later
@@ -144,12 +144,11 @@ This version does not `Demote a` and is better and is closer to Idris:
 ghci:
 ```
 *Part2.Sec9_1> testRemoveElemDem
-Nil
+VNil
 *Part2.Sec9_1> someKnownSizeVectToVect testRemoveElem
-Nil
+VNil
 ```
 Nice!
-
 
 `removeElem` using type families
 ------------------------------
@@ -237,7 +236,7 @@ The `notInNil` uses `EmptyCase` instead of the `impossible` Idris keyword
 
 The following, unfortunately, does not seem to work (TODO)
 
-> isElem :: DecEq (Sing :: a -> Type) => Sing a -> SVect xs -> Dec (VElem a xs)
+> isElem :: DecEq (Sing :: a -> Type) => Sing a -> Sing xs -> Dec (VElem a xs)
 > isElem val SVNil = No notInNil
 > isElem val (SVCons x xs) = undefined
 
@@ -255,7 +254,7 @@ ghc error:
 ```
 But narrowing the scope to just `Nat` (from `Sing a` to `SNat n`) makes it work
 
-> isElemNat :: SNat n -> SVect xs -> Dec (VElem n xs)
+> isElemNat :: SNat n -> Sing xs -> Dec (VElem n xs)
 > isElemNat val SVNil = No notInNil
 > isElemNat val (SVCons x xs) = case decEq val x of
 >        Yes Refl -> Yes VHere
@@ -273,7 +272,7 @@ and the code is the same as in Idris.
 I can also fix this using `DecEqSing`, which is probably closer to how I should code dependent types in Haskell 
 
 > isElemSing :: DecEqSing k => forall n (a :: k) (xs :: Vect n k) . 
->                 Sing a -> SVect xs -> Dec (VElem a xs)
+>                 Sing a -> Sing xs -> Dec (VElem a xs)
 > isElemSing val SVNil = No notInNil
 > isElemSing val (SVCons x xs) = case decEqSing val x of
 >        Yes Refl -> Yes VHere

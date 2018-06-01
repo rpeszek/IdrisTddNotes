@@ -108,5 +108,5 @@ and
 
 Compared to [Part2.Sez10_2aVect.hs](../blob/master/src/Part2/Sez10_2aVect.hs),
 [Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs) is less a "type level" code.
-It does not use `SVect` or `VAppend` type family.  The only proofs needed are about `Nat` and `+` and those do
+It does not use `Sing vect` or `VAppend` type family.  The only proofs needed are about `Nat` and `+` and those do
 not add to the computational cost (the need for `Sing list` evidence has been averted).

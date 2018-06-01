@@ -8,7 +8,6 @@ TODO move Nat into a separate module
       , DataKinds
       , GADTs
       , PolyKinds
-      , TypeInType -- needed for SVect
       , TypeOperators 
       , TypeFamilies
       , StandaloneDeriving

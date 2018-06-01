@@ -37,7 +37,7 @@ Both are equivalent, moving forward, I will focus on the second
 > import Data.Type.Equality
 > import Data.Kind (Type)
 > import Data.Void
-> import Data.SingBased (Nat(..), Vect(..), SVect(..), vlength, type SNat, type Sing(..))
+> import Data.SingBased (Nat(..), Vect(..), vlength, type SNat, type Sing(..))
 > import Data.Singletons
 > import Data.Singletons.TH
 > import Data.Bifunctor

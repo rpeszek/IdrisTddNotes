@@ -31,26 +31,27 @@ data SnocVect (v :: Vect n a) where
                  SnocVect xs -> Sing x -> SnocVect (VAppend xs (VOneElem x))
 
 snocVectHelp :: forall (input :: Vect n a) (rest :: Vect m a) . 
-                 SVect input -> SnocVect input -> SVect rest -> SnocVect (VAppend input rest)
+                 Sing input -> SnocVect input -> Sing rest -> SnocVect (VAppend input rest)
 snocVectHelp input snoc SVNil = case hsym (vappendVNilRightNeutral input) of HRefl -> snoc
 snocVectHelp input snoc (SVCons x xs) 
       = case hsym (vappendAssociative input (sVOneElem x) xs) of
            HRefl -> snocVectHelp (sVAppend input (sVOneElem x)) (SnocV snoc x) xs 
 
 
-{-| See comment below for problems with replacing `SVect v` with `SNat n`-}
-vappendVNilRightNeutral :: forall (v :: Vect n a) . SVect v -> (VAppend v 'VNil) :~~: v
+
+{-| See comment below for problems with replacing `Sing vect` with `SNat n`-}
+vappendVNilRightNeutral :: forall (v :: Vect n a) . Sing v -> (VAppend v 'VNil) :~~: v
 vappendVNilRightNeutral SVNil = HRefl
 vappendVNilRightNeutral (SVCons x xs) = case vappendVNilRightNeutral xs of HRefl -> HRefl
 
 
 vappendAssociative ::  forall (l :: Vect n a) (c :: Vect m a) (r :: Vect k a) .
-      SVect l -> SVect c -> SVect r -> VAppend l (VAppend c r) :~~: VAppend (VAppend l c) r
+      Sing l -> Sing c -> Sing r -> VAppend l (VAppend c r) :~~: VAppend (VAppend l c) r
 vappendAssociative SVNil c r = HRefl
 vappendAssociative (SVCons x xs) c r = case vappendAssociative xs c r of HRefl -> HRefl
 
 
-snocVect :: forall (xs :: Vect n a). SVect xs -> SnocVect xs
+snocVect :: forall (xs :: Vect n a). Sing xs -> SnocVect xs
 snocVect xs = snocVectHelp SVNil EmptyV xs
 
 myReverseHelper :: forall (v :: Vect n a) . SnocVect v -> SomeKnownSizeVect n a

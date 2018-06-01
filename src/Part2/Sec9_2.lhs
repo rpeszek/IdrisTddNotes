@@ -81,7 +81,7 @@ similar to Idris!
 >                Sing guesses_remaining -> 
 >                Sing letters ->
 >                String ->
->                SVect xs ->
+>                Sing xs ->
 >                WordState guesses_remaining letters
 > 
 > data Finished where
