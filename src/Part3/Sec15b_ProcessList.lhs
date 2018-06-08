@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part3_Sec15b_ProcessList
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/Part3_Sec15b_ProcessList
 |Idris Src: Sec15b_ProcessList.idr
 
 Section 15 Type safe concurrent programming example of library usage

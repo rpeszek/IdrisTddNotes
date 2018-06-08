@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part2_Sez10_2b
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/Part2_Sez10_2b
 |Idris Src: Sez10_2b.idr
 
 Sections 10.2.3 SnocList view and `isSuffix` function that uses multiple views 
@@ -31,7 +31,7 @@ Compared to Haskell
 > import Data.SingBased.List (List(..), type Sing(..))
 > import qualified Data.SingBased.List as L
 > import Data.Singletons
-> import Part2.Sez10_2a (SnocList(..), snocList)
+> import Part2.Sez10_2a_snoc (SnocList(..), snocList)
 
 I am taking a shortcut and use `Eq (Demote a)` (maybe not that bad?)
 

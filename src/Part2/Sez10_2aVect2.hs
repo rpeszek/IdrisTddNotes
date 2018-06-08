@@ -8,13 +8,14 @@
    , TypeInType
 #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+{-# OPTIONS_GHC -fwarn-unused-imports #-}
 
 module Part2.Sez10_2aVect2 where
 import Data.Type.Equality
 import Data.SingBased.Nat (Nat(..), SNat, type Sing(..), type (+))
 import Data.SingBased.NatTheorems
 import Data.SingBased.Vect
-import Data.Singletons
+-- import Data.Singletons
 
 {-
 -- IMPOSSIBLE!

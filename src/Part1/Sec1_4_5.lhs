@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part1_Sec1_4_5
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/Part1_Sec1_4_5
 |Idris Src: Sec1_4_5.idr
 
 Section 1.4.5. Simple Idris example vs Haskell
@@ -56,6 +56,7 @@ Compared to Haskell
 >  , ScopedTypeVariables
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+> {-# OPTIONS_GHC -fwarn-unused-imports #-}
 
 > module Part1.Sec1_4_5 where
 > import Data.Kind (Type)
@@ -150,4 +151,4 @@ testBad = valToString2' STrue (MkStr2 "Test")
 Conclusions
 -----------
 Idris dependent types are NICE!!! 
-Compared to Haskell, this type of code is much simpler and has much less boiler plate in Idris.
+Compared to Haskell, this type of code is much simpler and has much less boiler plate.

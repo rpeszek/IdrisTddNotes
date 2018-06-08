@@ -1,6 +1,6 @@
 
 module Part2.Sez10_2b
-import Part2.Sez10_2a
+import Part2.Sez10_2a_snoc
 
 %default total 
 

@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Play_FunctorLaws
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/Play_FunctorLaws
 |Idris Src: FunctorLaws.idr
 
 VerifiedFunctor in Idris and Haskell

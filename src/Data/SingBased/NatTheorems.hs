@@ -8,7 +8,7 @@
 #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
-{- This module reimplements Nat theorems from Part2.Sec8_2_5 for Data.SingBased.Nat -}
+{- This module reimplements Nat theorems from Part2.Sec8_2_5_vappd for Data.SingBased.Nat -}
 module Data.SingBased.NatTheorems where
 
 import Data.SingBased.Nat

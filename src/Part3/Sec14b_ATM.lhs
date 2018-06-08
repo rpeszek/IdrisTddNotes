@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part3_Sec14b_ATM
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/Part3_Sec14b_ATM
 |Idris Src: Sec14b_ATM.idr
 
 Section 14.2 Type Safe ATM protocol example vs Haskell

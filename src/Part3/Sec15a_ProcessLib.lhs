@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part3_Sec15a_ProcessLib
+|Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/Part3_Sec15a_ProcessLib
 |Idris Src: Sec15a_ProcessLib.idr
 
 Section 15 Type safe concurrent programming library example vs Haskell
@@ -25,7 +25,7 @@ Compared to Haskell
 -------------------
 I have implemented somewhat close (simplified) equivalents to Idris' `System.Concurrency.Channels`
 in 
-[Control.Concurrent.Primitives](https://github.com/rpeszek/IdrisTddNotes/blob/master/src/Control/Concurrent/Primitives.hs]
+[Control.Concurrent.Primitives](https://github.com/rpeszek/IdrisTddNotes/blob/master/src/Control/Concurrent/Primitives.hs)
 
 > {-# LANGUAGE TemplateHaskell
 >       , KindSignatures

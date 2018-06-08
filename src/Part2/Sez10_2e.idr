@@ -7,7 +7,7 @@ import Data.Nat.Views
 
 {- some excrcises from sec 10.2 -}
 
-{- equalSuffix excercise, should convert to Haskell (using slower snocList from Sez10_2a) -}
+{- equalSuffix excercise, should convert to Haskell (using slower snocList from Sez10_2a_snoc) -}
 equalSuffixHelper : Eq a => List a -> List a -> List a
 equalSuffixHelper input1 input2 with (snocList input1) 
     equalSuffixHelper [] input2 | Empty = []
