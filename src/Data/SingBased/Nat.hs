@@ -49,8 +49,7 @@ instance Ord Nat where
   compare _  Z = GT
   compare (S m) (S n) = compare m n
 
-instance Show (SNat n) where
-  show  = show . fromSing
+deriving instance Show (SNat n) 
 
 natToInteger :: Nat -> Integer
 natToInteger Z = 0

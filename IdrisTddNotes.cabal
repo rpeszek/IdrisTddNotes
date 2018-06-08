@@ -28,9 +28,12 @@ library
       src
   build-depends:
       base >= 4.7 && < 5
+      , protolude
       , attoparsec
       , bytestring
       , singletons
+      , mtl
+      , transformers
   exposed-modules:
       Data.SingBased.Vect
       , Data.SingBased.Nat
@@ -40,6 +43,7 @@ library
       , Data.SingBased.NatTheorems
       , Data.CodedByHand
       , Data.SingBased.List
+      , Control.Concurrent.Primitives
       , Util.AttoparsecUtil
       , Part1.Sec1_4_5
       , Part1.Sec2_2_2
@@ -63,6 +67,9 @@ library
       , Part2.Sez10_2aVect2     
       , Part2.Sez10_2b     
       , Part2.Sez10_3 
+      , Part3.Sec14b_ATM
+      , Part3.Sec15a_ProcessLib
+      , Part3.Sec15b_ProcessList 
       , Play.FunctorLaws    
 
 
@@ -87,4 +94,7 @@ test-suite IdrisTddNotes-test
   build-depends:
       base >= 4.7 && < 5
     , IdrisTddNotes
+    , hspec
+  other-modules: 
+     ConcurrencePrimitivesSpec
   default-language: Haskell2010

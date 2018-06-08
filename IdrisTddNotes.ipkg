@@ -26,6 +26,10 @@ modules = Main
         , Part2.Sez10_2b     
         , Part2.Sez10_2e     
         , Part2.Sez10_3
+        , Part3.Sec14a_DoorJam
+        , Part3.Sec14b_ATM
+        , Part3.Sec15a_ProcessLib
+        , Part3.Sec15b_ProcessList 
         , Play.FunctorLaws     
 
 sourcedir = src

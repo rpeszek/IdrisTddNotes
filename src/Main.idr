@@ -27,6 +27,10 @@ import Part2.Sez10_2a
 import Part2.Sez10_2b     
 import Part2.Sez10_2e     
 import Part2.Sez10_3
+import Part3.Sec14a_DoorJam
+import Part3.Sec14b_ATM
+import Part3.Sec15a_ProcessLib
+import Part3.Sec15b_ProcessList 
 import Play.FunctorLaws      
 
 main : IO ()

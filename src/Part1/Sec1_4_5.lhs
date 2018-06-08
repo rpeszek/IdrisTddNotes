@@ -86,7 +86,8 @@ Naive solution that tries to mimic Idris code is not type safe
 
 
 Using Type Families, GADTs, and DataKinds provides good (almost equivalent with some differences) type safety but
-the boiler plate is significant and conceptual difficulty is higher
+the boiler plate is significant and conceptual difficulty is higher.
+It also has other limitations explained below.
 
 > data StringOrInt2 a where
 >     MkStr2 :: String -> StringOrInt2 String
@@ -97,7 +98,15 @@ the boiler plate is significant and conceptual difficulty is higher
 > 
 > extractInt :: StringOrInt2 Int -> Int 
 > extractInt (MkInt2 i) = i
-> 
+
+The above GADT solution is nice but it is different.  It is not a clean type mapping
+to `String` or `Int` rather is involves parametrized type `StringOrInt2 a`
+
+Type family solution is closer to Idris but is also not equivalent. Type Families
+are not first class, for example I cannot define expressions like 
+`data MyGadt StrOrIntF where` because type family needs to be fully applied in type 
+signatures.
+ 
 > type family StrOrIntF (x::Bool) :: Type where
 >    StrOrIntF 'True = Int 
 >    StrOrIntF 'False = String 

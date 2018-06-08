@@ -1,7 +1,7 @@
 |Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Part3_Sec14b_ATM
 |Idris Src: Sec14b_ATM.idr
 
-Sections 14.2 Type Safe ATM protocol example vs Haskell
+Section 14.2 Type Safe ATM protocol example vs Haskell
 =======================================================
 This program is about converting a powerful dependently typed 
 state machine pattern to Haskell. The pattern is about defining 
