@@ -39,7 +39,7 @@ Both are equivalent, moving forward, I will focus on the second
 > import Data.Kind (Type)
 > import Data.Void
 > import Data.SingBased (Nat(..), Vect(..), vlength, type SNat, type Sing(..))
-> import Data.Singletons
+> -- import Data.Singletons
 > import Data.Singletons.TH
 > import Data.Bifunctor
 
@@ -108,14 +108,21 @@ Just ("t" ::: VNil)
 ```
 
 
-`SingKind` version of `DecEq`
+`Sing` version of `DecEq`
 -----------------------------
 
-I am having more luck with the following approach to `DecEq`:
+Using arbitrary `ty` mapping (as I done in `DecEq` above) seems like too much.  
+For example, if I show `DecEq (Sing :: k -> Type)` for bunch of kinds `k`,
+does `DecEq (Sing :: k -> Type)` even make sense as a constraint in Haskell?  
+(TODO research this).
 
-> class SingKind k => DecEqSing k where
+This approach seems simpler 
+
+> class DecEqSing k where
 >      decEqSing :: forall (a :: k) (b :: k) . Sing a -> Sing b -> Dec (Sing a :~: Sing b)
->
+
+Originally I was thinking about extending `SingKind` (`SingKind` k => DecEqSing k) but this is not needed.
+
 > instance DecEqSing (Nat) where
 >      decEqSing SZ SZ = Yes Refl
 >      decEqSing SZ (SS k) = No $ zSIsNotSS k

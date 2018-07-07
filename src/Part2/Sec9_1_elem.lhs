@@ -36,7 +36,6 @@ I am using only `Data.SingBased` moving forward.
 > import Data.SingBased.Vect (Vect(..), SomeKnownSizeVect(..), type Sing(..))
 > import Data.SingBased (sVectToVect)
 > import GHC.TypeLits hiding (Nat)
-> import Data.Kind (Type)
 > import Data.Void
 > import Data.Type.Equality
 > import Data.Singletons
@@ -184,7 +183,7 @@ The following code is not very useful (similarly to Idris `RemoveElem` is not re
 > data Test (a :: Vect ('S 'Z) Symbol) where
 >    Test :: Test (RemoveElem "str" ("hello" '::: "str" '::: 'VNil) strInVect) 
 
-`Test` compiles (because size is reduced by type family, but there is no evidence of type family actually working.
+`Test` compiles (size is reduced by type family), but there is no evidence of type family actually working.
 
 Unlike Idris, the following also compiles :( 
 
@@ -234,27 +233,16 @@ The `notInNil` uses `EmptyCase` instead of the `impossible` Idris keyword
 >                    ((Sing ax :~: Sing x) -> Void) -> VElem ax (x '::: xs) -> Void
 > notInTail notThere notHere VHere = notHere Refl
 > notInTail notThere notHere (VThere later) = notThere later
-
-The following, unfortunately, does not seem to work (TODO)
-
-> isElem :: DecEq (Sing :: a -> Type) => Sing a -> Sing xs -> Dec (VElem a xs)
-> isElem val SVNil = No notInNil
-> isElem val (SVCons x xs) = undefined
-
-use of `case decEq val x` or even `case decEq val val` on the RHS of the second case split
-```
-isElem val (SVCons x xs) = case decEq val val of
-        Yes Refl -> undefined 
-        No notHere -> undefined
-```
-causes
-```
-ghc error:
-   Could not deduce (DecEq Sing) arising from a use of ‘decEq’
-      from the context: DecEq Sing  
-```
-But narrowing the scope to just `Nat` (from `Sing a` to `SNat n`) makes it work
-
+>
+> isElemSing :: DecEqSing k => forall n (a :: k) (xs :: Vect n k) . 
+>                 Sing a -> Sing xs -> Dec (VElem a xs)
+> isElemSing val SVNil = No notInNil
+> isElemSing val (SVCons x xs) = case decEqSing val x of
+>        Yes Refl -> Yes VHere
+>        No notHere -> case isElemSing val xs of
+>           Yes prf -> Yes (VThere prf)
+>           No notThere -> No (notInTail notThere notHere)
+>
 > isElemNat :: SNat n -> Sing xs -> Dec (VElem n xs)
 > isElemNat val SVNil = No notInNil
 > isElemNat val (SVCons x xs) = case decEq val x of
@@ -265,24 +253,11 @@ But narrowing the scope to just `Nat` (from `Sing a` to `SNat n`) makes it work
 
 ghci:
 ```
+*Part2.Sec9_1_elem> isElemSing s1 (SVCons s1 SVNil)
+Yes
 *Part2.Sec9_1_elem> isElemNat s1 (SVCons s1 SVNil)
 Yes
 ```
-and the code is the same as in Idris.
 
-I can also fix this using `DecEqSing`, which is probably closer to how I should code dependent types in Haskell 
-
-> isElemSing :: DecEqSing k => forall n (a :: k) (xs :: Vect n k) . 
->                 Sing a -> Sing xs -> Dec (VElem a xs)
-> isElemSing val SVNil = No notInNil
-> isElemSing val (SVCons x xs) = case decEqSing val x of
->        Yes Refl -> Yes VHere
->        No notHere -> case isElemSing val xs of
->           Yes prf -> Yes (VThere prf)
->           No notThere -> No (notInTail notThere notHere)
-
-ghci:
-```
-*Part2.Sec9_1_elem> isElemSing s1 (SVCons s1 SVNil)
-Yes
-```
+I was not able to get far using the more general `DecEq` from Sec8_3_deceq in implementing
+`isElem`.
