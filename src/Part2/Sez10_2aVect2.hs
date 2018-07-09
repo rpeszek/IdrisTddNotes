@@ -33,7 +33,13 @@ data SnocVect n a where
 snocVect :: Vect n a -> SnocVect n a
 snocVect xs = snocVectHelp SZ (vlength xs) EmptyV xs
 
-{- | Still constly conversion with extra computational cost of proofs -}
+{- | Still a constly conversion with extra computational cost of proofs.
+     Howeer, the cost in the proof only not in maintaining the evindence.
+     One could think about somehow replacing these proofs with unsafeCoerce at runtime.
+     This would make the overall cost linear.  
+     Does Idris do that or something similar?  
+     Based on the claim in Sec 10_2 in the book about the linear cost it appears so!
+-}
 snocVectHelp ::  SNat n -> SNat m -> SnocVect n a -> Vect m a -> SnocVect (n + m) a
 snocVectHelp n m snoc VNil = case plusZeroRightNeutral n of Refl -> snoc
 snocVectHelp n (SS m) snoc (x ::: xs) 
@@ -59,7 +65,7 @@ myReverseHelper :: SnocVect n a -> Vect n a
 myReverseHelper EmptyV = VNil
 myReverseHelper (SnocV xs x) = x ::: myReverseHelper xs 
 
-{- snocVect is used only once, this is better!-}
+{- snocVect is used only once, this is better! could be linear cost if proofs were zero cost -}
 myReverse :: Vect n a -> Vect n a
 myReverse xs = myReverseHelper $ snocVect xs 
 
