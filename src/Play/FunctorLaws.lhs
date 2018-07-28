@@ -3,6 +3,11 @@
 
 VerifiedFunctor in Idris and Haskell
 =====================================
+One can argue that this is not the best example since instances of Functor are 
+mostly auto generated in Haskell.  Monad laws would be a better example.  
+I decided on to play with `VerfiedFunctor` because it is simpler. 
+The focal point is not what is verified but how easy it is to verify code.
+
 Ref: https://www.schoolofhaskell.com/user/edwardk/snippets/fmap  
 __Note the above reference, checking second functor law is redundant.__
 
@@ -127,4 +132,14 @@ Same for `Maybe`:
 >       SNothing -> Refl
 >       SJust x  -> Refl
 
-Idris wins. Keeping the value level syntax is huge! 
+Conclusions:
+------------
+Haskell example uses `singletons` to encode type dependent information, the verification relies
+on trusting `singletons` to do proper conversion between value level implementation
+of `map` and encoded conversions `sMap` and `Map`.
+Idris simply verifies the actual value level code bits.
+
+In addition, Haskell version is hard to read. Am I proving what I think I am proving?
+I view this to be error prone for DIY work.
+ 
+Idris wins. Keeping the value level syntax at type level is huge! 
