@@ -86,9 +86,9 @@ Naive solution that tries to mimic Idris code is not type safe
 >          MkStr1 x -> x
 
 
-Using Type Families, GADTs, and DataKinds provides good (almost equivalent with some differences) type safety but
+Using GADTs, DataKinds, and TypeFamilies provides good (almost equivalent with some differences) type safety but
 the boiler plate is significant and conceptual difficulty is higher.
-It also has other limitations explained below.
+It also has other limitations explained below and in this case can be avoided.
 
 > data StringOrInt2 a where
 >     MkStr2 :: String -> StringOrInt2 String
@@ -100,13 +100,13 @@ It also has other limitations explained below.
 > extractInt :: StringOrInt2 Int -> Int 
 > extractInt (MkInt2 i) = i
 
-The above GADT solution is nice but it is different.  It is not a clean type mapping
-to `String` or `Int` rather is involves parametrized type `StringOrInt2 a`
-
-Type family solution is closer to Idris but is also not equivalent. Type Families
+Using `StringOrInt2` GADT is nice but it is a different approach.  It is not a clean type mapping
+to `String` or `Int`.
+To finish this off, I need TypeFamilies. Type families
 are not first class, for example I cannot define expressions like 
 `data MyGadt StrOrIntF where` because type family needs to be fully applied in type 
-signatures.
+signatures, Type families cannot be partially applied, etc.
+However, it turns out these limitations are not preventing me from moving forward here.
  
 > type family StrOrIntF (x::Bool) :: Type where
 >    StrOrIntF 'True = Int 
@@ -121,13 +121,14 @@ signatures.
 >           STrue -> MkInt2 10
 >           SFalse -> MkStr2 "Hello"
 > 
-> {-! This compiles with warn-incomplete-patterns, sweet!!! -}
+> {-| This compiles with warn-incomplete-patterns, sweet!!! -}
 > valToString2 :: forall (a :: Bool). SBool a -> StringOrInt2 (StrOrIntF a) -> String
 > valToString2 x val = case x of
 >           STrue -> showInt $ extractInt val
 >           SFalse -> extractStr val
 > 
-> {-| However this still compiles which seems bad but see testGood below -}
+> {-| This does not depend on the first argument, 
+>     but is OK because of strong type signature -}
 > valToString2' :: forall (a :: Bool). SBool a -> StringOrInt2 (StrOrIntF a) -> String
 > valToString2' _ val = case val of
 >          MkInt2 x -> showInt x
@@ -147,8 +148,34 @@ Neither does this:
 testBad = valToString2' STrue (MkStr2 "Test")
 ```
 
+__Best solution__  
+It took me some time to figure out the obvious. The above type family is all I need:
+
+> getStringOrInt3 :: forall (a :: Bool). SBool a -> StrOrIntF a
+> getStringOrInt3 x = case x of
+>           STrue -> 10
+>           SFalse -> "Hello"
+> 
+> valToString3 :: forall (a :: Bool). SBool a -> StrOrIntF a -> String
+> valToString3 x val = case x of
+>           STrue -> showInt val
+>           SFalse -> val
+
+These work as expected and to not allow incorrect parameters, the implementation
+also has build in type safety, This will, as expected, not compile:
+
+```
+valToString3' :: forall (a :: Bool). SBool a -> StrOrIntF a -> String
+valToString3' x val = case x of
+          SFalse -> showInt val
+          STrue -> val
+```
+
 
 Conclusions
 -----------
 Idris dependent types are NICE!!! 
-Compared to Haskell, this type of code is much simpler and has much less boiler plate.
+No encoding of Bool into SBool, the same code bits work.
+Luckily limitations of Haskell type families did not prevented me from implementing
+`getStringOrInt3` and `valToString3` which are very close to Idris' version.
+This luck is particular to this simple example.
