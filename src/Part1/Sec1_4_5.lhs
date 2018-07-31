@@ -66,6 +66,7 @@ Naive solution that tries to mimic Idris code is not type safe
 > showInt :: Int -> String
 > showInt = show
 > 
+> {- | Isomorphic to Either -}
 > data StringOrInt1 = MkStr1 String | MkInt1 Int 
 > 
 > getStringOrInt1 :: Bool -> StringOrInt1
