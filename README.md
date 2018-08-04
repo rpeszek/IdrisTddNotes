@@ -1,6 +1,6 @@
 # IdrisTddNotes
 
 My notes from reading Type Driven Development with Idris.
-With some notes in (currently) Haskell.
+Currently in (or comparing Idris to) Haskell, working on Scala version.
 
 Please see generated Wiki pages.

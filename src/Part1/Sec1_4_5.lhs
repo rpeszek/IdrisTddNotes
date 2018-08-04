@@ -171,7 +171,8 @@ valToString3' x val = case x of
           SFalse -> showInt val
           STrue -> val
 ```
-
+Intuitively, _I view `getStringOrInt3` implementation as value level expression inhabiting the 
+type family_.
 
 Conclusions
 -----------
