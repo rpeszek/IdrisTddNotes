@@ -6,13 +6,15 @@ _using 'z' in the name to recover alphabetical sort of sections_
 Section 10.1 Idris `ListLast`, `SplitList`, `TakeN` views vs Haskell
 ====================================================================
 
-Pattern matching using views.  Idris allows for a very expressive pattern match 
-informed by GADT-like structures.
-Haskell does not and the GADTs need to be used directly in the pattern match.  
+__Pattern matching using views.__  Idris allows for a very expressive pattern match 
+informed by GADT-like structures.  
+Haskell does not and the GADTs need to be used directly in the pattern match.
+Well, there is the `ViewPatterns` pragma, which I am using here, but I am not
+very happy about it (see Slow `reverse` example below).
 Also, Haskell GADTs need to contain more information, while Idris can infer 
-(or _exfer_) such information.  
+(or, rather, _exfer_) such information.  
 Idris is capable of matching on the type (RHS) of constructor.  
-The extends the traditional matching on the constructor itself (LHS).
+This extends the traditional matching on the constructor itself (LHS).
  
 I ended up using `SomeSing` in the return type and I am testing with `Nat` data trying
 to avoid complexity of using literals in dependently typed Haskell code.
