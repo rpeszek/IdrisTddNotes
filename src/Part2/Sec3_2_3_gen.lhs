@@ -37,7 +37,7 @@ Holes: Part2.Sec3_2_3_gen.mapV2_rhs_2, Part2.Sec3_2_3_gen.mapV2_rhs_1
 Compared to Haskell
 -------------------
 __Automatic derivation DeriveFunctor, etc.__   
-(This is not a fair comparison since Idris uses only type signature and functoriality is lost.)  
+(This is not a fair comparison since Idris uses only type signature.)  
 Surprisingly this ability goes beyond ADTs and Haskell can derive functor on simple GADTs like `Vect`:
 
 > {-# LANGUAGE DeriveFunctor
@@ -77,7 +77,7 @@ and, obviously, I can just do
 > data MyList a = Empty | Cons a (MyList a) deriving Functor
 
 __Vs Hole Driven Development__  
-This is more fair since comparison since holes are based on type information only.
+This is somewhat more fair comparison since holes are based on type information only.
 GHC 8.2.2 appears to provide much less info about `DataKinds` lifted types like Nat. 
 If I type
 
@@ -107,7 +107,7 @@ Is not very useful
           (bound at /Users/rpeszek/Documents/idris_play/IdrisTddNotes/src/Part2/Temp2.hs:26:15)
         x :: a
 ```
-I am not told how n1 related to n.  
+I am not told how `n1` is related to `n`.  
 Similarly, I did not have much luck with 
 ```
 mapV f (x ::: xs) = f x ::: _ 

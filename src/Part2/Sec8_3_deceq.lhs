@@ -28,7 +28,7 @@ Both are equivalent, moving forward, I will focus on the second
 >   , EmptyCase
 >   , TypeSynonymInstances -- needed for DecEq instance of singletons SNat
 >   , ScopedTypeVariables -- singletons need it
->   -- , TypeInType
+>   , TypeInType
 >   , UndecidableInstances -- fancy DecEq instance for MyPair needs it
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
@@ -55,8 +55,10 @@ Both are equivalent, moving forward, I will focus on the second
 >   show (No _) = "No"
 >
 > class DecEq (ty :: k -> Type) where
->      decEq :: ty a -> ty b -> Dec (ty a :~: ty b)
->
+>      decEq :: ty a -> ty b -> Dec (a :~: b)
+
+I have originally implemented `decEq :: ty a -> ty b -> Dec (ty a :~: ty b)`
+but dropping `ty` from the RHS seems like a better, stronger definition.
 
 `DecEq` for `Nat` 
 ----------------
@@ -70,13 +72,13 @@ Both are equivalent, moving forward, I will focus on the second
 >                                   Yes prf -> Yes $ congSS prf
 >                                   No contra -> No $ contra . revSS
 >
-> congSS :: (SNat n :~: SNat m) -> (SNat ('S n) :~: SNat ('S m))
+> congSS :: (n :~: m) -> (('S n) :~: ('S m))
 > congSS Refl = Refl
 >
-> revSS :: (SNat ('S n) :~: SNat ('S m)) -> (SNat n :~: SNat m)
+> revSS :: (('S n) :~: ('S m)) -> (n :~: m)
 > revSS Refl = Refl
 >
-> zSIsNotSS :: SNat n -> (SNat 'Z :~: SNat ('S n)) -> Void
+> zSIsNotSS :: SNat n -> ('Z :~: ('S n)) -> Void
 > zSIsNotSS _ x = case x of { }
 
 ghci:
@@ -119,9 +121,9 @@ does `DecEq (Sing :: k -> Type)` even make sense as a constraint in Haskell?
 This approach seems simpler 
 
 > class DecEqSing k where
->      decEqSing :: forall (a :: k) (b :: k) . Sing a -> Sing b -> Dec (Sing a :~: Sing b)
+>      decEqSing :: forall (a :: k) (b :: k) . Sing a -> Sing b -> Dec (a :~: b)
 
-Originally I was thinking about extending `SingKind` (`SingKind` k => DecEqSing k) but this is not needed.
+Originally I was thinking about extending `SingKind` (`SingKind` k => DecEqSing k) but that is not needed.
 
 > instance DecEqSing (Nat) where
 >      decEqSing SZ SZ = Yes Refl
@@ -181,10 +183,10 @@ And Haskell allows me to express this nicely, the code is almost identical to Id
 >             No contra -> No (secondUnequal Refl contra)
 >         No contra -> No (firstUnequal contra)
 >
-> firstUnequal :: ((Sing a1 :~: Sing a2) -> Void) -> (Sing (MkMyPair a1 b1) :~: Sing (MkMyPair a2 b2)) -> Void
+> firstUnequal :: ((a1 :~: a2) -> Void) -> ((MkMyPair a1 b1) :~: (MkMyPair a2 b2)) -> Void
 > firstUnequal contra Refl = contra Refl
 >
-> secondUnequal :: (Sing a1 :~: Sing a2) -> ((Sing b1 :~: Sing b2) -> Void) ->  (Sing (MkMyPair a1 b1) :~: Sing (MkMyPair a2 b2)) -> Void
+> secondUnequal :: (a1 :~: a2) -> ((b1 :~: b2) -> Void) ->  ((MkMyPair a1 b1) :~: (MkMyPair a2 b2)) -> Void
 > secondUnequal Refl contra Refl = contra Refl
 
 This is all very similar to Idris!

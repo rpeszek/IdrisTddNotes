@@ -16,8 +16,7 @@ idris repl
 2.0 : Double
 
 *src/Part2/Sec6_1_1_tyfunc> tri
-[(0.0, 0.0), (3.0, 0.0), (0.0, 4.0)] : Vect 3
-                                            (Double, Double)
+[(0.0, 0.0), (3.0, 0.0), (0.0, 4.0)] : Vect 3 (Double, Double)
 *src/Part2/Sec6_1_1_tyfunc> :t tri
 tri : Polygon 3
 ```
@@ -25,7 +24,7 @@ Compared to Haskell
 -------------------
 Idris simplifies things by removing concept of `type` synonyms.
 Haskell can use type families instead of type synonyms as well.
-Idris seems much simpler.
+Idris seems much simpler on the conceptual level.
  
 > {-# LANGUAGE  
 >    TypeFamilies
@@ -39,7 +38,7 @@ Idris seems much simpler.
 > import Data.Kind (Type)
 > import GHC.TypeLits
 >
-> {- Using type synomyms -}
+> {- Using type synonyms -}
 > type Position = (Double, Double)
 > type Polygon n = Vect n Position
 >
@@ -72,4 +71,3 @@ Idris seems much simpler.
 The other big improvement is that in Idris type level functions are, well functions.
 In Haskell, type families have limitations, for example type family cannot be partially applied
 when used as a type variable.  That is why `singletons` uses all these strange `Sym0`, `Sym1` types. 
-

@@ -11,7 +11,8 @@ Idris code example
 Compared to Haskell
 -------------------
 Note, standard approach in Haskell is to use existential type (or GADT which gives
-equivalent functionality).  Typical name used in Haskell for this starts with 'Some'
+equivalent functionality).  
+Typical name used in Haskell for this starts with 'Some'. 
  
 This follows the idea from 5.3.2 and naming convention from the book so instead of
 `SomeVect` I have `VectUnknown`
@@ -63,6 +64,9 @@ ghci:
 MkVect (SS (SS (SS SZ))) (1 ::: (2 ::: (3 ::: VNil)))
 *Part2.Sec5_3_3_dpair> 
 ```
+A clear difference between Idris and Haskell is that Idris figures out the size 
+(`_`) and I have to type it in Haskell.
+
 There is also a CPS approach, `singletons` library uses it, (it uses `RankNTypes`).
 For `Vect` type I can define:
 
@@ -74,7 +78,7 @@ For `Vect` type I can define:
 >
 > test = withListAsVect [1,2,3] $ \n vect -> show vect
 
-This is similar to `withNat`, `withSomeNat` in 
+This is similar to `withNat`, `withSomeNat` I created in 
 [/src/Util/NonLitsNatAndVector.hs](../blob/master/src/Data/CodedByHand/Nat.hs)  
 
 ghci:

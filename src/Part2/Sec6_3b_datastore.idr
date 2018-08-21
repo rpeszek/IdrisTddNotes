@@ -96,8 +96,7 @@ schemaBody = do
         Nothing =>  pure col
         Just rest => pure (col .+. rest)
 
-{- Note Idris has no problem with this name being overloaded! 
-   It is also used in the record type -}
+{- Note Idris has no problem with this name being overloaded -}
 covering
 schema : Parser Schema 
 schema = string "schema" *> spaces *> schemaBody

@@ -99,32 +99,32 @@ This shuffles things around to mimic Idris.
 > absurd' :: Uninhabited t => t -> Void 
 > absurd' = void . uninhabited
 
-A type family version of this (which I need later)  
+A type family version of this (needed later)  
 _TODO this needs more thinking_
 
-> type family VoidF :: Void -> a
-> type family UninhabitedF :: a -> Void
+> type family VoidF :: Void -> a where
+> type family UninhabitedF :: a -> Void where
 
 
 `removeElem` using `singletons`
 ------------------------------
 This is very similar to Idris except the final result is demoted and `fwarn-incomplete-patterns` does not work so well.  
-_Note, even using `TypeInType`, I was not able to auto-generate singletons for `Vect n a` itself._   
+_Side Note, I was not able to auto-generate singletons for `Vect n a` itself._   
 
 > removeElemDem :: forall (n :: Nat) (val :: a) (xs :: Vect (S n) a) . SingKind a =>
 >       SNat n -> Sing val ->  Sing xs -> VElem val xs -> Vect n (Demote a)
 > removeElemDem _ val (_ `SVCons` ys) VHere = sVectToVect ys
 > removeElemDem (SS n1) val (y `SVCons` ys) (VThere later) = (fromSing y) ::: (removeElemDem n1 val ys later)
 > {- While Idris knows that the following case is invalid, 
->  GHC picks is up as error: Pattern match(es) are non-exhaustive
+>  GHC does not and I get, Pattern match(es) are non-exhaustive
 >  attempt to implement it as 'absurd' later' causes compilation errors as well
->  using SVect GADT  defined by hand instead of 'Sing xs' does not solve the issue
+>  using SVect GADT defined by hand instead of 'Sing xs' does not solve the issue either
 > -}
-> removeElemDem SZ _ (SVCons _ _) (VThere _) = undefined
+> removeElemDem SZ _ (SVCons _ _) (VThere _) = undefined -- absurd' later
 >
 > testRemoveElemDem = removeElemDem s0 s3 (SVCons s3 SVNil) VHere
 
-This (equivalent, really) version does not `Demote a` and seems a bit closer to Idris' dependent pair:
+This (equivalent, really) version does not `Demote a` and it seems a bit closer to Idris' dependent pair:
 
 > removeElem :: forall (n :: Nat) (val :: a) (xs :: Vect (S n) a) .
 >       SNat (S n) -> Sing val ->  Sing xs -> VElem val xs -> SomeKnownSizeVect n a
@@ -134,7 +134,7 @@ This (equivalent, really) version does not `Demote a` and seems a bit closer to 
 >       in case res of 
 >           MkSomeKnownSizeVect _ rys -> MkSomeKnownSizeVect (SS n) $ SVCons y rys
 > {- The absurd case remains, GHC does not know that we are dealing with one element list,
->   for example replacing `SVCons _ _` with `SVCons _ SVNil` would cause Pattern match(es) are non-exhaustive
+>   for example, replacing `SVCons _ _` with `SVCons _ SVNil` would cause Pattern match(es) are non-exhaustive
 >   error
 > -}
 > removeElem (SS SZ) val (SVCons _ _) (VThere _) = undefined -- absurd' later
@@ -230,7 +230,7 @@ The `notInNil` uses `EmptyCase` instead of the `impossible` Idris keyword
 > notInNil x = case x of { }
 >
 > notInTail ::  (VElem ax xs -> Void) ->
->                    ((Sing ax :~: Sing x) -> Void) -> VElem ax (x '::: xs) -> Void
+>                    ((ax :~: x) -> Void) -> VElem ax (x '::: xs) -> Void
 > notInTail notThere notHere VHere = notHere Refl
 > notInTail notThere notHere (VThere later) = notThere later
 >

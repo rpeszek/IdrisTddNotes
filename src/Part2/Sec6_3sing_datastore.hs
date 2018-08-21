@@ -88,7 +88,6 @@ schemaToSchemaCmd :: Schema -> Command sch
 schemaToSchemaCmd  = toSetSchemaCommand . toAnySchema
 
 -- | unchanged except for use of polymorphic Sing 
--- TODO implement singletons artifacts by hand
 data DataStore (sch :: Schema) where
   MkDataStore :: SSchema sc -> Sing n -> Vect n (SchemaType sc) -> DataStore sc
 

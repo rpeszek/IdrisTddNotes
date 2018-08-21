@@ -7,8 +7,8 @@ data Format = Number Format
              | Lit String Format
              | End
 
-{-  Nice recursive mapping that ends up resolving to a long function ending in String
-   implementable with TypeFamilies and DataKinds lift of Format in Haskell. -}
+{-  Nice recursive definition that ends up resolving to a long function returning String.
+   This ends up being implementable with TypeFamilies and DataKinds (for Format) in Haskell. -}
 PrintfType : Format -> Type
 PrintfType (Number fmt) = (i : Int) -> PrintfType fmt
 PrintfType (Str fmt) = (str : String) -> PrintfType fmt

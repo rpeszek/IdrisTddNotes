@@ -14,7 +14,7 @@ Idris code example
 Compared to Haskell
 -------------------
 Haskell version is a straightforward copy of Idris code with exception of additional `SNat` parameter
-which can be made implicit.
+which can be made implicit (or just computed from `Vect n a` - not shown).
 
 > {-# LANGUAGE 
 >     TypeOperators
@@ -71,6 +71,12 @@ ghci:
 > myReverse2' = myReverse2 sNat
 >
 > test' = myReverse2' ("1" ::: "2" ::: "3 "::: VNil)
+
+Note, there is a runtime cost to these proofs.  It would be cool if there 
+was some mechanism to replace these with something like `unsafeCoerce` at runtime.   
+This appears to be an issue for Idirs as well:
+https://github.com/idris-lang/Idris-dev/issues/3516.  
+See also notes for section 10.2.
 
 ghci
 ```

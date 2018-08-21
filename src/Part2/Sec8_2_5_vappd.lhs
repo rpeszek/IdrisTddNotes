@@ -45,8 +45,9 @@ I can do that easily enough
 > myAppend2 = myAppend
 
 but this introduces the `(n + m) ~ (m + n)` constraint that is hard to work with, for example, 
-`testAppend [1,2] [6] myAppend2` has no chance of compiling because of it and all nice and reusable 
-infrastructure build around existential (`SomeVect`) or rank2 quantification (`listWithVect`) does not handle it.
+`testAppend [1,2] [6] myAppend2` has no chance of compiling and all the nice 
+infrastructure build around existential (`SomeVect`) or rank2 quantification (`listWithVect`) will not 
+compile with it.
 
 Or I can just do this:
 
@@ -89,7 +90,7 @@ checks out:
 > plusSuccRightSucc SZ right        = Refl
 > plusSuccRightSucc (SS left) right = cong $ plusSuccRightSucc left right 
 
-Side-note I find `cong` intuitive but is not needed:
+Side-note I find using `cong` to be more intuitive but is not needed:
 
 > plusZeroRightNeutral' :: SNat mx -> 'Z + mx :~: mx + 'Z
 > plusZeroRightNeutral' SZ     = Refl
@@ -127,7 +128,7 @@ ghci:
 *Part2.Sec8_2_5_vappd> test4''
 "1" ::: ("2" ::: ("3" ::: VNil))
 ```
-Here is the runtime test that converts regular list and treat it as a vector:
+Here is the runtime test that converts regular list and treats it as a vector:
 
 ghci:
 ```
@@ -137,4 +138,4 @@ SomeVect (1 ::: (2 ::: (6 ::: VNil)))
 SomeVect (1 ::: (2 ::: (6 ::: VNil)))
 ```
 As could be expected the programmable `:~:` works great!  
-Idris approach with `rewrite` is just much more expressive and simpler.
+Idris approach with `rewrite` is feels more expressive and simpler.

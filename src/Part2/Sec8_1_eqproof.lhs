@@ -3,7 +3,7 @@
 
 Section 8.1. Equality proofs vs Haskell
 ========================================
-Dependent types are so rich that type checker needs help in figuring things out.
+Dependent types are so rich that the type checker needs help in figuring things out.
 A proof of equality between natural numbers is needed to type check   
 ```
 exactLength : (len : Nat) -> (input : Vect m a) -> Maybe (Vect len a)
@@ -109,11 +109,11 @@ equivalent of Idris' `=`
 
 Conclusions
 -----------
-Maybe this is just basics but Haskell typechecker is great.
+Maybe this are just basics but Haskell typechecker is great.
 
 __Why Proofs?__ 
 The book presents the need for proofs as a natural consequence of using dependent types.
-This makes a lot of sense to me. If a type parameter has some underlying requirements 
+This makes a lot of sense to me. If a type parameter has some underlying properties 
 (e.g. `Vect` is parametrized by `n : Nat` which comes with an algebra), 
 then it is only natural that the program will need to provide typechecker with some help 
 (like `n + m = m + n`).

@@ -78,13 +78,14 @@ this seems type safe and works. The error message on type mismatch is interestin
 ```
 
 I am still using `GHC.TypeLits`. 
-I had to realign Vec and SNat to be based on the predecessor `n - 1` instead of 
+I had realigned Vec and SNat to be based on the predecessor `n - 1` instead of 
 a successor `1 + n` or `n + 1` to avoid errors like the following (for `1 + n`)
 ```
  Could not deduce: n2 ~ n1
   from the context: n ~ (1 + n1)
 ```
-These errors could be fixable by writing theorems about `GHC.TypeLits.Nat` (see below), but using `n - 1' approach seems simpler.
+These errors could be fixable by writing theorems about `GHC.TypeLits.Nat` (see below), 
+but using `n - 1' approach seems simpler.
 
 
 __Type family solution (first attempt)__   
@@ -110,7 +111,8 @@ result is compilation error (ghc 8.2.2)
 ```
 
 __Type family solution (working)__  
-The problem seems to be again with `TypeLits`, this works just fine:
+The problem seems to be again with compiler not knowing enough about `TypeLits`, 
+this works just fine:
 
 > data Nat' = Z' | S' Nat' 
 > 
@@ -154,6 +156,6 @@ Couldn't match type ‘n’ with ‘(n + 1) - 1’.  Using constraints like
 `n ~ ((n + 1) - 1)` does not always help (see note [Part2_Sec8_2_5_vappd](Part2_Sec8_2_5_vappd)).  
 I still think that most of these issues could be resolved by writing theorems about GHC.TypeLits Nat.
 Theorems similar to 'plus commutes' from (future) Sec 8.2.  
-To move forward I created 'Data.CodedByHand.hs'.
+To move forward I have created 'Data.CodedByHand.hs'.
 
 I like Idris more and more!

@@ -28,11 +28,11 @@ following the example from the book.
 Large part of this code is devoted to parsing user input and that code is rather imperative
 and not exciting. I wanted to see how that would look like using a more functional parsing approach.  
 
-__Monadic MiniParser__ I want to avoid dependency on external libraries (Idris still does not have a package manager). 
+__Monadic MiniParser__ I wanted to avoid dependency on external libraries (Idris still does not have a package manager). 
 I also wanted to learn Idris better.  So I wrote a very primitive parser 
 [/src/Util/MiniParser.idr](../blob/master/src/Util/MiniParser.idr) myself.
 Such parser code likes to use recursion and that results in reduced totality claims that I can make.  
-(TODO think about more total implementations.)
+(TODO think about a more total implementation.)
 
 Here is the replaced version, I will use it as a starting point for my Haskell code.
  
@@ -48,7 +48,7 @@ Compared to Haskell
 This version was coded 'by-hand'. Using `singletons` is a bit less boilerplate
 [/src/Part2/Sec6_3sing_datastore.hs](../blob/master/src/Part2/Sec6_3sing_datastore.hs)  
 
-*  I am using `attoparsec` just to play with it. Obviously, the existence of super nice parser (and other) libraries is a big plus for Haskell.
+*  I am using `attoparsec` just to play with it. Obviously, the existence of many parser flibraries is a big plus for Haskell.
 *  GHC.TypeLits based vectors are hard to work with and I moved to using my own implementation `Data.CodedByHand`
 *  Implementing polymorphic setSchema while keeping addSchema and getEntry type safe was hard
 *  Tuples in Haskell are yucky
@@ -193,8 +193,8 @@ In Haskell, SetSchema is also polymorphic in `sch`, I should be able to define
 
 I was not able to come up with a much simpler way of doing it than the following.
 The issue is how to map `:+` constructor. I want to use recursion to do that and 
-for this it is helpful to have unique constructor. Hence. I created a helper type `AnySchema`.
-A possible simplification would be to define DSL Command type as a coproduct of DSL 
+for this it is helpful to have a unique constructor. I created a helper type `AnySchema`.
+A possible simplification would be to define Command type as a coproduct of
 instructions (`SetSchema`, `Add`, `Get`, and `Quit`). This should simplify recursive 
 definition for `SetSchema`, potentially removing the need for a helper type but it would
 deviate from Idris version I am trying to mimic.  
@@ -219,7 +219,7 @@ deviate from Idris version I am trying to mimic.
 
 For datastore I still need to use a GADT (regular records will not do).
 Also, Idris can simply use `schema store` on the typelevel so there is 
-no need to parametrize DataStore with schema in Idris. I need that
+no need to parametrize DataStore with schema in Idris. This is needed
 to implement `addToStore`
 
 > data DataStore (sch :: Schema) where
@@ -239,8 +239,8 @@ to implement `addToStore`
 > display SSInt item =  CH8.pack . show $ item
 > display (SSCons sch1 sch2) (item1, item2) = display sch1 item1 <> " " <> display sch2 item2 
 
-Instead of implementing Fin type (which I plan to do later, TODO) getEntry
-is coded directly and is not as type safe:
+Instead of implementing `Fin` type (which I plan to do later, TODO) getEntry
+is coded directly and is not as type safe as the Idris' version:
 
 > {-| getvelem is total because at some point vector will reduce to VNil 
 >     returning Just value only if 0 index is encountered during recursion
@@ -280,7 +280,7 @@ is coded directly and is not as type safe:
 
 __Parsers__
 The following parsers map directly to Idris code (I have reimplemented some of Idris generic
-parser code in `Util.AttoparsecUtil`)
+parser code in `Util.AttoparsecUtil` to keep both versions of code similar)
 
 > sstring :: Parser Schema 
 > sstring =  string "String" *> pure SString

@@ -35,8 +35,8 @@ Compared to Haskell
 > import Data.Singletons.TH
 > import Data.Char (toUpper)
 
-I am trying to avoid type literals and avoid use of type level strings and fighting
-with (or learning) type level list `singletons` syntax.  Type level list (from `Data.SingBased.List`) is used to 
+I am trying to avoid type literals and avoid using type level strings and fighting
+with (or learning much about) type level list `singletons` syntax.  Type level list (from `Data.SingBased.List`) is used to 
 mimic `ValidInput` definition from Idris.   
 This is a 'by hand', poor man's version of type level chars: 
 
@@ -73,8 +73,9 @@ This is a 'by hand', poor man's version of type level chars:
 >             axs <- stringToAChars xs
 >             Right (LCons ac axs)
 
-Idris dependent typing makes things simpler and the rest of the code is quite 
-similar to Idris!
+Idris dependent typing made things simpler.
+
+The rest of the code is quite similar to Idris!
 
 > data WordState  (guesses_remaining :: Nat) (letters :: Nat) where
 >    MkWordState :: forall guesses_remaining (xs :: Vect letters AChar) . 
@@ -124,7 +125,7 @@ I use SomeValidInput instead of the dependent pair but the rest is almost identi
 > isValidInput (SLCons _ (SLCons _ _)) = No invalidTwo
 
 My 'by hand' characters are not fully supported and I keep the error for not converted stuff.
-This also allows for an easy exit from the game (just type unsupported char).
+This also allows for an easy exit from the game (just type any unsupported char).
 
 > readGuess :: IO SomeValidInput
 > readGuess = do putStr "Guess:"
@@ -160,7 +161,7 @@ having to think much about the `(S guesses) (S letters)` semantics.
 > game' st = case st of 
 >         MkWordState (SS guesses) (SS letters) _ _ -> game guesses letters st
 
-The type safe list (`['T', 'E', 'S']` in Idris) is ugly but I made it!
+The type safe list (that corresponds to `['T', 'E', 'S']` in Idris) is ugly but I made it!
 
 > sec_9_2 :: IO()
 > sec_9_2 

@@ -15,7 +15,7 @@ Code:
 
 |IdrisRef: Sec6_2_2_printf.idr 
 
-Here it the level to which Idris generates some of this code:
+Here is the level to which Idris can generate some of this code:
 ```Idris
 printfFmt1 : (fmt : Format) -> (acc : String) -> PrintfType fmt
 printfFmt1 (Number x) acc = \i => ?printfFmt1_rhs_6
@@ -82,7 +82,7 @@ ghci:
 testFmt :: Int -> String -> String
 ```
 
-> {- PrintfType is polymorphic on RHS, this GADT is polymorphic on LHS.
+> {- PrintfType is 'polymorphic' (in Format kind) on RHS, this GADT is 'polymorphic' on LHS.
 >    SFormat allows me to construct type safe printf expressions. 
 >    GADT converts Format kind to Type -}
 > data SFormat (fmt :: Format) where
