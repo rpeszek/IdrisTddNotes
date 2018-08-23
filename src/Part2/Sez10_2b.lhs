@@ -18,10 +18,7 @@ Compared to Haskell
 >    , DataKinds
 >    , PolyKinds
 >    , ScopedTypeVariables 
->    -- , KindSignatures
 >    , FlexibleContexts
->    -- , FlexibleInstances
->    -- , TypeInType
 > #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >

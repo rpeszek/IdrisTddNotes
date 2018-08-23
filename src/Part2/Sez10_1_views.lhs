@@ -13,7 +13,7 @@ Well, there is the `ViewPatterns` pragma, which I am using here, but I am not
 very happy about it (see Slow `reverse` example below).
 Also, Haskell GADTs need to contain more information, while Idris can infer 
 (or, rather, _exfer_) such information.  
-Idris is capable of matching on the type (RHS) of constructor.  
+Idris is capable of matching on the type (RHS) of constructor.
 This extends the traditional matching on the constructor itself (LHS).
  
 I ended up using `SomeSing` in the return type and I am testing with `Nat` data trying
@@ -96,8 +96,8 @@ ghci
 Slow `reverse` example
 ----------------------
 
-I am also using `ViewPatterns` here (see `myReverseHelper` `listLast -> ...` syntax).  
-I am not using them elsewhere. 
+I am using `ViewPatterns` here (see `myReverseHelper` `listLast -> ...` syntax).  
+I am not using this extension elsewhere. 
 It appears that with GHC 8.2.2 this extension does not play well with 
 `-fwarn-incomplete-patterns`. 
 
@@ -175,7 +175,7 @@ ghci:
 ```
 
 Unfortunately the standard `merge` function (see `Data.SingBased.List`) does not lift easily with `singletons`. 
-SomeSing needs to be used in the result type to make it work
+`SomeSing` needs to be used in the result type, again, to make it work
 
 > sMerge :: forall (xs :: List a) (ys :: List a). (SingKind a, Ord (Demote a)) => 
 >            Sing xs -> Sing ys -> SomeSing (List a)
@@ -208,35 +208,29 @@ ghci
 Exercises
 ---------
 
-Definition identical to Idris is possible (requires `AllowAmbiguousTypes`):
+I managed to get close to the Idris' `TakeN` definition. I added an explicit
+`rest` argument to the `Exact` constructor. 
+
+> data TakeN (xs :: List a) where
+>      Fewer :: TakeN xs
+>      Exact :: Sing n_xs -> Sing rest -> TakeN (L.Append n_xs rest)
+> 
+> takeN ::  forall (n :: Nat) (xs :: List a) . Sing n -> Sing xs -> TakeN xs
+> takeN SZ xs = Exact SLNil xs 
+> takeN(SS k) SLNil = Fewer
+> takeN (SS k) (x `SLCons` xs) = case takeN k xs of 
+>       Fewer -> Fewer
+>       Exact rxs rest ->  Exact (x `SLCons` rxs) rest
+
+Trying to get even closer to Idris requires `AllowAmbiguousTypes`:
 ```
 data TakeN_ (xs :: List a) where
       Fewer_ :: TakeN_ xs
       Exact_ :: Sing n_xs -> TakeN_ (L.Append n_xs rest)
 ```
-but it does not allow me to use:
-```
-takeN SZ _ = Exact
-```
-However, the following works:
+and I had hard time convincing ghc to compile `takeN_` implemented based on 
+that definition (TODO).
 
-> data TakeN (xs :: List a) where
->      Fewer :: TakeN xs
->      Exact :: forall (n_xs :: List a) (rest :: List a) (xs :: List a) . 
->                L.SList n_xs -> L.SList rest -> TakeN xs
-
-The `forall (n_xs :: List a) (xs :: List a)` quantifications above are needed for the
-expression `Exact (x `SLCons` rxs)` below to compile. 
-I also need to maintain the `rest` argument in `Exact` constructor to get sufficient pattern match.
-Also the above definition seems less type-safe (for example, `n_xs` does not need to be a sublist of `xs`).
-
-> takeN :: forall (n :: Nat) (xs :: List a) . Sing n -> Sing xs -> TakeN xs
-> takeN SZ xs = Exact SLNil xs
-> takeN (SS k) SLNil = Fewer
-> takeN (SS k) (x `SLCons` xs) = case takeN k xs of 
->       Fewer -> Fewer
->       Exact rxs rrest -> Exact (x `SLCons` rxs) rrest
->
 > groupByNHelper :: forall (n :: Nat) (xs :: List a) . 
 >                   Sing n -> 
 >                   Sing xs -> SomeSing (List (List a))

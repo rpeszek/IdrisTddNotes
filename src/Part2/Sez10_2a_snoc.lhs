@@ -11,7 +11,14 @@ Idris code example
 Compared to Haskell
 -------------------
 
-A straightforward conversion of Idris code has quadratic cost (Idris code has linear cost).
+A straightforward conversion of Idris code looks slower than Idris. 
+Idris code has a linear cost ignoring the cost of proofs themselves.
+Quoting the book: 
+_"You now have an implementation of myReverse that runs in linear time, 
+because it traverses the list once to build the SnocList view and then traverses 
+the SnocList view once to build the reversed list."_  
+It looks to me that, in Idris example (`snocListHelp`), we have a linear cost proof at each step 
+causing overall quadratic cost.
 
 > {-# LANGUAGE 
 >    TypeOperators
@@ -46,7 +53,8 @@ A straightforward conversion of Idris code has quadratic cost (Idris code has li
 Similarly to Idris ghc needs `appendNilRightNeutral` and `appendAssociative` theorems to compile.
 However `snocListHelp` `input` argument is no longer implicit `{input}` and results in 
 one `sAppend` call at each recursive step.
-This becomes quadratic complexity, ouch!  The only reason why we cary `input` around is to use it as an argument
+This becomes quadratic complexity (even ignoring the cost of the proofs), ouch!  
+The only reason why we cary `input` around is to use it as an argument
 to proofs of `appendNilRightNeutral` and `appendAssociative`.
 This is a type level aspect that Idris appears to handle without runtime cost!   
 TODO - think about it more!
@@ -82,8 +90,8 @@ TODO - think about it more!
 ```
 
 I do not think the linear cost can be achieved by making the above `Sing input`
-argument implicit (using constraint such as `SingI input`). The implicit `sing` will still be 
-a reclusive call.
+argument implicit (using constraint such as `SingI input`). 
+The implicit `sing` will still be a reclusive call.
 
 Reversing `Vect` 
 ----------------
@@ -100,7 +108,7 @@ The take away is:
 * I had big hope that I will be able to replace `Sing list` evidence in `appendNilRightNeutral`, `appendAssociative` 
   with SNat` but I have failed. If that works my hope is to recover linear cost.
 
-[Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs) is simpler and has linear cost!
+[Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs) is simpler and has linear cost (ignoring proofs)!
 This is basically the same code as a straightforward implementation of `reverse` for `Vect` that uses 
 accumulator, see 
 [my presentation 1](https://github.com/rpeszek/presentations-code/blob/master/precise-types/src/Present/P5_VectRev1.hs)
@@ -109,5 +117,4 @@ and
 
 Compared to [Part2.Sez10_2aVect.hs](../blob/master/src/Part2/Sez10_2aVect.hs),
 [Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs) is less a "type level" code.
-It does not use `Sing vect` or `VAppend` type family.  The only proofs needed are about `Nat` and `+` and those do
-not add to the computational cost (the need for `Sing list` evidence has been averted).
+It does not use `Sing vect` or `VAppend` type family.  The only proofs needed are about `Nat` and `+`.

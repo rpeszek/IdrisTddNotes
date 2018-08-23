@@ -75,7 +75,7 @@ ghci:
 Note, there is a runtime cost to these proofs.  It would be cool if there 
 was some mechanism to replace these with something like `unsafeCoerce` at runtime.   
 This appears to be an issue for Idirs as well:
-https://github.com/idris-lang/Idris-dev/issues/3516.  
+https://github.com/idris-lang/Idris-dev/issues/3516  
 See also notes for section 10.2.
 
 ghci

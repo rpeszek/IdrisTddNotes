@@ -1,6 +1,8 @@
 {- 
- SnocList and liner cost reverse examples from 10.2.1 and 10.2.2 
+ SnocList and fast reverse examples from 10.2.1 and 10.2.2 
  "snoc" == reverse "cons"
+ The book claims linear cost but my experiments suggest quadratic.
+ I think the cost of snocListHelp append proofs causes it.
 -}
 
 module Part2.Sez10_2a_snoc
@@ -30,6 +32,12 @@ myReverse : List a -> List a
 myReverse input with (snocList input)
   myReverse [] | Empty = []
   myReverse (xs ++ [x]) | (Snoc rec) = x :: myReverse xs | rec -- passed with argument
+
+test1 : List Int
+test1 = myReverse [1..50]
+
+test2 : List Int
+test2 = myReverse [1..100]
 
 {-
 idris repl:

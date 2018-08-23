@@ -13,15 +13,18 @@ Idris code example
 Compared to Haskell
 -------------------
 Haskell equivalent is not as pretty and not as useful. 
-I implementing `area` that works on type level shapes and type level sizes.
-I am using manually defined fractional type `Frac` in place of language build `Double`
+I am implementing `area` that works on type level shapes and type level sizes.
+I am using manually defined fractional type `Frac` in place of a language 
+built-in `Double`.  
+This code does not try to achieve equivalent implementation hiding, rather,
+it is an experiment in writing a somewhat similar code in Haskell where 
+`triangle`, `rectangle`, and `circle` are used on the type level.
 
 > {-# LANGUAGE 
 >    TemplateHaskell
 >    , GADTs
 >    , TypeFamilies
 >    , DataKinds
->  --  , PolyKinds
 >    , KindSignatures
 >    , UndecidableInstances
 >    , TypeInType
@@ -52,11 +55,12 @@ I am using manually defined fractional type `Frac` in place of language build `D
 >   
 >   data Frac = MkFrac Nat Nat deriving Show
 >
->   fmulti :: Frac -> Frac -> Frac 
->   fmulti (MkFrac n1 n2) (MkFrac m1 m2) = MkFrac (multi n1 m1) (multi n2 m2)
->   
 >   |])
 >
+> -- | could be placed inside singletons template too
+> fmulti :: Frac -> Frac -> Frac 
+> fmulti (MkFrac n1 n2) (MkFrac m1 m2) = MkFrac (multi n1 m1) (multi n2 m2)
+>   
 > showFrac :: Frac -> String 
 > showFrac (MkFrac n m) = show (natToInteger n) ++ "/" ++ show (natToInteger m) 
 > 
@@ -68,20 +72,22 @@ ghci:
 sF1 :: Sing ('MkFrac ('S 'Z) ('S 'Z))
 ```
 
-Interstingly, ShapeView is completely isomorphic to singletons generated `SShape` 
+Idris' definition of `ShapeView` translates quite nicely to Haskell.
 
 > data ShapeView (s :: Shape a) where
 >     SvTriangle :: Sing sbase -> Sing sheight -> ShapeView (Triangle sbase sheight)
 >     SvRectangle :: Sing swidth -> Sing sheight -> ShapeView (Rectangle swidth sheight)
 >     SvCircle :: Sing sradius -> ShapeView (Circle sradius)
->
+
+Interestingly, this ShapeView is isomorphic to singletons generated `SShape` 
+
 > shapeView :: forall (s :: Shape a) . Sing s -> ShapeView s
 > shapeView (SMkTriangle a b) = SvTriangle a b
 > shapeView (SMkRectangle a b) = SvRectangle a b
 > shapeView (SMkCircle a) = SvCircle a
 
-so using the `ShapeView` is redundant to the constructs already defined in `singletons`
-(and Instead of `SomeSing Frac` I am using the isomorphic `Frac` directly)
+so using the `ShapeView` is redundant to the constructs already defined in `singletons`.
+Instead of `SomeSing Frac` I am using the isomorphic `Frac` directly.
 
 > approxPi = MkFrac (integerToNat 22) (integerToNat 7)
 > 
@@ -106,4 +112,3 @@ ghci:
 *Part2.Sez10_3_hiding> showFrac $ area' (sRectangle sF1 sF1)
 "1/1"
 ```
-
