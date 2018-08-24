@@ -1,8 +1,8 @@
 |Markdown version of this file: https://github.com/rpeszek/IdrisTddNotes/wiki/Part3_Sec15b_ProcessList
 |Idris Src: Sec15b_ProcessList.idr
 
-Section 15 Type safe concurrent programming example of library usage
-=====================================================================
+Section 15 `ListAction` Type safe concurrent programming example
+================================================================
 
 Idris code example
 ------------------  
@@ -10,6 +10,20 @@ Idris code example
 
 Compared to Haskell
 -------------------
+Idris ListAction is equivalent to ExistentialQuantification or a GADT in Haskell.
+Promoting such type definitions is not supported by `singletons`.
+https://github.com/goldfirere/singletons/issues/150
+
+For this reason, I am fixing `elem` type variable to be just `Nat`. The following code
+implements distributed computation of list length and list append that works
+on `List Nat` only. 
+
+There is no type guarantee that, say, the list in `AppendAT list` corresponds to the 
+type level parameter in `ListActionType ('AppendA l1 l2)` (that the service 
+implementation code will actually be appending the lists) but similar guarantee
+does not exist in Idris' code either.  
+The emphasis here is on the communication protocol type safety and on keeping Haskell
+relatively close to Idris.
 
 > {-# LANGUAGE TemplateHaskell
 >       , KindSignatures
@@ -40,9 +54,7 @@ Compared to Haskell
 > 
 > data ListActionType :: ListAction -> Type where
 >    AppendAT   ::  List Nat -> ListActionType ('AppendA l1 l2)
->    -- ^ 'n' 'm' are picked automatically by compiler
 >    LengthAT ::  Nat -> ListActionType ('LengthA l)
->    -- ^ 'n' is picked automatically by compiler
 > 
 > instance Show (ListActionType a) where
 >     show (AppendAT list) = "AppendAT " ++ (show list)
@@ -66,7 +78,7 @@ Compared to Haskell
 >                  Nothing -> Action (putStrLn "failed")
 >             )
 
-The closer way that follows Idris (and a more intuitive code) would be to use a TypeFamily
+A closer way to follow Idris (and a more intuitive code) would be to use a TypeFamily
 
 ```
 data ListAction where
@@ -80,7 +92,7 @@ type family ListType (la :: ListAction) :: Type where
 
 that compiles just fine and the kind signature of ListType matches the required
 `ListAction -> Type`.  However, a type family cannot be used as a type parameter.
-That is why singletons have all these 'SymN' symbol types like `EQSym0`.
+That is one reason why `singletons` have all these 'SymN' symbol types like `EQSym0`.
 
 ghci:  
 ```

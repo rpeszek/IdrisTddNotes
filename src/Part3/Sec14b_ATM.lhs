@@ -5,11 +5,12 @@ Section 14.2 Type Safe ATM protocol example vs Haskell
 =======================================================
 This program is about converting a powerful dependently typed 
 state machine pattern to Haskell. The pattern is about defining 
-a DSL with instructions parameterized by startState and function that evaluates endState
+a DSL with instructions parameterized by startState and a function that evaluates
+computation result producing endState
 
 `Dsl : (res : Type) -> DslState -> (res -> DslState) -> Type`
 
-and providing monad-like binding that enforces that for the chained steps 
+and providing monad-like binding that enforces that 
 endState of a step matches the beginState of the next.
 
 ```
@@ -29,7 +30,7 @@ I am using `Unsafe.Coerce`. This is probably hard to do without it.
 The `unsafeCoerce` is needed to transform the bind (`:>>=`) part of DSL to IO
 (see the comment below). 
 
-I am also simplifying things and treating pin as `Nat`.
+I am also simplifying things and using `Nat` to define `pin`.
 
 > {-# LANGUAGE TemplateHaskell
 >       , KindSignatures
@@ -122,9 +123,9 @@ I am also simplifying things and treating pin as `Nat`.
 > (>>:) m k    = m :>>= \ _ -> k  
 
 Note that `(:>>=)` goes across kinds. This is important because it limits the domain scope 
-of type level state functions as well as the domain scope of `Sing a`.
+of type level state functions as well as the domain scope of `Sing a` (it increases type precision).
 
-Note that DSL definition became more complex with the use of singletons GADT-zed type level 
+Note that DSL definition becames more complex with the use of `singletons` GADT-zed type level 
 functions (`~>` and `@@`) and 'symbols'.
 
 * `type (~>) a b = TyFun a b -> Type` 
@@ -182,11 +183,11 @@ The interpreter:
 >                    ioUnit
 > runATM (Pure res) = return $ SomeSing res
 
-The case match on `:>>=` constructor is where `unsafeCoerce` is needed. 
+The case match on `:>>=` constructor is where I need `unsafeCoerce`. 
 This should be safe because I am mapping a stricter definitions of 
 `ATMCmd (res::k)` DSL to looser `IO (SomeSing k)`.   
 _TODO_ Maybe using something like a `Tapeable` would give me some way to do 
-type equality proofs??   At this time, I DUNNO.
+type equality proofs here??  At this time, I DUNNO.
 
 > runATM (x :>>= f) = 
 >                 do ax <- runATM x 

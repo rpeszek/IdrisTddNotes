@@ -8,13 +8,13 @@ to create somewhat equivalent version of Idris' `System.Concurrency.Channels`
 primitives and getting it to work.
 
 Section 15 of the book shows how dependent types help in creating type safe protocols
-that can be implemented using unsafe primitives.  If the implementation of the protocol
+on top of less safe primitives.  If the implementation of the protocol
 itself is correct, the programs that use it are prevented from race 
-conditions but type level guarantees.
+conditions.
 
 This section shows the code for the library itself. The next note shows how it is used.
 
-As for other Notes, the easiest method or reading it is to open two browser windows side-by-side
+As with the other of my notes, the easiest method or reading this is to open two browser windows side-by-side
 and compare Idris and Haskell.
 
 Idris code example
@@ -24,8 +24,9 @@ Idris code example
 Compared to Haskell
 -------------------
 I have implemented somewhat close (simplified) equivalents to Idris' `System.Concurrency.Channels`
-in 
+in
 [Control.Concurrent.Primitives](https://github.com/rpeszek/IdrisTddNotes/blob/master/src/Control/Concurrent/Primitives.hs)
+included in this project.
 
 > {-# LANGUAGE TemplateHaskell
 >       , KindSignatures
@@ -51,7 +52,7 @@ in
 > import Protolude hiding (Nat, forever, show)
 > import Control.Monad.Trans.Maybe
 
-Fuel boilerplate to mimic Idris (without the nice totality assurance, of course):
+Fuel boilerplate to mimic Idris (without any totality assurances, of course):
 
 > data Fuel = Dry | More Fuel
 > 
@@ -68,7 +69,7 @@ I use `singletons` `Sing` when I need arguments that are both value level and ty
 > 
 > data ProcState = Ready | Sent | Looping
 > 
-> -- flipped msg type from second position (in Idris version) to end
+> -- flipped msg type from second position (in Idris version) to the end
 > data Process (iface :: reqType -> Type) (inState:: ProcState) (outState :: ProcState) msg where
 >      Request :: MessagePID service_iface ->
 >                 Sing msg ->
@@ -139,7 +140,7 @@ This uses the transformer MaybeT instead to avoid boilerplate.
 > run :: Fuel -> Process iface in_state out_state t -> IO (Maybe t)
 > run fuel p = (newMVar []) >>= (\mchs -> runMaybeT $ runT mchs fuel p) 
 
-Simple test example to see that it works. ListAction example is in the next note.
+Simple test example to see that it works. `ListAction` example is in the next note.
 It is worth noting that implementing kind `iface :: reqType -> Type` is not as elegant
 as in Idris. (see next note for more discussion).
 
