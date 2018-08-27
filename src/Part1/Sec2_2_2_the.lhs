@@ -45,6 +45,10 @@ allow for two different `Nil`/`[]` or two different `Cons`/`::`/`:` in
 single lexical scope.
 But I can play with polymorphic numeric literals.
 
+> {-# LANGUAGE  
+>  TypeApplications
+> #-}
+> {-# OPTIONS_GHC -fwarn-unused-imports #-}
 > module Part1.Sec2_2_2_the where
 > import Data.Proxy
 >
@@ -89,6 +93,17 @@ ad-hoc overloaded names like Idris.)
 
 This approach is clearly not as nice as Idris'. 
 I had to declare helper proxies which is ugly.
+
+Using `TypeApplications` extension
+----------------------------------
+As it was pointed out to me on [reddit](https://www.reddit.com/r/haskell/comments/99toaz/tdd_with_idris_book_vs_haskell/) (thank you u/Potato44 and u/kurtel)
+`TypeApplications` extension provides a way to use types at value level 
+expressions.  
+https://www.microsoft.com/en-us/research/uploads/prod/2018/06/tyvars-in-pats-haskell18-final.pdf
+
+So I can just do this 
+
+> double4 = id @Double 4
 
 
 JVM
