@@ -4,7 +4,8 @@ module Main
 -- import Prelude.Monad
 -- import Sanity.Hello 
 
--- Needed for Idris build script!
+-- Convenient for Idris build script
+-- forces compiling of all modules
 import Part1.Sec1_4_5
 import Part1.Sec2_2_2_the
 import Util.MiniParser
@@ -32,6 +33,7 @@ import Part3.Sec14b_ATM
 import Part3.Sec15a_ProcessLib
 import Part3.Sec15b_ProcessList 
 import Play.FunctorLaws      
+import Play.RankN      
 
 main : IO ()
 main = sec6_3b
