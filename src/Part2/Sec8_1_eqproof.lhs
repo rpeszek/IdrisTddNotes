@@ -4,10 +4,11 @@
 Section 8.1. Equality proofs vs Haskell
 ========================================
 Dependent types are so rich that the type checker needs help in figuring things out.
-A proof of equality between natural numbers is needed to type check   
+A proof of equality between natural numbers is needed to implement  
 ```
 exactLength : (len : Nat) -> (input : Vect m a) -> Maybe (Vect len a)
 ```
+that, basically, checks if `m` is `len` and returns the vector if it is.
 
 Idris code example
 ------------------
@@ -53,8 +54,6 @@ equivalent of Idris' `=`
 > checkEqNat (SS k) (SS j) = case checkEqNat k j of
 >       Nothing -> Nothing
 >       Just prf -> Just $ cong prf
->       -- ^ Note cong is not needed, this works:
->       -- Just Refl -> Just Refl
 >       -- Note: SS :: SNat n -> SNat ('S n) which explains the use of cong
 > type instance F n = 'S n
 >
@@ -79,7 +78,7 @@ equivalent of Idris' `=`
 > -}
 > type family F2 (a :: k1) (b:: k2 ):: k3 
 > 
-> {- I need z in scope for this to work, again not really needed -}
+> {- I need z in scope for this to work -}
 > cong2 :: z -> (x :~: y) -> F2 z x :~: F2 z y
 > cong2 _ Refl = Refl 
 > 
@@ -103,7 +102,7 @@ equivalent of Idris' `=`
 > allSameS :: SNat x -> SNat y -> SNat z -> ThreeEqual x y z -> ThreeEqual ('S x) ('S y) ('S z)
 > allSameS _ _ _ Refl3 = Refl3
 > 
-> {- It is good to have evidence of just one -}
+> {- Good enough to have evidence of just one -}
 > allSameS2 :: SNat x -> ThreeEqual x y z -> ThreeEqual ('S x) ('S y) ('S z)
 > allSameS2 _ Refl3 = Refl3
 

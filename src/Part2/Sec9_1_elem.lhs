@@ -22,7 +22,7 @@ I am using only `Data.SingBased` moving forward.
 >   , ScopedTypeVariables
 >   , StandaloneDeriving
 >   , KindSignatures
->   , TypeInType
+>   , TypeInType -- helpful when type variable is both type and kind SomeConstraint k => xs :: Vect n k 
 >   , AllowAmbiguousTypes
 >   , EmptyCase
 >   , UndecidableInstances 
@@ -258,6 +258,7 @@ Yes
 *Part2.Sec9_1_elem> isElemNat s1 (SVCons s1 SVNil)
 Yes
 ```
+(`s1` represents Nat number 1, see imports above)
 
 I was not able to get far using the more general `DecEq` from Sec8_3_deceq in implementing
 `isElem`.

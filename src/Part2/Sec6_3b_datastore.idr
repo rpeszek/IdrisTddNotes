@@ -33,6 +33,11 @@ data Command : Schema -> Type where
            Get : Integer -> Command schema
            Quit : Command schema
 
+{- This is powerful. Some of this can be mimicked in Haskell, e.g.
+`singletons` library could generate type family Schema :: DataStore -> Schema from
+something like `data DataStore = DataStore{ schema :: Schema}`
+but cross referencing between field values and field types is beyond what I can 
+do in Haskell, also record 'getters' are not automatically lifted by `DataKinds` -}
 record DataStore where
        constructor MkData
        schema : Schema
@@ -43,7 +48,7 @@ record DataStore where
 teststore = MkData (SInt .+. SString .+. SInt) 1 [(2, "Two", 42)]
 -}
 
-{- helper methods used with DataStore -}
+{- helper methods used with DataStore, note cool use of record getter at type level -}
 
 addToStore : (store : DataStore) -> SchemaType (schema store) -> DataStore
 addToStore (MkData schema size store) newitem

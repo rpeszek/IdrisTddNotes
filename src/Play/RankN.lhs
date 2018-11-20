@@ -81,6 +81,9 @@ This definition generalizes to ranks higher than 2 hence the rank-n term.
 Type checker can get in trouble with things like type reconstruction (inference)
 (which is undecidable for rank > 2). 
 
+Idris code example
+------------------  
+|IdrisRef: FunctorLaws.idr 
 
 In Haskell
 ----------
