@@ -7,10 +7,10 @@ import System.Concurrency.Channels
 
 %default total
 
-||| `iface : reqType -> Type` defines type level served interface (server commands)
+||| `iface : reqType -> Type` defines type level service interface (service commands)
 ||| `reqType` would typically be some ADT defining commands and LHS `Type` is the
-||| result type,  Idris makes these easier to define than Haskell but 
-||| it will map to the pattern of lifting ADT 
+||| result type,  Idris makes these easier to define than Haskell but this approach
+||| maps to the pattern of lifting ADT 
 ||| with DataKinds and using GADT/Sing to map these back to `Type`
 export
 data MessagePID : (iface : reqType -> Type) -> Type where

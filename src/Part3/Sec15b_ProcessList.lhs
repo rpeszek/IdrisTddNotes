@@ -78,7 +78,7 @@ relatively close to Idris.
 >                  Nothing -> Action (putStrLn "failed")
 >             )
 
-Note Idris maps response types of `Nat` and `List a` directly. The Haskell approach above
+Note Idris maps response types to `Nat` and `List a` directly. The Haskell approach above
 uses `ListActionType` GADT as the result type.  
 A closer way to follow Idris (and a more intuitive code) would be to use a TypeFamily
 
