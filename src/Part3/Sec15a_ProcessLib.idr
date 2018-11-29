@@ -7,6 +7,11 @@ import System.Concurrency.Channels
 
 %default total
 
+||| `iface : reqType -> Type` defines type level served interface (server commands)
+||| `reqType` would typically be some ADT defining commands and LHS `Type` is the
+||| result type,  Idris makes these easier to define than Haskell but 
+||| it will map to the pattern of lifting ADT 
+||| with DataKinds and using GADT/Sing to map these back to `Type`
 export
 data MessagePID : (iface : reqType -> Type) -> Type where
      MkMessage : PID -> MessagePID iface
@@ -28,22 +33,29 @@ data ProcState = Ready | Sent | Looping
                               Respond             
 -}
 
+||| payload type is the second type variable (after interface)
 public export
 data Process : (iface : reqType -> Type) ->
                Type -> ProcState -> ProcState -> Type where
-     ||| returns service_iface defined type, does not change state
+     ||| Given service process and request message 
+     ||| returns paload as defined by service_iface, does not change state
      Request : MessagePID service_iface ->
                (msg : service_reqType) ->
                Process iface (service_iface msg) st st
      ||| CPS handler returns Process in in Ready state, iface is not specified but
-     ||| iface (iface msg) is contrained, intersting this can be used with Pure  
+     ||| iface (iface msg) is contrained, intersting this can be used with Pure
+     ||| Note:  `Ready Ready` in CPS input works with Pure and Action  
      Respond : ((msg : reqType) -> Process iface (iface msg) Ready Ready) ->
                Process iface (Maybe reqType) st Sent
-     ||| allows Looping service (argument) to process arbitrary state
+     ||| see below (`Service iface a = Process iface a Ready Looping`)
+     ||| given a service returns (maybe) process handle to it
      Spawn : Process service_iface () Ready Looping ->
              Process iface (Maybe (MessagePID service_iface)) st st
 
-     ||| used by service to loop
+     ||| used by service to loop (note moves from Ready to Sent to provide
+     ||| extra type safety while still allows to chain after any Respond
+     ||| keeping Ready as starting state, see (>>=))
+     ||| This basically allows server to be coded as `server = Respond (...) >> Loop server`
      Loop : Inf (Process iface a Ready Looping) ->
             Process iface a Sent Looping
      ||| Encodes IO as process

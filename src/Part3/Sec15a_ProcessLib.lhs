@@ -69,8 +69,9 @@ I use `singletons` `Sing` when I need arguments that are both value level and ty
 > 
 > data ProcState = Ready | Sent | Looping
 > 
-> -- flipped msg type from second position (in Idris version) to the end
-> data Process (iface :: reqType -> Type) (inState:: ProcState) (outState :: ProcState) msg where
+> -- flipped payload type from second position (in Idris version) to the end
+> -- making it look more like traditional monad notation
+> data Process (iface :: reqType -> Type) (inState:: ProcState) (outState :: ProcState) a where
 >      Request :: MessagePID service_iface ->
 >                 Sing msg ->
 >                 Process iface st st (service_iface msg) 
@@ -106,13 +107,11 @@ This uses the transformer MaybeT instead to avoid boilerplate.
 > runT :: MonadIO m => MVar [Channel] -> Fuel -> Process iface in_state out_state t -> MaybeT m t
 > runT mchs _ (Request (MkMessagePID pid) smsg)
 >             = do chan <- MaybeT . liftIO . connect mchs $ pid
->                  chns <- liftIO $ readMVar mchs
 >                  liftIO $ unsafeSend chan smsg
 >                  x <- liftIO $ unsafeRecv chan
 >                  pure x
 > 
 > runT mchs fuel (Respond calc) = do 
->               pid <- liftIO $ myThreadId
 >               channel <- MaybeT . liftIO . listen $ mchs
 >               msg <- liftIO $ unsafeRecv channel
 >               res <- runT mchs fuel (calc msg)
