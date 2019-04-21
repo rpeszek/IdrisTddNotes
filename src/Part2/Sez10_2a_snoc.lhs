@@ -53,7 +53,7 @@ causing overall quadratic cost.
 Similarly to Idris ghc needs `appendNilRightNeutral` and `appendAssociative` theorems to compile.
 However `snocListHelp` `input` argument is no longer implicit `{input}` and results in 
 one `sAppend` call at each recursive step.
-This becomes quadratic complexity (even ignoring the cost of the proofs), ouch!  
+This becomes quadratic complexity (ignoring the cost of the proofs, see [ProofPerformance](Play_ProofPerformance)), ouch!  
 The only reason why we cary `input` around is to use it as an argument
 to proofs of `appendNilRightNeutral` and `appendAssociative`.
 This is a type level aspect that Idris appears to handle without runtime cost!   
@@ -106,9 +106,10 @@ The take away is:
 * I had to use `:~~:` instead of `:~:` because ghc considered `appendNilRightNeutral`, `appendAssociative`
   equalities having different RHS and LHS kinds
 * I had big hope that I will be able to replace `Sing list` evidence in `appendNilRightNeutral`, `appendAssociative` 
-  with SNat` but I have failed. If that works my hope is to recover linear cost.
+  with SNat` but I have failed. If that worked, my hope was to recover linear cost.
 
-[Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs) is simpler and has linear cost (ignoring proofs)!
+[Part2.Sez10_2aVect2.hs](../blob/master/src/Part2/Sez10_2aVect2.hs) is simpler and has linear cost 
+(ignoring proofs, see [ProofPerformance](Play_ProofPerformance))!
 This is basically the same code as a straightforward implementation of `reverse` for `Vect` that uses 
 accumulator, see 
 [my presentation 1](https://github.com/rpeszek/presentations-code/blob/master/precise-types/src/Present/P5_VectRev1.hs)

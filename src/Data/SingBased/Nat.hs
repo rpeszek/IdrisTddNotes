@@ -68,6 +68,11 @@ integerToNat n
         | n == 0 = Z
         | otherwise = S (integerToNat (n - 1))
 
+integerToNat' :: Integer -> Nat
+integerToNat' n 
+        | n < 0 = integerToNat (negate n)
+        | otherwise = integerToNat n
+
 -- Singling of literal patterns not yet supported
 type family ToTL (n :: Nat) :: TL.Nat where
     ToTL Z = 0

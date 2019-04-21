@@ -34,6 +34,7 @@ library
       , singletons
       , mtl
       , transformers
+      , QuickCheck
   exposed-modules:
       Data.SingBased.Vect
       , Data.SingBased.Nat
@@ -70,7 +71,8 @@ library
       , Part3.Sec14b_ATM
       , Part3.Sec15a_ProcessLib
       , Part3.Sec15b_ProcessList 
-      , Play.FunctorLaws    
+      , Play.FunctorLaws
+      , Play.ProofPerformance    
 
 
   default-language: Haskell2010

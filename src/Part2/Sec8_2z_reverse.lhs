@@ -72,9 +72,8 @@ ghci:
 >
 > test' = myReverse2' ("1" ::: "2" ::: "3 "::: VNil)
 
-Note, there is a runtime cost to these proofs.  It would be cool if there 
-was some mechanism to replace these with something like `unsafeCoerce` at runtime.   
-See also notes for section 10.2.
+Note, there is a runtime cost to these proofs.    
+See [ProofPerformance](Play_ProofPerformance) and also notes for section 10.2.
 
 ghci
 ```

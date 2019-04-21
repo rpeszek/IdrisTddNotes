@@ -33,12 +33,8 @@ data SnocVect n a where
 snocVect :: Vect n a -> SnocVect n a
 snocVect xs = snocVectHelp SZ (vlength xs) EmptyV xs
 
-{- | Still a constly conversion with extra computational cost of proofs.
-     Howeer, the cost in the proof only not in maintaining the evindence.
-     One could think about somehow replacing these proofs with unsafeCoerce at runtime.
-     This would make the overall cost linear.  
-     Does Idris do that or something similar?  
-     Based on the claim in Sec 10_2 in the book about the linear cost it appears so!
+{- | Maintaining the evindence is not longer costly, the runtime cost of the proof
+     can be dealt with to (see ProofPerformance.lhs).
 -}
 snocVectHelp ::  SNat n -> SNat m -> SnocVect n a -> Vect m a -> SnocVect (n + m) a
 snocVectHelp n m snoc VNil = case plusZeroRightNeutral n of Refl -> snoc
