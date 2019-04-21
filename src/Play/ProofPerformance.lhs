@@ -82,7 +82,7 @@ Method 2
 
 I think, I like this approach the best. 
 
-No termination
+Non termination
 --------------
 
 Anything can be proven using a non-terminating proof. Haskell does not check totality
