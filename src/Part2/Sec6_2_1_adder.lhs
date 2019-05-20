@@ -84,7 +84,8 @@ a successor `1 + n` or `n + 1` to avoid errors like the following (for `1 + n`)
  Could not deduce: n2 ~ n1
   from the context: n ~ (1 + n1)
 ```
-These errors could be fixable by writing theorems about `GHC.TypeLits.Nat` (see below), 
+These errors could be fixable by writing theorems about `GHC.TypeLits.Nat` 
+(see the Conclusions section below), 
 but using `n - 1' approach seems simpler.
 
 
@@ -152,10 +153,10 @@ ghci output:
 Conclusions
 -----------
 I am finding that using GHC.TypeLits Nat is a bit of a struggle.  I often get errors like 
-Couldn't match type ‘n’ with ‘(n + 1) - 1’.  Using constraints like 
-`n ~ ((n + 1) - 1)` does not always help (see note [Part2_Sec8_2_5_vappd](Part2_Sec8_2_5_vappd)).  
-I still think that most of these issues could be resolved by writing theorems about GHC.TypeLits Nat.
-Theorems similar to 'plus commutes' from (future) Sec 8.2.  
+Couldn't match type ‘n’ with ‘(n + 1) - 1’.  
+Most of these issues could be resolved by writing theorems about GHC.TypeLits Nat,
+theorems similar to 'plus commutes' from (the future) Sec 8.2. 
+But writing these for TypeLits is awkward (see [WorkingWithTypeLits.hs in my LC2019 presentation](https://github.com/rpeszek/present-proofs-lc19/blob/master/src/Present/WorkingWithTypeLits.hs)).  
 To move forward I have created 'Data.CodedByHand.hs'.
 
 I like Idris more and more!

@@ -49,7 +49,8 @@ This version was coded 'by-hand'. Using `singletons` is a bit less boilerplate
 [/src/Part2/Sec6_3sing_datastore.hs](../blob/master/src/Part2/Sec6_3sing_datastore.hs)  
 
 *  I am using `attoparsec` just to play with it. Obviously, the existence of many parser flibraries is a big plus for Haskell.
-*  GHC.TypeLits based vectors are hard to work with and I moved to using my own implementation `Data.CodedByHand`
+*  GHC.TypeLits based vectors are hard to work with and I moved to using my own implementation `Data.CodedByHand` 
+([WorkingWithTypeLits.hs in my LC2019 presentation](https://github.com/rpeszek/present-proofs-lc19/blob/master/src/Present/WorkingWithTypeLits.hs))
 *  Implementing polymorphic setSchema while keeping addSchema and getEntry type safe was hard
 *  Tuples in Haskell are yucky
 *  It is hard to implement locally scoped dependently typed helper functions in Haskell
