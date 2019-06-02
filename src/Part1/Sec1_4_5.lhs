@@ -95,14 +95,10 @@ It also has other limitations explained below and in this case can be avoided.
 >     MkStr2 :: String -> StringOrInt2 String
 >     MkInt2 :: Int -> StringOrInt2 Int
 > 
-> extractStr :: StringOrInt2 String -> String
-> extractStr (MkStr2 s) = s
-> 
-> extractInt :: StringOrInt2 Int -> Int 
-> extractInt (MkInt2 i) = i
+> extractStrOrInt2 :: StringOrInt2 a -> a
+> extractStrOrInt2 (MkStr2 s) = s
+> extractStrOrInt2 (MkInt2 i) = i
 
-Using `StringOrInt2` GADT is nice but it is a different approach.  It is not a clean type mapping
-to `String` or `Int`.
 To finish this off, I need TypeFamilies. Type families
 are not first class, for example I cannot define expressions like 
 `data MyGadt StrOrIntF where` because type family needs to be fully applied in type 
@@ -117,16 +113,25 @@ However, it turns out these limitations are not preventing me from moving forwar
 >    STrue :: SBool True
 >    SFalse :: SBool False
 > 
-> getStringOrInt2 :: forall (a :: Bool). SBool a -> StringOrInt2 (StrOrIntF a)
-> getStringOrInt2 x = case x of
+> mkStringOrInt2 :: forall (a :: Bool). SBool a -> StringOrInt2 (StrOrIntF a)
+> mkStringOrInt2 x = case x of
 >           STrue -> MkInt2 10
 >           SFalse -> MkStr2 "Hello"
 > 
+> getStringOrInt2 :: forall (a :: Bool). SBool a -> StrOrIntF a
+> getStringOrInt2 sb =  extractStrOrInt2 (mkStringOrInt2 sb)
+
+And it works:
+```
+*Part1.Sec1_4_5> getStringOrInt2 STrue
+10
+```
+
 > {-| This compiles with warn-incomplete-patterns, sweet!!! -}
 > valToString2 :: forall (a :: Bool). SBool a -> StringOrInt2 (StrOrIntF a) -> String
 > valToString2 x val = case x of
->           STrue -> showInt $ extractInt val
->           SFalse -> extractStr val
+>           STrue -> showInt $ extractStrOrInt2 val
+>           SFalse -> extractStrOrInt2 val
 > 
 > {-| This does not depend on the first argument, 
 >     but is OK because of strong type signature -}
@@ -139,8 +144,8 @@ However, it turns out these limitations are not preventing me from moving forwar
 
 This no longer builds. Good!:
 ```
-getStringOrInt2' :: forall (a :: Bool). SBool a -> StringOrInt2 (StrOrIntF a)
-getStringOrInt2' x = case x of
+mkStringOrInt2' :: forall (a :: Bool). SBool a -> StringOrInt2 (StrOrIntF a)
+mkStringOrInt2' x = case x of
           STrue -> MkStr2 "Hello"
           SFalse -> MkInt2 10
 ```
