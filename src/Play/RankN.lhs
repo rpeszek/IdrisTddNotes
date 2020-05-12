@@ -84,10 +84,15 @@ Type checker can get in trouble with things like type reconstruction (inference)
 
 In Haskell
 ----------
-I have found some issues (using 8.2.2) with support for rank-n (as shown in the code comments)
-I think these are caused by limited support for impredicative polymorphism in Haskell.
+
+_(Edit 2020/05/11)_     
+Haskell has a limited support for what is called impredicative polymorphism.
+This has to do with type inference.  Basically polymorphic functions are not 
+first class in Haskell.  
 (see [impredicative in ghc user guide](https://downloads.haskell.org/~ghc/master/users-guide/glasgow_exts.html#impredicative-polymorphism)).
-There is an `ImpredicativeTypes` pragma but it does not appear to help here.
+There is an `ImpredicativeTypes` pragma but it is supposed to be not good.   
+There are good workaround for these issues (creating wrapping types for polymorphic functions, and annotating types (e.g. using `TypeApplications`) 
+helps with the problems).
 
 > {-# LANGUAGE RankNTypes #-}
 >
