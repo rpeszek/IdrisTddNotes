@@ -26,10 +26,17 @@ printfFmt1 End acc = ?printfFmt1_rhs_4
 
 Compared to Haskell
 -------------------
-Template Haskell/QuasiQuotation approach provides similar solution  
+
+__There is a much nicer solution to what I have here.__  
+
+See https://github.com/kcsongor/symbols   
+look at:
+https://github.com/kcsongor/symbols/blob/master/src/Data/Symbol/Examples/Printf.hs
+
+Template Haskell/QuasiQuotation approach is the old way of doing stuff like this in Haskell    
 https://hackage.haskell.org/package/safe-printf#readme
 
-I found a more dependently typed solution here (lacking the same string formatting as Idris):  
+I also found a more dependently typed solution here (lacking the same string formatting as Idris):  
 https://www.reddit.com/r/haskell/comments/55bvt4/typesafe_printf_with_typeintype/  
 https://gist.github.com/gergoerdi/5a0785ae9366776ebd4f1090d75979d3  
 
